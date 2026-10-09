@@ -1,0 +1,10 @@
+Веб-версия Kovapp: сервер и сайт.
+
+Как положить: распакуйте архив web.zip в папку F:\kovapp_autotest\project
+(в архиве уже есть папка web) - получится:
+  project\web\server\server.py
+  project\web\web_app\index.html
+Старое содержимое папки web перед этим удалите.
+
+Из этой папки берётся сервер для всех прогонов и сайт для браузеров.
+Другая папка - PROJECT_WEB_DIR в .env.

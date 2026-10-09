@@ -1,0 +1,263 @@
+/* Раздел «Оборудование». */
+
+/* ── Раздел «Оборудование» ─────────────────────────────────────────────────
+   Не таблица: у позиции своя жизнь — кто взял, сколько осталось, что с
+   возвратом. В строку это не помещается, а на телефоне не помещается и
+   половина. Поэтому карточки с полосой занятости и раскрывающимся журналом. */
+.eq-toolbar { flex-wrap: wrap; align-items: center; gap: .6rem; }
+.eq-count { color: var(--text-muted); font-size: .8rem; margin-left: auto; white-space: nowrap; }
+.eq-add { flex: 0 0 auto; }
+.eq-list { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr)); align-content: start; align-items: start; }
+.eq-card {
+  display: flex; flex-direction: column; gap: .6rem; min-width: 0;
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: .85rem .95rem; box-shadow: var(--card-shadow);
+  animation: eqIn .3s var(--anim) both; animation-delay: calc(var(--eq-i, 0) * 28ms);
+  transition: border-color .2s var(--anim), box-shadow .2s var(--anim), opacity .25s, transform .25s;
+}
+.eq-card.is-leaving { opacity: 0; transform: scale(.96); }
+/* Изменил кто-то другой — карточка коротко подсвечивается, чтобы было видно */
+.eq-card.is-flash { animation: eqFlash 1.2s var(--anim); }
+@keyframes eqFlash {
+  0% { box-shadow: 0 0 0 0 var(--accent-soft); border-color: var(--accent); }
+  100% { box-shadow: var(--card-shadow); border-color: var(--card-border); }
+}
+/* Ждут именно этого человека — карточка помечена слева */
+.eq-card.needs-me { border-color: var(--accent); box-shadow: inset .2rem 0 0 var(--accent), var(--card-shadow); }
+/* Кнопки правки переносятся под название, если оно длинное: иначе
+   название ужимается до двух-трёх слов на строку */
+.eq-card-head { display: flex; align-items: center; gap: .5rem; min-width: 0; }
+/* Название занимает всю ширину своей колонки и переносится по словам,
+   а не по буквам: раньше его сжимали кнопки, стоявшие рядом */
+.eq-title { display: flex; align-items: center; gap: .4rem; min-width: 0; flex: 1; }
+.eq-title .eq-value { font-size: 1.02rem; line-height: 1.25; overflow-wrap: break-word; }
+.eq-unit { font-size: .75rem; color: var(--text-muted); background: var(--chip-bg); border-radius: .35rem; padding: .1rem .4rem; }
+.eq-card-actions { display: flex; gap: .35rem; align-items: center; flex: 0 0 auto; }
+.eq-value { font-weight: 700; color: var(--text-value); min-width: 0; overflow-wrap: anywhere; text-align: left; }
+.eq-value.is-empty { color: var(--text-muted); font-weight: 500; font-style: italic; }
+.eq-value.is-editable {
+  display: inline-flex; align-items: center; gap: .3rem; cursor: pointer;
+  background: none; border: 1px dashed transparent; border-radius: .35rem;
+  padding: .1rem .3rem; min-height: 1.75rem; font: inherit; font-weight: 700; color: inherit;
+  transition: background .15s var(--anim), border-color .15s var(--anim);
+}
+.eq-value.is-editable svg { width: .8rem; height: .8rem; opacity: 0; color: var(--accent); transition: opacity .15s; }
+.eq-value.is-editable:hover { background: var(--ghost-hover); border-color: var(--card-border); }
+.eq-value.is-editable:hover svg { opacity: 1; }
+.eq-numbers { display: grid; grid-template-columns: repeat(3, 1fr); gap: .4rem; }
+.eq-num { display: flex; flex-direction: column; align-items: flex-start; gap: .1rem; min-width: 0; }
+.eq-num-value { font-size: 1.15rem; font-weight: 700; color: var(--text-value); font-variant-numeric: tabular-nums; }
+.eq-num-label { font-size: .68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .02em; }
+.eq-num.is-issued .eq-num-value { color: var(--warning-text); }
+.eq-num.is-left .eq-num-value { color: var(--success-text); }
+.eq-num.is-zero .eq-num-value { color: var(--critical-text); }
+/* Дорожка видна всегда, даже у пустой позиции: без неё карточка
+   выглядела незаконченной, а строки в списке — разной высоты */
+.eq-gauge {
+  height: .45rem; border-radius: .25rem; background: var(--surface-3);
+  box-shadow: inset 0 0 0 1px var(--card-border); overflow: hidden;
+}
+.eq-gauge-fill { height: 100%; width: 0; border-radius: .2rem; background: var(--success); transition: width .5s var(--anim); }
+.eq-gauge.is-high .eq-gauge-fill { background: var(--warning); }
+.eq-gauge.is-full .eq-gauge-fill { background: var(--critical); }
+.eq-issues { display: flex; flex-direction: column; gap: .4rem; }
+/* Кнопки не должны сжимать имя в столбик — если не помещаются, уходят строкой ниже */
+.eq-issue {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .4rem .5rem; min-width: 0;
+  background: var(--surface-2); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: .45rem .55rem;
+  animation: eqIn .25s var(--anim) both;
+}
+.eq-issue.st-pending { border-color: var(--warning); background: var(--warning-soft); }
+.eq-issue.st-return_pending { border-color: var(--info); background: var(--info-soft); }
+.eq-issue-body { flex: 1 1 9rem; min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
+.eq-issue-who { font-weight: 600; font-size: .85rem; color: var(--text-value); display: flex; gap: .35rem; align-items: center; }
+.eq-issue-meta { font-size: .74rem; color: var(--text-muted); display: flex; gap: .4rem; flex-wrap: wrap; }
+.eq-state { color: var(--text-value); font-weight: 600; }
+.eq-tag { font-size: .62rem; text-transform: uppercase; background: var(--accent-fill); color: #fff; border-radius: .3rem; padding: .05rem .3rem; }
+.eq-issue-actions { display: flex; gap: .3rem; flex-wrap: wrap; margin-left: auto; }
+.eq-issue-actions .btn { min-height: 1.9rem; padding: .25rem .6rem; font-size: .78rem; }
+.eq-issue-actions .btn.is-busy { opacity: .55; }
+.eq-card-foot { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.eq-card-foot .btn { min-height: 1.9rem; padding: .25rem .6rem; font-size: .78rem; }
+.eq-locked {
+  display: inline-flex; align-items: center; gap: .3rem; font-size: .72rem;
+  color: var(--text-muted); background: var(--chip-bg); border-radius: .35rem; padding: .2rem .45rem;
+}
+.eq-locked svg { width: .85rem; height: .85rem; }
+.eq-journal { display: flex; flex-direction: column; gap: .55rem; border-top: 1px solid var(--card-border); padding-top: .55rem; animation: eqIn .25s var(--anim) both; }
+.eq-log-group { display: flex; flex-direction: column; gap: .2rem; }
+.eq-log-title { display: flex; align-items: center; gap: .35rem; font-size: .72rem; text-transform: uppercase; letter-spacing: .02em; color: var(--text-muted); margin-bottom: .15rem; }
+.eq-log-title svg { width: .85rem; height: .85rem; color: var(--accent); }
+.eq-log { display: flex; gap: .45rem; font-size: .76rem; align-items: baseline; }
+.eq-log-when { color: var(--text-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.eq-log-text { color: var(--text-value); min-width: 0; }
+.eq-empty { color: var(--text-muted); font-size: .8rem; padding: .35rem 0; }
+.eq-empty-big { text-align: center; padding: 2.5rem 1rem; }
+.eq-hint { display: flex; gap: .4rem; align-items: flex-start; color: var(--text-muted); font-size: .8rem; margin: 0 0 .6rem; }
+.eq-hint svg { width: 1rem; height: 1rem; flex: 0 0 auto; color: var(--accent); margin-top: .1rem; }
+.eq-receiver-row { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
+.eq-receiver { display: flex; gap: .4rem; align-items: center; min-width: 0; flex: 1; }
+@media (max-width: 700px) {
+  .eq-list { grid-template-columns: minmax(0, 1fr); gap: .6rem; }   /* minmax(0,…): длинное название не раздвигает строку за край экрана */
+  /* Кнопки уходят на свою строку под названием: втроём они не оставляли
+     названию места, и оно сжималось до пары букв в столбик */
+  .eq-card-head { flex-wrap: wrap; gap: .45rem .5rem; }
+  .eq-title { flex: 1 1 100%; }
+  .eq-card-head .eq-card-actions { flex: 1 1 100%; }
+  .eq-card-head .eq-card-actions .btn { flex: 1 1 auto; }
+  .eq-card-head .eq-card-actions .btn.icon { flex: 0 0 auto; }
+  .eq-locked { flex: 1 1 100%; justify-content: center; }
+  .eq-toolbar { gap: .45rem; }
+  .eq-count { width: 100%; margin-left: 0; order: 3; }
+  .eq-add { width: 100%; order: 4; }
+  .eq-add .btn { width: 100%; }
+  .eq-card { padding: .7rem .75rem; }
+  .eq-num-value { font-size: 1.05rem; }
+  .eq-issue { flex-wrap: wrap; }
+  .eq-issue-actions { width: 100%; }
+  .eq-issue-actions .btn { flex: 1; }
+  .eq-log { flex-direction: column; gap: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eq-card, .eq-issue, .eq-journal { animation: none; }
+  .eq-gauge-fill { transition: none; }
+  .eq-card.is-flash { animation: none; border-color: var(--accent); }
+}
+/* ── Оборудование на компьютере: позиция занимает строку целиком ───────────
+   Карточками в три колонки список читался как витрина, а не как ведомость.
+   Теперь слева название и числа, справа люди, за кем оборудование числится:
+   и то и другое видно сразу, без прокрутки взглядом по колонкам. */
+@media (min-width: 701px) {
+  .eq-list { grid-template-columns: minmax(0, 1fr); }
+  .eq-card {
+    display: grid; align-items: start; gap: .5rem 1.25rem;
+    grid-template-columns: minmax(17rem, 25rem) minmax(0, 1fr);
+    grid-template-areas:
+      "head    issues"
+      "numbers issues"
+      "gauge   issues"
+      "foot    foot"
+      "journal journal";
+  }
+  .eq-card > .eq-card-head { grid-area: head; }
+  .eq-card > .eq-numbers { grid-area: numbers; }
+  .eq-card > .eq-gauge { grid-area: gauge; align-self: center; }
+  .eq-card > .eq-issues, .eq-card > .eq-empty, .eq-card > .eq-idle { grid-area: issues; align-self: stretch; min-width: 0; }
+  .eq-card > .eq-card-foot { grid-area: foot; border-top: 1px solid var(--card-border); padding-top: .5rem; }
+  .eq-card > .eq-journal { grid-area: journal; }
+  /* Люди в две колонки: строк выдачи бывает много, а места по ширине хватает */
+  /* min() обязателен: без него плитка требует свои 19rem даже когда
+     столбцу столько не досталось, и вылезает за край экрана */
+  .eq-card > .eq-issues { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr)); gap: .4rem; min-width: 0; }
+  .eq-card > .eq-journal { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: .5rem 1.5rem; min-width: 0; }
+}
+/* Правая половина строки, когда оборудование никому не выдано: на широком
+   экране одна серая надпись оставляла её наполовину пустой */
+.eq-idle {
+  display: flex; align-items: center; gap: .7rem; min-height: 3.4rem;
+  padding: .6rem .8rem; border-radius: var(--radius);
+  border: 1px dashed var(--card-border); background: var(--surface-2);
+}
+.eq-idle .circ {
+  width: 2.1rem; height: 2.1rem; border-radius: 50%; flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--success-soft); color: var(--success-text);
+}
+.eq-idle .circ svg { width: 1.05rem; height: 1.05rem; }
+.eq-idle.is-draft .circ { background: var(--warning-soft); color: var(--warning-text); }
+.eq-idle-text { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+.eq-idle-text b { font-size: .87rem; color: var(--text-value); }
+.eq-idle-text span { font-size: .76rem; color: var(--text-muted); }
+/* Снимок позиции оборудования */
+/* min-height: 0 обязателен: без него картинка распирала рамку своей полной
+   высотой, заданное соотношение сторон не применялось, а max-height просто
+   срезал низ — в кадре оставалась одна верхушка снимка. С нулевым минимумом
+   рамка держит своё соотношение, и object-fit: cover показывает середину. */
+.eq-photo {
+  position: relative; width: 100%; aspect-ratio: 16 / 9; min-height: 0;
+  border-radius: var(--radius); overflow: hidden; background: var(--surface-3);
+  display: grid; place-items: center; cursor: pointer;
+}
+/* Картинка растянута по рамке напрямую, а не через height: 100%.
+   В сетке с выравниванием по центру такая высота считается от содержимого
+   и получается круговой: картинка оставалась своей полной высоты, рамка её
+   обрезала, и в кадре была одна верхушка. Здесь высота приходит от рамки,
+   а object-fit: cover берёт середину снимка. */
+.eq-photo img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center; display: block;
+}
+.eq-photo.is-empty { border: 1px dashed var(--card-border); }
+.eq-photo.is-empty > svg { width: 1.8rem; height: 1.8rem; color: var(--text-label); }
+.eq-photo .eq-photo-btn {
+  position: absolute; right: .4rem; bottom: .4rem; min-height: 1.9rem; width: 1.9rem; padding: 0;
+  background: var(--card-bg); border-color: var(--card-border); opacity: .9;
+}
+.eq-photo .eq-photo-btn:hover { opacity: 1; }
+.eq-photo-row { display: flex; gap: .6rem; align-items: center; }
+.eq-photo-pick {
+  width: 5.5rem; height: 5.5rem; border-radius: var(--radius); overflow: hidden;
+  background: var(--surface-3); display: grid; place-items: center; flex: 0 0 auto;
+}
+.eq-photo-pick img { width: 100%; height: 100%; object-fit: cover; }
+.eq-photo-pick.is-empty { border: 1px dashed var(--card-border); }
+.eq-photo-pick.is-empty > svg { width: 1.5rem; height: 1.5rem; color: var(--text-label); }
+.eq-photo-acts { display: flex; flex-direction: column; gap: .35rem; }
+/* Планшет и неширокое окно: снимок слева, всё остальное справа столбиком.
+   Трёхколоночная раскладка тут не помещается — люди уезжали за экран. */
+@media (min-width: 701px) {
+  .eq-card { grid-template-areas:
+      "photo   head"
+      "photo   numbers"
+      "photo   gauge"
+      "issues  issues"
+      "foot    foot";
+    grid-template-columns: 8rem minmax(0, 1fr);
+    column-gap: 1rem; }
+  .eq-card > .eq-card-head { align-items: flex-start; padding-bottom: .1rem; }
+  .eq-card > .eq-photo { grid-area: photo; aspect-ratio: 1; min-height: 0; align-self: start; }
+}
+/* Широкий экран: слева снимок и числа, справа люди — места хватает */
+@media (min-width: 1100px) {
+  .eq-card { grid-template-areas:
+      "photo   head    head"
+      "photo   numbers issues"
+      "photo   gauge   issues"
+      "foot    foot    foot";
+    grid-template-columns: 8rem minmax(15rem, 22rem) minmax(0, 1fr); }
+}
+/* снимок оборудования в форме: смена — кнопкой в углу */
+.eq-photo-pick { position: relative; }
+.eq-photo-pick .eq-photo-btn { position: absolute; right: .3rem; bottom: .3rem; min-height: 1.8rem; width: 1.8rem; padding: 0;
+  background: var(--card-bg); border-color: var(--card-border); opacity: .92; }
+.eq-photo-pick:not(.is-empty) { cursor: zoom-in; }
+/* оборудование на телефоне: компактные строки, полная карточка — в шторке */
+.eq-row { display: flex; align-items: center; gap: .7rem; width: 100%; min-width: 0; min-height: 64px; padding: .45rem .65rem;
+  border: 1px solid var(--card-border); border-radius: 12px; background: var(--card-bg); color: var(--text-value);
+  text-align: left; font: inherit; box-sizing: border-box; animation: eq-in .22s ease both; animation-delay: calc(var(--eq-i, 0) * 25ms); }
+.eq-row:active { background: var(--info-soft); }
+.eq-row-thumb { width: 48px; height: 48px; flex: 0 0 auto; border-radius: 10px; overflow: hidden; background: var(--surface-3);
+  display: grid; place-items: center; color: var(--text-label); }
+.eq-row-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.eq-row-thumb svg { width: 1.3rem; height: 1.3rem; }
+.eq-row-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: .15rem; }
+.eq-row-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.eq-row-nums { font-size: .8rem; color: var(--text-label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.eq-row-nums b { color: var(--text-value); }
+.eq-row > svg { width: 1.1rem; height: 1.1rem; flex: 0 0 auto; color: var(--text-label); }
+.eq-row-dot { width: 10px; height: 10px; flex: 0 0 auto; border-radius: 50%; background: #f5a623; }
+.eq-row.needs-me { border-color: #f5a623; }
+.eq-row.is-flash { background: var(--info-soft); }
+.eq-sheet-card .eq-card { border: 0; box-shadow: none; padding: 0; animation: none; }
+@media (prefers-reduced-motion: reduce) { .eq-row { animation: none; } }
+/* оборудование на телефоне: поиск и фильтр — в одну строку */
+@media (max-width: 760px) {
+  .eq-toolbar { flex-wrap: wrap; }
+  .eq-toolbar > :first-child { flex: 1 1 55%; min-width: 0; }
+  .eq-toolbar > .sheet-select { flex: 0 1 auto; width: auto; max-width: 42%; }
+  .eq-toolbar > .eq-count, .eq-toolbar > .eq-add { flex: 1 1 100%; }
+}
+/* «Никому не выдано» на сером — цветом подписи (было 4,3:1) */
+:root[data-theme="dark"] .eq-idle-text span { color: var(--text-label); }

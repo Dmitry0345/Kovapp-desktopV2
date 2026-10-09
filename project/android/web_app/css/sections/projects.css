@@ -1,0 +1,268 @@
+/* Раздел «Проекты»: список проектов и страница проекта (задачи, разделы файлов). */
+
+/* ── проекты (шаг 4) ───────────────────────────────────────────────────── */
+.project-layout { display: grid; grid-template-columns: 2fr 3fr; gap: .75rem; align-items: start; }
+.section-cards { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.section-card { display: flex; flex-direction: column; gap: .5rem; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: .9rem; padding: 1rem; cursor: pointer; min-height: 9rem; text-align: left; }
+.section-card:hover { border-color: var(--accent-soft); background: var(--surface-2); }
+.section-card .circ { width: 3.2rem; height: 3.2rem; border-radius: 50%; background: var(--info-soft); color: var(--accent); display: grid; place-items: center; }
+.section-card .circ svg { width: 1.5rem; height: 1.5rem; }
+.section-card .t { font-size: 1.05rem; font-weight: 700; }
+.section-card .s { color: var(--text-label); font-size: .78rem; }
+.section-card .cnt { margin-top: auto; align-self: flex-start; }
+.folder-card { display: flex; flex-direction: column; gap: .6rem; }
+.folder-head { display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap; }
+.folder-head .t { font-weight: 700; flex: 1; min-width: 8rem; }
+@media (max-width: 960px) {
+  .project-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .section-cards { grid-template-columns: 1fr 1fr; }
+}
+.folder-head > svg { width: 1.15rem; height: 1.15rem; color: var(--accent); flex: 0 0 auto; align-self: center; }
+/* Задачи проекта: список фиксированной высоты вместо бесконечного */
+.table-wrap.project-tasks { height: 22rem; max-height: 22rem; flex: 0 0 auto; }
+.folder-card { padding: 0; overflow: hidden; }
+.folder-card > .folder-head {
+  width: 100%; border: 0; background: transparent; cursor: pointer; text-align: left;
+  padding: .75rem .9rem; display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+}
+.folder-card > .folder-head:hover { background: var(--chip-bg); }
+.folder-arrow { display: inline-flex; transition: transform var(--anim); flex: 0 0 auto; }
+.folder-arrow svg { width: 1rem; height: 1rem; color: var(--text-label); }
+.folder-card.open > .folder-head .folder-arrow, .sub-folder.open > .sub-head .folder-arrow { transform: rotate(180deg); }
+.folder-body { display: flex; flex-direction: column; gap: .4rem; padding: 0 .9rem .8rem; }
+.sub-folder { border: 1px solid var(--card-border); border-radius: var(--radius); overflow: hidden; }
+.sub-head {
+  width: 100%; border: 0; background: var(--ghost-bg); cursor: pointer; text-align: left;
+  padding: .5rem .7rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+}
+.sub-head:hover { background: var(--ghost-hover); }
+.sub-head .t { font-weight: 600; flex: 1; min-width: 8rem; font-size: .85rem; }
+.sub-head > svg { width: 1.05rem; height: 1.05rem; color: var(--accent); flex: 0 0 auto; }
+.sub-body { padding: .6rem; }
+@media (max-width: 760px) {
+  .table-wrap.project-tasks { height: 18rem; max-height: 18rem; }
+}
+/* Окно проекта на всю высоту экрана */
+.section.project-section { height: 100%; min-height: 0; }
+.section.project-section > * { flex: 0 0 auto; }
+.section.project-section > .project-layout { flex: 1 1 auto; min-height: 0; }
+.project-layout.stretch { align-items: stretch; grid-template-rows: minmax(0, 1fr); }
+.project-right { display: flex; flex-direction: column; gap: .75rem; min-height: 0; overflow: auto; padding-right: .2rem; }
+.project-right > .section-cards { flex: 0 0 auto; }
+.project-right > .card.section-files { flex: 1 1 auto; min-height: 0; display: flex; padding: .6rem; }
+.project-right > .card.section-files > .file-block { flex: 1 1 auto; min-height: 0; }
+.project-right > .card.section-files .file-grid { flex: 1 1 auto; min-height: 0; overflow: auto; align-content: start; }
+.project-layout.stretch > .info-card { min-height: 0; overflow: auto; }
+.media-list { display: flex; flex-direction: column; gap: .75rem; }
+.extra-folder > .folder-head .t { color: var(--accent); }
+.extra-folder .folder-body { min-height: 0; }
+.extra-folder .file-block { min-height: 14rem; }
+@media (max-width: 960px) {
+  .section.project-section { height: auto; min-height: 100%; }
+  .section.project-section > .project-layout { grid-template-rows: none; }
+  .project-right, .project-layout.stretch > .info-card { overflow: visible; }
+}
+/* Ответственный за проект — та же подача, что у людей в задаче */
+.people-field { display: flex; flex-direction: column; gap: .4rem; }
+.people-field .chips { min-height: 2.3rem; align-items: center; }
+.project-tabs { display: none; }
+@media (max-width: 760px) {
+  /* ── список проектов карточками вместо широкой таблицы ─────────────── */
+  .project-cards { display: flex; flex-direction: column; gap: .4rem; padding: .5rem; }
+  .project-cards .group-head { display: flex; align-items: center; gap: .5rem;
+    font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--text-label); padding: .5rem .2rem .1rem; }
+  .project-cards .group-head .muted { margin-left: auto; text-transform: none; letter-spacing: 0; }
+  .project-card { display: flex; flex-direction: column; gap: .15rem; text-align: left;
+    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg);
+    padding: .7rem .8rem; cursor: pointer; }
+  .project-card .t { font-weight: 700; font-size: .95rem; }
+  .project-card .s { font-size: .78rem; color: var(--text-label); }
+  .project-card.on { border-color: var(--accent); box-shadow: 0 0 0 .12rem var(--accent-soft); }
+  .project-card.overdue { background: var(--critical-soft); }
+  .project-card.urgent { background: var(--warning-soft); }
+  /* ── проект: вкладки и раздел на весь экран ────────────────────────── */
+  .project-tabs { display: flex; }
+  /* ширина кнопок — по общему правилу .segmented на телефоне */
+  .project-tabs .btn { justify-content: center; }
+  .section.project-section { height: auto; min-height: 100%; }
+  .project-layout.stretch { display: block; }
+  .project-layout.show-tasks > .project-right { display: none; }
+  .project-layout.show-files > .info-card { display: none; }
+  .project-right.section-open { min-height: calc(100vh - 12rem); }
+  .project-right.section-open > .card.section-files { min-height: calc(100vh - 16rem); }
+  .section-cards { grid-template-columns: 1fr; }
+  .project-right > .toolbar { flex-wrap: wrap; }
+  .project-right > .toolbar > .btn { flex: 0 0 auto; }
+}
+/* ── список проектов: названия по центру, колонки страницами ───────────── */
+.projects-table { width: 100%; table-layout: fixed; }
+.projects-table th { text-align: center; white-space: pre-line; }
+/* Вес выше, чем у общего table.data td.left, иначе название прижималось влево */
+table.data.projects-table td.project-cell { text-align: center; vertical-align: top; }
+.projects-table td.project-cell > div { text-align: center; }
+.col-pager {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; align-items: center; gap: .5rem;
+  padding: .4rem .5rem; background: var(--card-bg);
+  border-bottom: 1px solid var(--card-border);
+}
+.col-pager .t { flex: 1; text-align: center; font-size: .78rem; color: var(--text-label); font-weight: 600; }
+.col-pager .btn { flex: 0 0 auto; }
+.col-dots { display: flex; gap: 0; align-items: center; }
+.col-dots .dot {
+  width: 1.75rem; height: 1.75rem; padding: 0; border: 0; border-radius: 50%;
+  background: transparent; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.col-dots .dot::before {
+  content: ''; width: .45rem; height: .45rem; border-radius: 50%;
+  background: var(--card-border); transition: transform .15s ease, background .15s ease;
+}
+.col-dots .dot:hover::before { background: var(--accent-soft); }
+.col-dots .dot.on::before { background: var(--info); transform: scale(1.5); }
+/* ── шапка открытого проекта: название и карточка сведений ──────────────── */
+.proj-head { display: flex; flex-direction: column; gap: .7rem; margin-bottom: .8rem; flex: 0 0 auto; }
+.proj-top { display: flex; align-items: center; gap: .75rem; min-width: 0; }
+.proj-top .proj-back { flex: 0 0 auto; }
+.proj-title { margin: 0; font-size: 1.3rem; font-weight: 700; line-height: 1.25; color: var(--text-value); min-width: 0; overflow-wrap: anywhere; }
+.proj-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); padding: .25rem .35rem;
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 1rem; box-shadow: var(--card-shadow); }
+.proj-cell { display: flex; align-items: center; gap: .7rem; padding: .6rem .8rem; min-width: 0; }
+.proj-cell + .proj-cell { border-left: 1px solid var(--card-border); }
+.proj-ico { flex: 0 0 auto; width: 2rem; height: 2rem; border-radius: .6rem; display: grid; place-items: center;
+  background: var(--info-soft); color: var(--accent); }
+.proj-ico svg { width: 1.05rem; height: 1.05rem; }
+.proj-txt { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+.proj-lbl { font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; color: var(--text-label); }
+.proj-val { font-size: .92rem; color: var(--text-value); overflow-wrap: anywhere; }
+.proj-desc { font-size: .88rem; line-height: 1.4; color: var(--text-label); overflow-wrap: anywhere; }
+.proj-due { align-self: flex-start; padding: .1rem .55rem; border-radius: 999px; font-size: .85rem; font-weight: 600;
+  background: var(--info-soft); color: var(--info); }
+.proj-due.urgent { background: var(--warning-soft); color: var(--warning-text); }
+.proj-due.overdue { background: var(--critical-soft); color: var(--critical); }
+@media (max-width: 760px) {
+  /* телефон: стрелка вместо «К проектам», сведения — строками сверху вниз */
+  .proj-top { align-items: flex-start; }
+  .proj-top .proj-back { width: 44px; height: 44px; padding: 0; justify-content: center; }
+  .proj-top .proj-back .lbl-full { display: none; }
+  .proj-title { font-size: 1.12rem; padding-top: .55rem; }
+  .proj-info { display: flex; flex-direction: column; padding: .3rem .9rem; }
+  .proj-cell { padding: .55rem 0; }
+  .proj-cell + .proj-cell { border-left: 0; border-top: 1px solid var(--card-border); }
+}
+/* ══ Склад проекта ══════════════════════════════════════════════════════ */
+/* пятая карточка — во всю ширину под четырьмя: сетка не рвётся пополам */
+.section-card.wide {
+  flex-direction: row; align-items: center; gap: .9rem; min-height: 0; padding: .9rem 1rem;
+  margin-top: .75rem; transition: border-color var(--anim), background var(--anim), transform .18s ease;
+}
+.section-card.wide .body { display: flex; flex-direction: column; gap: .15rem; flex: 1; min-width: 0; }
+.section-card.wide .circ { width: 2.8rem; height: 2.8rem; flex: 0 0 auto; }
+.section-card.wide .go { color: var(--text-muted); display: grid; place-items: center; }
+.section-card.wide .go svg { width: 1.2rem; height: 1.2rem; }
+.section-card.wide:hover { transform: translateY(-1px); }
+.section-card.wide:hover .go { color: var(--accent); }
+/* ── склад на телефоне: столбцы уже, номер строки прилипает слева ─────── */
+@media (max-width: 760px) {
+  .section-card.wide { padding: .75rem .8rem; }
+}
+/* Склад занимает окно проекта целиком: ведомости нужна вся ширина */
+.project-layout.full-right { grid-template-columns: minmax(0, 1fr); }
+.project-layout.full-right > .info-card { display: none; }
+.project-layout.full-right > .project-right { overflow: hidden; }
+/* строка поиска с кнопкой фильтров (телефон) */
+.toolbar.one-row { flex-wrap: nowrap; }
+.toolbar.one-row > :first-child { flex: 1 1 auto; min-width: 0; }
+.filter-btn { position: relative; flex: 0 0 auto; }
+.filter-badge { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px;
+  background: var(--accent-fill); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+.filter-badge[hidden] { display: none; }
+/* задачи проекта на телефоне: карточки со сроком и этапами */
+.ptask-list { display: flex; flex-direction: column; gap: .5rem; margin: .5rem 0; }
+.ptask { padding: .65rem .8rem; border: 1px solid var(--card-border); border-radius: 12px; background: var(--card-bg);
+  animation: eq-in .22s ease both; animation-delay: calc(var(--eq-i, 0) * 25ms); -webkit-tap-highlight-color: transparent; }
+.ptask:active { background: var(--info-soft); }
+.ptask.selected { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent); }
+.ptask.archived { opacity: .7; }
+.ptask-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .6rem; }
+.ptask-name { font-weight: 700; color: var(--text-value); min-width: 0; overflow-wrap: anywhere; }
+.ptask-top .deadline { flex: 0 0 auto; }
+.ptask-meta { display: flex; align-items: center; gap: .5rem; margin-top: .35rem; font-size: .8rem; color: var(--text-label); }
+.ptask-dots { display: flex; gap: 4px; }
+.ptask-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--card-border); }
+.ptask-dots i.on { background: var(--accent); }
+.ptask-empty { padding: .8rem; text-align: center; }
+/* «Все · Активные · Архивные» на телефоне — одна компактная строка */
+.seg-compact { flex-wrap: nowrap !important; }
+.seg-compact > * { flex: 1 1 0; min-width: 0; padding-left: .4rem !important; padding-right: .4rem !important; white-space: nowrap; font-size: .85rem; }
+@media (prefers-reduced-motion: reduce) { .ptask { animation: none; } }
+/* проект на телефоне: сведения по кнопке, разделы — строками как «Склад» */
+.proj-head.collapsible .proj-top { display: flex; align-items: center; gap: .5rem; }
+.proj-head.collapsible .proj-title { flex: 1 1 auto; min-width: 0; margin: 0; }
+.proj-more { flex: 0 0 auto; display: inline-flex; align-items: center; gap: .3rem; border: 0; border-radius: 14px; padding: .35rem .65rem;
+  background: var(--info-soft); color: var(--accent); font: inherit; font-size: .8rem; font-weight: 700; }
+.proj-more svg { width: 1rem; height: 1rem; }
+.proj-more .chev { display: grid; transition: transform .2s; }
+.proj-more.open .chev { transform: rotate(180deg); }
+.proj-head.collapsible .proj-info:not([hidden]) { animation: eq-in .2s ease both; }
+.section-cards.as-rows { display: flex !important; flex-direction: column; gap: .6rem; margin-bottom: .6rem; }
+.section-cards.as-rows .section-card.wide .cnt { flex: 0 0 auto; align-self: center; margin: 0; }
+/* разделы проекта на телефоне — одной высоты со «Складом»: подпись в одну строку */
+@media (max-width: 760px) {
+  .project-right .section-card.wide .body { min-width: 0; }
+  .project-right .section-card.wide .s { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+/* точки задач в проекте — цвета этапов */
+.ptask-dots i.done { background: var(--stage-done); }
+.ptask-dots i.cur { background: var(--info); }
+/* разделы файлов проекта на телефоне — плотнее: без старых полей, промежуток 8 px */
+.section-cards.as-rows { gap: .5rem !important; margin: 0 0 .5rem !important; }
+.section-cards.as-rows > .section-card, .project-right > .section-card.wide { margin: 0 !important; }
+.section-cards.as-rows + .section-card.wide { margin-top: 0 !important; }
+/* проект на телефоне: название — в верхней строке */
+.proj-spacer { flex: 1 1 auto; }
+/* шапка раздела файлов на телефоне: «назад» и сортировка — значками, название раздела — целиком */
+@media (max-width: 760px) {
+  .sec-head { display: flex; align-items: center; gap: .45rem; flex-wrap: nowrap; }
+  .sec-head > .btn { flex: 0 0 auto; width: 42px; height: 42px; padding: 0 !important; gap: 0 !important; font-size: 0 !important; justify-content: center; }
+  .sec-head > .btn svg { width: 1.2rem !important; height: 1.2rem !important; margin: 0 !important; }
+  .sec-head > .section-header { flex: 1 1 auto !important; min-width: 0; padding: 0; gap: .5rem; }
+  .sec-head > .section-header .title { font-size: 1rem; text-transform: none; letter-spacing: 0; color: var(--text-value); white-space: normal; line-height: 1.2; }
+  .sec-head > .section-header .rule { display: none; }
+  .sec-head > .sort-btn { width: auto; min-width: 42px; padding: 0 .55rem !important; }
+  .sec-head > .sort-btn::after { content: attr(data-order); font-size: .95rem; font-weight: 800; margin-left: .15rem; color: var(--accent); }
+}
+/* проект на телефоне (вариант Б): вкладки в строке заголовка, «ⓘ» — значком */
+.project-tabs.in-head { flex: 1 1 auto; min-width: 0; margin: 0; }
+.project-tabs.in-head > * { flex: 1 1 0; min-width: 0; padding-left: .3rem !important; padding-right: .3rem !important; white-space: nowrap; font-size: .82rem; }
+.proj-head.collapsible .proj-more > span { display: none; }
+.proj-head.collapsible .proj-more { width: 40px; height: 40px; padding: 0; justify-content: center; border-radius: 50%; }
+.proj-head.collapsible .proj-more svg { width: 1.2rem; height: 1.2rem; }
+.ptask.no-access, tr.no-access { opacity: .55; }
+/* проект (компьютер): сведения — в правой колонке над подразделами, в две строки; описание — во всю ширину */
+.project-right > .proj-info { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 0 14px; }
+.project-right > .proj-info > .proj-cell-desc { grid-column: 1 / -1; border-top: 1px solid var(--border, rgba(127,127,127,.18)); }
+.proj-top .proj-done { margin-left: auto; }
+.proj-done-row { display: flex; align-items: center; gap: .6rem; }
+.proj-done-hint { font-size: .8rem; color: var(--text-muted, #8a99a8); }
+.proj-done.phone { grid-column: 1 / -1; padding: .5rem .25rem .25rem; }
+.proj-done.phone .proj-done-row { flex-direction: column-reverse; align-items: stretch; }
+/* список проектов: «Активные / Архивные» — левый угол строки кнопок (компьютер), над ней со счётчиком (телефон) */
+.list-actions .proj-arch { margin-right: auto; }
+.proj-switch-row { display: flex; align-items: center; gap: .6rem; margin: .5rem 0; }
+/* проект (компьютер): список задач тянется до кнопок, кнопки — внизу карточки; у описания — без лишней линии слева */
+@media (min-width: 761px) {
+  .project-layout.stretch > .info-card { display: flex; flex-direction: column; }
+  .project-layout.stretch > .info-card > .table-wrap.project-tasks { height: auto; max-height: none; flex: 1 1 auto; min-height: 12rem; }
+}
+.project-right > .proj-info > .proj-cell-desc { border-left: 0; }
+.list-actions .proj-lead { display: flex; align-items: center; gap: .6rem; margin-right: auto; }
+/* Склад на компьютере — во всю ширину: правило «спрятать задачи проекта»
+   перебивалось более поздним display:flex для компьютера */
+.project-layout.stretch.full-right > .info-card { display: none; }
+/* строка «К проектам» над складом лишняя: проект назван в шапке, назад — «Разделы».
+   Компьютер и телефон: на телефоне иначе две кнопки «назад» одна под другой */
+.section.project-section:has(> .project-layout.full-right) > .proj-head { display: none; }

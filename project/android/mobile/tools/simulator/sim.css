@@ -1,0 +1,131 @@
+/* Симулятор телефона: спокойный тёмный стол, телефон в центре, панели по бокам */
+:root {
+  --bg: #1b2227;
+  --card: #242d33;
+  --line: #34414a;
+  --text: #e6ecef;
+  --muted: #93a3ad;
+  --accent: #6e9aaf;
+  --accent-2: #f5b301;
+  --danger: #d9534f;
+  --radius: 12px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 14px;
+  color: var(--text);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }   /* иначе display: flex у слоёв перебивает hidden */
+html, body { height: 100%; margin: 0; }
+body {
+  display: grid;
+  grid-template-columns: 280px 1fr 340px;
+  background: var(--bg);
+  overflow: hidden;
+}
+h1 { font-size: 18px; margin: 4px 4px 14px; font-weight: 600; }
+h1 span { display: block; font-size: 12px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+h2 { font-size: 13px; margin: 0 0 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+     display: flex; justify-content: space-between; align-items: center; }
+
+.panel { padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.panel.right { border-left: 1px solid var(--line); }
+.panel.left { border-right: 1px solid var(--line); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.card.grow { flex: 1 1 0; min-height: 160px; }
+label { display: flex; flex-direction: column; gap: 4px; color: var(--muted); font-size: 12px; }
+label.row { flex-direction: row; align-items: center; gap: 8px; color: var(--text); font-size: 13px; }
+select, button { font: inherit; }
+select { background: #1d252a; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.card > button, .seg button {
+  background: #2e3a41; color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; cursor: pointer; text-align: left;
+}
+.card > button:hover, .seg button:hover { border-color: var(--accent); }
+.seg { display: flex; gap: 4px; }
+.seg button { flex: 1; text-align: center; }
+.seg button.on { background: var(--accent); border-color: var(--accent); color: #0f1d22; font-weight: 600; }
+button.link { background: none; border: 0; color: var(--accent); cursor: pointer; padding: 0; font-size: 12px; text-transform: none; letter-spacing: 0; }
+.hint { color: var(--muted); font-size: 12px; margin: 0; line-height: 1.4; }
+.kv { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.kv span { color: var(--muted); }
+.kv b { font-weight: 500; text-align: right; word-break: break-all; }
+.empty { color: var(--muted); font-size: 12px; margin: 4px 0; }
+
+/* ── телефон ── */
+.stage { position: relative; overflow: hidden; display: flex; align-items: flex-start; justify-content: center; padding: 20px 0; }
+.phone {
+  position: relative; background: #0b0f12; border-radius: 34px; padding: 12px;
+  box-shadow: 0 0 0 2px #3a464e, 0 20px 50px rgba(0, 0, 0, .5);
+  transform-origin: top center;
+}
+.screen { position: relative; overflow: hidden; border-radius: 24px; background: #fff; }
+.status {
+  position: absolute; top: 0; left: 0; right: 0; height: 24px; z-index: 5;
+  display: flex; justify-content: space-between; align-items: center; padding: 0 14px;
+  font-size: 12px; font-weight: 600; color: #1b1b1b; background: #fff;
+}
+.status.dark { color: #f2f2f2; }
+.status .icons { display: flex; gap: 8px; align-items: center; }
+.batt { width: 20px; height: 10px; border: 1.5px solid currentColor; border-radius: 2px; position: relative; }
+.batt::after { content: ""; position: absolute; inset: 1px 4px 1px 1px; background: currentColor; }
+.appArea { position: absolute; top: 24px; left: 0; right: 0; bottom: 48px; background: #fff; }
+.appArea iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+.navbar {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 48px; z-index: 5;
+  display: flex; justify-content: space-around; align-items: center; background: #fff;
+}
+.navbar button { background: none; border: 0; font-size: 20px; width: 64px; height: 40px; cursor: pointer; color: #333; border-radius: 20px; }
+.navbar.dark button { color: #eee; }
+.navbar button:hover { background: rgba(128, 128, 128, .18); }
+
+/* домашний экран и «Недавние» */
+.home {
+  position: absolute; top: 24px; left: 0; right: 0; bottom: 48px; z-index: 3;
+  background: linear-gradient(160deg, #1f3a45 0%, #132a32 55%, #0c1a1f 100%);
+  display: flex; align-items: flex-start; justify-content: flex-start; padding: 28px 22px;
+}
+.appIcon { background: none; border: 0; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; }
+.appIcon img { width: 56px; height: 56px; border-radius: 16px; background: #132a32; }
+.recents {
+  position: absolute; top: 24px; left: 0; right: 0; bottom: 48px; z-index: 6; background: rgba(20, 26, 30, .92);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #fff; padding: 20px;
+}
+.recents .rcard { width: 70%; background: #fff; color: #1b1b1b; border-radius: 16px; padding: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); cursor: pointer; }
+.recents .rcard b { display: block; margin-bottom: 4px; }
+.recents button { background: #2e3a41; color: #fff; border: 1px solid #4a5a64; border-radius: 20px; padding: 8px 16px; cursor: pointer; }
+
+/* системные элементы поверх экрана */
+.headsup {
+  position: absolute; top: 30px; left: 10px; right: 10px; z-index: 8; background: #fff; color: #1b1b1b;
+  border-radius: 14px; padding: 10px 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); cursor: pointer;
+}
+.headsup small, .note small { color: #6b7780; font-size: 11px; }
+.headsup b, .note b { display: block; font-size: 13px; margin: 2px 0; }
+.headsup p, .note p { margin: 0; font-size: 13px; line-height: 1.35; }
+.sysdialog {
+  position: absolute; inset: 0; z-index: 9; background: rgba(0, 0, 0, .45);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.sysdialog .box { background: #fff; color: #1b1b1b; border-radius: 22px; padding: 22px; width: 100%; max-width: 300px; text-align: center; }
+.sysdialog .box p { margin: 0 0 16px; font-size: 15px; line-height: 1.4; }
+.sysdialog .box button { display: block; width: 100%; padding: 10px; margin-top: 6px; border: 0; border-radius: 18px; background: #e8eef1; font-size: 14px; cursor: pointer; }
+.sysdialog .box button.primary { background: #546e7a; color: #fff; }
+.systoast {
+  position: absolute; left: 50%; bottom: 64px; transform: translateX(-50%); z-index: 9; background: #323232; color: #fff;
+  border-radius: 18px; padding: 8px 14px; font-size: 12px; max-width: 86%; text-align: center;
+}
+
+/* шторка, загрузки, журнал */
+.shade, .list, .log { overflow-y: auto; display: flex; flex-direction: column; gap: 6px; min-height: 0; flex: 1 1 auto; }
+.note { background: #fff; color: #1b1b1b; border-radius: 12px; padding: 8px 10px; cursor: pointer; position: relative; }
+.note .x { position: absolute; top: 4px; right: 6px; background: none; border: 0; color: #888; cursor: pointer; font-size: 14px; }
+.note.chat { border-left: 4px solid var(--accent); }
+.note.group { border-left: 4px solid var(--accent-2); }
+.note.notification { border-left: 4px solid #8aa; }
+.dl { background: #1d252a; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; font-size: 12px; display: flex; justify-content: space-between; gap: 6px; }
+.dl a { color: var(--accent); }
+.log { font-family: ui-monospace, Consolas, monospace; font-size: 11px; gap: 2px; }
+.log div { white-space: pre-wrap; word-break: break-all; color: #b7c3ca; }
+.log .ev { color: #f0c36b; }
+.log .err { color: #ff8a80; }
+.sitelink { color: var(--accent); font-size: 13px; text-decoration: none; }
+.sitelink:hover { text-decoration: underline; }

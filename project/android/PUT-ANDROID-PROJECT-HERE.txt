@@ -1,0 +1,10 @@
+Android-версия Kovapp: из этой папки собирается приложение (APK).
+
+Как положить: распакуйте архив android.zip в папку F:\kovapp_autotest\project
+(в архиве уже есть папка android) - получится:
+  project\android\mobile\app\build.gradle
+  project\android\web_app\index.html
+Старое содержимое папки android перед этим удалите.
+
+Сервер для проверок приложения берётся из папки web.
+Другая папка - PROJECT_ANDROID_DIR в .env.

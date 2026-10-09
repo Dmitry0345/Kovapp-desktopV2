@@ -1,0 +1,114 @@
+/* Раздел «Настройки». */
+
+/* настройки на телефоне: список разделов и раздел на отдельном экране */
+.set-menu { display: flex; flex-direction: column; gap: .6rem; }
+.set-menu-row { display: flex; align-items: center; gap: .85rem; padding: .95rem 1rem; border-radius: 1rem;
+  background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--card-shadow);
+  color: var(--text-value); text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.set-menu-row:active { background: var(--ghost-bg); }
+.set-menu-text { display: flex; flex-direction: column; gap: .15rem; flex: 1 1 auto; min-width: 0; }
+.set-menu-text .t { font-weight: 600; font-size: 1rem; }
+.set-menu-text .s { font-size: .85rem; color: var(--text-label); }
+.set-menu-go { color: var(--text-label); display: flex; }
+.set-menu-go svg { width: 1.2rem; height: 1.2rem; }
+.set-menu-hint { font-size: .8rem; color: var(--text-label); text-align: center; margin-top: .4rem; }
+.set-back { display: inline-flex; align-items: center; gap: .25rem; margin: 0 0 .6rem; padding: .35rem .2rem;
+  color: var(--accent); font-weight: 600; text-decoration: none; }
+.set-back svg { width: 1.2rem; height: 1.2rem; }
+.preview-box { border: 1px dashed var(--card-border); border-radius: var(--radius-lg); padding: 1rem; display: flex; gap: 1rem; align-items: center; }
+.preview-box { max-width: 100%; }
+/* ── раздел настроек ──────────────────────────────────────────────────── */
+.settings-page { display: flex; flex-direction: column; gap: .9rem; padding-bottom: .5rem; }
+.settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; align-items: start; }
+.settings-grid .set-card.span2 { grid-column: 1 / -1; }
+.set-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow); overflow: hidden;
+  display: flex; flex-direction: column;
+  animation: setIn var(--anim) both;
+}
+.set-card:nth-child(2) { animation-delay: 60ms; }
+.set-card:nth-child(3) { animation-delay: 120ms; }
+@keyframes setIn { from { opacity: 0; transform: translateY(.6rem); } to { opacity: 1; transform: none; } }
+.set-head { display: flex; align-items: center; gap: .7rem; padding: .85rem 1rem; border-bottom: 1px solid var(--card-border);
+  background: linear-gradient(180deg, var(--surface-head-a), var(--surface-head-b)); }
+.set-head .set-glyph, .set-menu-row .set-glyph { flex: 0 0 auto; width: 2.4rem; height: 2.4rem; border-radius: .7rem; display: grid; place-items: center;
+  background: var(--info-soft); color: var(--accent); }
+.set-head .set-glyph svg, .set-menu-row .set-glyph svg { width: 1.25rem; height: 1.25rem; }
+.set-head .t { font-weight: 800; font-size: 1rem; letter-spacing: .01em; }
+.set-head .s { display: block; font-weight: 400; font-size: .76rem; color: var(--text-label); margin-top: .1rem; }
+.set-body { padding: .9rem 1rem 1rem; display: flex; flex-direction: column; gap: .8rem; }
+/* строка настройки: значок, название с пояснением, справа переключатель */
+.set-row { display: flex; align-items: center; gap: .75rem; padding: .55rem .6rem; border-radius: var(--radius);
+  transition: background var(--anim); }
+.set-row + .set-row { border-top: 1px solid var(--card-border); }
+.set-row:hover { background: var(--chip-bg); }
+.set-row.off { opacity: .45; pointer-events: none; }
+.set-row .set-ico { flex: 0 0 auto; width: 1.7rem; height: 1.7rem; color: var(--accent-soft); display: grid; place-items: center; }
+.set-row .set-ico svg { width: 1.15rem; height: 1.15rem; }
+.set-row .set-text { flex: 1; min-width: 0; }
+.set-row .set-text b { display: block; font-size: .88rem; font-weight: 700; }
+.set-row .set-text span { display: block; font-size: .74rem; color: var(--text-label); margin-top: .1rem; }
+.set-row.sub { margin-left: 1.6rem; }
+/* масштаб: пресеты, ползунок с отметками, живой предпросмотр */
+.set-scale-value { display: flex; align-items: baseline; gap: .5rem; }
+.set-scale-value b { font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.set-scale-value span { font-size: .78rem; color: var(--text-label); }
+.set-ticks { display: flex; justify-content: space-between; font-size: .68rem; color: var(--text-muted); margin-top: -.35rem; }
+.preview-box { background: var(--page-bg); border-style: solid; border-color: var(--card-border); }
+/* состояние push: цветная плашка вместо служебной подписи */
+.set-pill { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .7rem; border-radius: 1rem;
+  font-size: .76rem; font-weight: 700; background: var(--chip-bg); color: var(--text-label); }
+.set-pill svg { width: .9rem; height: .9rem; }
+.set-pill.on { background: var(--success-soft); color: var(--success); }
+.set-pill.warn { background: var(--warning-soft); color: var(--warning-text); }
+.set-note { font-size: .76rem; color: var(--text-label); line-height: 1.45; }
+/* строка сохранения прилипает к низу раздела */
+.set-save { position: sticky; bottom: 0; z-index: 2; display: flex; align-items: center; gap: .7rem;
+  padding: .7rem .9rem; border: 1px solid var(--card-border); border-radius: var(--radius-lg);
+  background: var(--surface-glass); backdrop-filter: blur(6px); box-shadow: 0 -.2rem .8rem rgba(0,0,0,.12); }
+.set-save .hint { flex: 1; font-size: .78rem; color: var(--text-label); }
+.set-save .btn.saved { background: var(--success); border-color: var(--success); }
+.set-saved-mark { display: inline-flex; align-items: center; gap: .3rem; color: var(--success); font-weight: 700; font-size: .8rem;
+  animation: setIn .3s both; }
+@media (max-width: 900px) {
+  .settings-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .set-row.sub { margin-left: .8rem; }
+  .set-head { padding: .7rem .8rem; }
+  .set-body { padding: .8rem; }
+}
+/* подзаголовок и разделитель внутри карточки настроек */
+.set-sub { font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--title-fg); margin-bottom: -.35rem; }
+.set-divider { height: 1px; background: var(--card-border); margin: .2rem 0; }
+/* ── телефон: настройки не должны выходить за край ─────────────────────── */
+@media (max-width: 760px) {
+  .settings-page, .settings-grid, .set-card, .set-body, .set-row { min-width: 0; }
+  .set-card, .set-body { max-width: 100%; overflow: hidden; }
+  /* переключатели в карточках переносятся, а не растягивают страницу */
+  .set-body .segmented { display: flex; flex-wrap: wrap; width: 100%; }
+  .set-body .segmented .btn { flex: 1 1 8rem; min-width: 0; justify-content: center; }
+  .set-body .segmented .btn span, .set-body .segmented .btn { white-space: nowrap; }
+  .set-row { gap: .55rem; padding: .5rem .35rem; }
+  .set-row .set-text b { font-size: .84rem; }
+  .set-row .set-text span { font-size: .7rem; }
+  .set-row.sub { margin-left: .6rem; }
+  .preview-box { flex-wrap: wrap; }
+  .set-save { flex-wrap: wrap; gap: .5rem; }
+  .set-save .hint { flex: 1 1 100%; order: 2; }
+  .set-save .btn { margin-left: auto; }
+  .set-ticks { font-size: .64rem; }
+}
+@media (max-width: 420px) {
+  /* по две кнопки в ряд: столбиком раздел растягивался на пол-экрана */
+  .set-body .segmented .btn { flex: 1 1 42%; padding: .5rem .4rem; font-size: .82rem; }
+  .set-body .segmented .btn svg { width: 1rem; height: 1rem; }
+  .set-scale-value b { font-size: 1.35rem; }
+}
+@media (pointer: coarse) {
+  .set-back { min-height: 44px !important; }
+}
+.set-note svg { width: 1em; height: 1em; }
+.set-ico svg, .set-pill svg { flex: 0 0 auto; }

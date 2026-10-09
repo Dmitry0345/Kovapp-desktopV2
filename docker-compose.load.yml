@@ -1,0 +1,14 @@
+# ===== сервер размером с рабочий: машина на 2 ядра и около 2 ГБ памяти =====
+services:
+  server:
+    cpus: ${LOAD_SERVER_CPUS:-2}
+    mem_limit: ${LOAD_SERVER_MEMORY:-1400m}
+    memswap_limit: ${LOAD_SERVER_MEMORY:-1400m}
+  db:
+    cpus: ${LOAD_DB_CPUS:-0.5}
+    mem_limit: ${LOAD_DB_MEMORY:-512m}
+    memswap_limit: ${LOAD_DB_MEMORY:-512m}
+  tests:
+    environment:
+      LOAD_EXPECT_CPUS: ${LOAD_SERVER_CPUS:-2}
+      LOAD_EXPECT_MEMORY: ${LOAD_SERVER_MEMORY:-1400m}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Знак Kovapp как на экране входа: контур, буква K, янтарный угол. На тёмной вкладке контур светлый. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="28 8 104 104" width="104" height="104">
+  <style>
+    .ink { stroke: #132A32; } .fill { fill: #132A32; }
+    @media (prefers-color-scheme: dark) { .ink { stroke: #EAEFEE; } .fill { fill: #EAEFEE; } }
+  </style>
+  <path class="ink" fill="none" stroke-width="9" d="M124 42V78A26 26 0 0 1 98 104H62A26 26 0 0 1 36 78V42A26 26 0 0 1 62 16H98"/>
+  <path fill="none" stroke="#F5B301" stroke-width="9" stroke-linecap="round" d="M98 16A26 26 0 0 1 124 42"/>
+  <rect class="fill" x="59" y="36" width="11" height="48" rx="5.5"/>
+  <path class="ink" fill="none" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" d="M95 38L73 60L95 82"/>
+</svg>

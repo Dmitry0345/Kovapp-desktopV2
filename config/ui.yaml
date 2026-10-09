@@ -1,0 +1,135 @@
+# ===== проверка вёрстки =====
+audit:
+  interactive: "button, a[href], input:not([type=hidden]):not([type=file]), select, textarea, [role=button]"
+  ignore:
+    - "#kov-toasts"
+    - ".link-bar"
+    - ".dl-panel"
+    - ".scrim"
+    - ".side-menu:not(.open)"
+    - ".side-panel:not(.open)"
+    - ".login-bg"
+  containers:
+    - ".card"
+    - ".modal"
+    - ".file-tile"
+    - ".info-card"
+    - ".login-card"
+    - ".top-bar"
+    - ".profile-panel"
+    - ".folder-card"
+    - ".viewer-top"
+    - ".tile-actions"
+    - ".btn-row"
+  allow_overflow:
+    - ".badge"
+    - ".count"
+    - ".lock-mark"
+    - ".tile-play"
+    - ".chip-x"
+    - ".spinner"
+    - "[data-tooltip]"
+  text_clip: ".tile-name, .title-chip, .chip, .btn, td, th, .name, .t"
+  overlays:
+    - ".side-menu.open"
+    - ".side-panel.open"
+    - ".viewer-root"
+    - ".modal-root"
+    - ".kov-sheet-root"   # шторки снизу на телефоне (фильтры, меню файла, выбор из списка)
+  allowed_console:
+    - "WebSocket connection"
+    - "Failed to load resource: the server responded with a status of 404"
+    - "Failed to load resource: the server responded with a status of 415"
+    - "favicon"
+    - "interactive-widget"
+    - "Push API in incognito"
+  allowed_http:
+    - "404 /employees/\\d+/photo"
+    - "404 /.*/thumb"
+    - "415 /.*"
+
+# ===== разделы приложения =====
+sections:
+  notifications:
+    route: "#/notifications"
+    title: Уведомления
+  tasks:
+    route: "#/tasks"
+    title: Задачи
+  tasks_archive:
+    route: "#/tasks"
+    title: Задачи
+  projects:
+    route: "#/projects"
+    title: Проекты
+  organizations:
+    route: "#/organizations"
+    title: Организации
+  equipment:
+    route: "#/equipment"
+    title: Оборудование
+  employees:
+    route: "#/employees"
+    title: Работники
+  csv:
+    route: "#/csv"
+    title: Файлы CSV
+  settings:
+    route: "#/settings"
+    title: Настройки
+  messenger:
+    route: "#/messenger"
+    title: Мессенджер
+
+# ===== пункты меню =====
+menu:
+  - {key: notifications, label: Уведомления}
+  - {key: tasks, label: Задачи}
+  - {key: projects, label: Проекты}
+  - {key: organizations, label: Организации}
+  - {key: equipment, label: Оборудование}
+  - {key: employees, label: Работники}
+  - {key: csv, label: Файлы CSV}
+  - {key: profile, label: Профиль}
+  - {key: settings, label: Настройки}
+  - {key: messenger, label: Мессенджер}
+
+# ===== безопасный обход кнопок =====
+crawler:
+  skip_text:
+    - Пример кнопки
+    - Удалить
+    - Выйти
+    - Выход
+    - Сохранить
+    - Отправить
+    - Завершить
+    - Возобновить
+    - Продолжить задачу
+    - Вернуть в работу
+    - Выдать
+    - Подтвердить
+    - Отклонить
+    - Отменить
+    - Применить
+    - Импорт
+    - Загрузить
+    - Добавить файлы
+    - Сменить фото
+  skip_selector:
+    - ".danger"
+    - ".menu-btn"
+    - ".bell-btn"
+    - "input[type=file]"
+  max_buttons: 40
+  roles: [director, head_mont, worker_mont]
+  combos: [light-desktop, dark-mobile]
+
+# ===== кто смотрит разделы при проверке вёрстки =====
+visual:
+  roles: [director, head_mont, worker_mont, worker_buh, contract1, stock]
+
+# ===== доступ к разделам меню =====
+access:
+  projects_hidden_for: [worker_mont, worker_mont2, worker_to]
+  csv_only: [admin, director]

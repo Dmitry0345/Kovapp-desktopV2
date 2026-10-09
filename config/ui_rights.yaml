@@ -1,0 +1,76 @@
+# ===== кнопки интерфейса по ролям =====
+checks:
+  tasks.new:
+    title: Кнопка «Новая задача»
+    route: "#/tasks"
+    button: Новая задача
+    allow: [management, heads]
+  notifications.create:
+    title: Кнопка «Создать уведомление»
+    route: "#/notifications"
+    button: Создать уведомление
+    allow: [management, heads]
+  organizations.add:
+    title: Кнопка «Добавить организацию»
+    route: "#/organizations"
+    button: Добавить организацию
+    allow: [management, heads, contract]
+  employees.add:
+    title: Кнопка «Добавить работника»
+    route: "#/employees"
+    button: Добавить работника
+    allow: [management]
+  equipment.add:
+    title: Кнопка «Добавить» в оборудовании
+    route: "#/equipment"
+    button: Добавить
+    allow: [management, buh]
+  equipment.issue:
+    title: Кнопка «Выдать» в оборудовании
+    route: "#/equipment"
+    button: Выдать
+    needs: equipment
+    allow: [management, stock]
+  projects.create:
+    title: Кнопка «Создать проект»
+    route: "#/projects"
+    button: Создать проект
+    allow: [management, heads, contract]
+  warehouse.editors:
+    title: Кнопка «Кто правит товары» на складе проекта
+    route: "#/projects/{project}/warehouse"
+    button: Кто правит товары
+    allow: [management]
+  task.complete_stage:
+    title: Кнопка «Завершить этап»
+    route: "#/tasks/{task_open}"
+    button: Завершить этап
+    allow: [management, mont_members]
+  task.extend:
+    title: Кнопка «Продолжить задачу»
+    route: "#/tasks/{task_done}"
+    button: Продолжить задачу
+    allow: [management, mont_heads]
+  task.request_completion:
+    title: Кнопка завершения задачи («Отправить на завершение» или «Завершить задачу (Архив)»)
+    route: "#/tasks/{task_done}"
+    button: [Отправить на завершение, Завершить задачу (Архив)]
+    allow: [management, mont_heads]
+  task.stage_upload:
+    title: Добавление файлов в этап
+    route: "#/tasks/{task_open}"
+    zone: stage
+    button: Добавить файлы
+    allow: [management, mont_members]
+  task.task_upload:
+    title: Добавление файлов задачи
+    route: "#/tasks/{task_open}"
+    zone: task
+    button: Добавить файлы
+    allow: [management, mont_members]
+  csv.export:
+    title: Раздел «Файлы CSV»
+    route: "#/csv"
+    button: Скачать CSV
+    before: "[data-key='export']"
+    allow: [management]

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Значок в строке состояния: силуэт знака, одним цветом -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <group android:scaleX="0.26" android:scaleY="0.26" android:translateX="-11.79" android:translateY="-1">
+        <path android:pathData="M98,16A26,26 0,0 1,124 42"
+            android:strokeColor="#FFFFFFFF" android:strokeWidth="9" android:strokeLineCap="round" />
+        <path android:pathData="M64.5,36L64.5,36A5.5,5.5 0,0 1,70 41.5L70,78.5A5.5,5.5 0,0 1,64.5 84L64.5,84A5.5,5.5 0,0 1,59 78.5L59,41.5A5.5,5.5 0,0 1,64.5 36Z"
+            android:fillColor="#FFFFFFFF" />
+        <path android:pathData="M95,38L73,60L95,82"
+            android:strokeColor="#FFFFFFFF" android:strokeWidth="11" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+</vector>

@@ -1,0 +1,274 @@
+# ===== группы ролей =====
+groups:
+  all: [admin, director, head_mont, deputy_mont, worker_mont, worker_mont2, head_to, worker_to, head_buh, worker_buh, contract1, contract2, stock]
+  management: [admin, director]
+  heads: [head_mont, deputy_mont, head_to, head_buh]
+  mont_heads: [head_mont, deputy_mont]
+  mont_members: [head_mont, deputy_mont, worker_mont, worker_mont2]
+  contract: [contract1, contract2]
+  buh: [head_buh, worker_buh]
+  warehouse_viewers: [head_mont, deputy_mont, worker_mont, worker_mont2, head_buh, worker_buh, stock]
+
+# ===== ожидания по действиям =====
+actions:
+  task.create_own:
+    title: Создать задачу с одним этапом своего отдела
+    allow: [management, heads]
+  task.create_foreign:
+    title: Создать задачу на чужой отдел
+    allow: [management]
+  task.create_two_stages:
+    title: Создать задачу сразу с двумя этапами своего отдела
+    allow: [management]
+  task.create_from_template:
+    title: Создать задачу из шаблона монтажного отдела
+    allow: [management, mont_heads]
+  task.view:
+    title: Открыть задачу монтажного отдела
+    allow: [management, mont_members]
+  task.history:
+    title: Журнал задачи
+    allow: [management, mont_members]
+  task.edit:
+    title: Править задачу своего отдела
+    allow: [management, mont_heads]
+  task.edit_multi:
+    title: Править задачу двух отделов
+    allow: [management]
+  task.edit_foreign_stage:
+    title: Передать этап задачи другому отделу через правку
+    allow: [management]
+  task.archive:
+    title: Отправить задачу в архив и вернуть
+    allow: [management, mont_heads]
+  task.delete:
+    title: Удалить задачу
+    allow: [management, mont_heads]
+  task.extend:
+    title: Продлить задачу на другой отдел
+    allow: [management, mont_heads]
+  stage.edit_text:
+    title: Править описание этапа
+    allow: [management, mont_members]
+  stage.complete:
+    title: Завершить и возобновить этап
+    allow: [management, mont_members]
+  stage.roster:
+    title: Изменить состав этапа
+    allow: [management, mont_heads]
+  contract.roster:
+    title: Состав договорного этапа (ответственный — сотрудник отдела)
+    allow: [management, contract1]
+  contract.edit_text:
+    title: Описание договорного этапа
+    allow: [management, contract1]
+  contract.extend:
+    title: Продление после договорного этапа
+    allow: [management, mont_heads, contract1]
+  contract.request_completion:
+    title: Запросить завершение задачи
+    allow: [management, contract1]
+  completion.decide:
+    title: Отклонить заявку на завершение
+    allow: [management]
+  file.read:
+    title: Открыть и скачать файл задачи
+    allow: [management, mont_members]
+  file.upload_task:
+    title: Прикрепить файл к задаче
+    allow: [management, mont_members]
+  file.upload_stage:
+    title: Прикрепить файл к этапу
+    allow: [management, mont_members]
+  file.upload_archived:
+    title: Прикрепить файл к задаче в архиве
+    allow: []
+    deny_codes: [403, 409]
+  file.delete_task:
+    title: Удалить файл задачи
+    allow: [management, mont_heads]
+  file.delete_stage:
+    title: Удалить файл этапа, прикреплённый монтажником
+    allow: [management, mont_members]
+  file.by_path:
+    title: Открыть файл задачи прямым путём
+    allow: [management, mont_members]
+  file.chat_by_path:
+    title: Открыть вложение чата прямым путём
+    allow: [director, worker_mont]
+  file.chat_by_message:
+    title: Скачать вложение чата по номеру сообщения
+    allow: [director, worker_mont]
+  project.create:
+    title: Создать проект
+    allow: [management, heads, contract]
+  project.view:
+    title: Открыть проект
+    allow: [all]
+  project.edit:
+    title: Править проект, созданный руководителем монтажа
+    allow: [director, head_mont]
+  project.delete:
+    title: Удалить проект, созданный руководителем монтажа
+    allow: [director, head_mont]
+  project.files:
+    title: Загрузить и удалить файл раздела проекта
+    allow: [all]
+  wh.view:
+    title: Открыть склад проекта
+    allow: [management, warehouse_viewers]
+  wh.edit_goods:
+    title: Править «Товар» и «Количество»
+    allow: [management]
+  wh.edit_stock:
+    title: Править «Количество на складе»
+    allow: [management, stock]
+  wh.issue:
+    title: Выдать товар
+    allow: [management, stock]
+  wh.editors:
+    title: Список тех, кто правит товары
+    allow: [management]
+  wh.units_add:
+    title: Добавить единицу измерения
+    allow: [management, stock]
+  wh.units_manage:
+    title: Переименовать единицу измерения
+    allow: [management]
+  eq.view:
+    title: Открыть оборудование
+    allow: [all]
+  eq.edit:
+    title: Добавить, править и удалить позицию оборудования
+    allow: [management, buh]
+  eq.issue:
+    title: Выдать оборудование
+    allow: [management, stock]
+  eq.confirm:
+    title: Подтвердить получение (выдано монтажнику)
+    allow: [worker_mont]
+  eq.accept_return:
+    title: Принять возврат оборудования
+    allow: [management, stock]
+  org.view:
+    title: Открыть и искать организации
+    allow: [all]
+  org.edit:
+    title: Добавить, править и удалить организацию
+    allow: [management, heads, contract]
+  tpl.view:
+    title: Список шаблонов
+    allow: [all]
+  tpl.edit:
+    title: Создать, изменить и удалить шаблон
+    allow: [management]
+  emp.view:
+    title: Список и карточки сотрудников
+    allow: [all]
+  emp.create:
+    title: Добавить сотрудника
+    allow: [management]
+  emp.edit_other:
+    title: Править карточку другого сотрудника
+    allow: [management]
+  emp.own_contacts:
+    title: Изменить свои телефон и почту
+    allow: [all]
+  emp.own_position:
+    title: Изменить свою должность
+    allow: [management]
+  emp.photo_own:
+    title: Сменить своё фото
+    allow: [all]
+    skip: [admin]
+  emp.photo_other:
+    title: Сменить чужое фото
+    allow: [management]
+  emp.delete:
+    title: Удалить сотрудника
+    allow: [management]
+  notif.own:
+    title: Свои уведомления
+    allow: [all]
+  notif.others:
+    title: Чужие уведомления
+    allow: []
+  notif.send_any:
+    title: Отправить уведомление другому сотруднику
+    allow: [management, heads]
+  notif.send_task_members:
+    title: Уведомить участников своей задачи
+    allow: [management, heads, mont_members]
+  csv.export:
+    title: Выгрузка CSV
+    allow: [management]
+  health.file_access:
+    title: Служебная диагностика доступа к файлам
+    allow: [management]
+  chat.group_info:
+    title: Сведения о группе чата
+    allow: [director, worker_mont]
+  chat.history:
+    title: История группы чата
+    allow: [director, worker_mont]
+  chat.upload:
+    title: Загрузить файл в группу чата
+    allow: [director, worker_mont]
+  chat.avatar:
+    title: Сменить картинку группы
+    allow: [director]
+  chat.add_members:
+    title: Добавить участников в группу
+    allow: [director]
+  chat.private_with_admin:
+    title: Начать переписку со служебной записью администратора
+    allow: []
+    skip: [admin]
+  upload.foreign_session:
+    title: Чужой сеанс загрузки частями
+    allow: [director]
+    deny_codes: [403, 404]
+  upload.foreign_token:
+    title: Чужое разрешение на повтор файла
+    allow: [director]
+    deny_codes: [403, 409]
+  chat.send_files:
+    title: Отправить файлы в группу чата
+    allow: [director, worker_mont]
+
+  # ===== добавлено по permissions.md: правила, у которых не было проверки =====
+  emp.delete_self:
+    title: Удалить самого себя
+    allow: []
+    deny_codes: [400, 403]
+  wh.issue_self:
+    title: Выдать товар со склада самому себе
+    allow: []
+    deny_codes: [400, 403]
+  wh.issue_confirm:
+    title: Подтвердить получение товара (выдано монтажнику)
+    allow: [management, worker_mont]
+  wh.issue_cancel:
+    title: Отменить неподтверждённую выдачу товара
+    allow: [management, stock, worker_mont]
+  eq.decline:
+    title: Отказаться от выдачи оборудования
+    allow: [management, stock, worker_mont]
+  eq.return:
+    title: Вернуть оборудование (числится за монтажником)
+    allow: [worker_mont]
+  completion.approve:
+    title: Подтвердить завершение задачи
+    allow: [management]
+  file.stage_completed:
+    title: Прикрепить файл к завершённому этапу
+    allow: []
+    deny_codes: [403, 409]
+  file.delete_archived:
+    title: Удалить файл задачи в архиве
+    allow: []
+    deny_codes: [403, 409]
+  chat.promote:
+    title: Назначить администратора группы чата
+    allow: [director]
+

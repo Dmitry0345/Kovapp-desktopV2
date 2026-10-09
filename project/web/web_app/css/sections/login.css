@@ -1,0 +1,97 @@
+/* Экран входа. */
+
+/* Каркас и компоненты веб-версии «Ковчег». Размеры в rem — см. theme.css. */
+/* ── экран входа ────────────────────────────────────────────────────────── */
+.login-screen {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  background: var(--page-bg); overflow: hidden;
+}
+/* Живой фон входа: медленно плывущие пятна и еле заметная сетка.
+   Только CSS-анимации — процессор почти не задействован. */
+.login-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.login-bg .blob {
+  position: absolute; border-radius: 50%; filter: blur(60px); opacity: var(--login-blob-opacity);
+  will-change: transform;
+}
+.login-bg .b1 { width: 38rem; height: 38rem; left: -10rem; top: -12rem;
+  background: radial-gradient(circle at 35% 35%, var(--login-blob-1), transparent 70%);
+  animation: kov-blob-a 26s ease-in-out infinite alternate; }
+.login-bg .b2 { width: 32rem; height: 32rem; right: -8rem; bottom: -10rem;
+  background: radial-gradient(circle at 60% 40%, var(--login-blob-2), transparent 70%);
+  animation: kov-blob-b 32s ease-in-out infinite alternate; }
+.login-bg .b3 { width: 22rem; height: 22rem; right: 18%; top: 8%;
+  background: radial-gradient(circle at 50% 50%, var(--login-blob-3), transparent 70%);
+  animation: kov-blob-c 38s ease-in-out infinite alternate; }
+.login-bg .grid {
+  position: absolute; inset: -20%;
+  background-image: linear-gradient(var(--login-grid) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--login-grid) 1px, transparent 1px);
+  background-size: 3.5rem 3.5rem;
+  mask-image: radial-gradient(circle at 50% 45%, #000 15%, transparent 68%);
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 15%, transparent 68%);
+  animation: kov-grid 60s linear infinite;
+}
+@keyframes kov-blob-a { to { transform: translate3d(7rem, 5rem, 0) scale(1.12); } }
+@keyframes kov-blob-b { to { transform: translate3d(-6rem, -4rem, 0) scale(1.08); } }
+@keyframes kov-blob-c { to { transform: translate3d(-4rem, 6rem, 0) scale(.88); } }
+@keyframes kov-grid { to { transform: translate3d(3.5rem, 3.5rem, 0); } }
+@media (prefers-reduced-motion: reduce) {
+  .login-bg .blob, .login-bg .grid { animation: none; }
+}
+.login-card {
+  position: relative; z-index: 1;
+  width: min(24rem, calc(100vw - 2rem));
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: 1rem; padding: 2rem 1.75rem; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: .8rem;
+}
+.login-card h1 { margin: 0 0 .6rem; text-align: center; font-size: 1.75rem; color: var(--login-title); letter-spacing: .02em; }
+/* Живая шапка входа: знак сам себя обводит, слово проявляется следом */
+.login-card .brand { display: flex; flex-direction: column; align-items: center; gap: .35rem; cursor: pointer; user-select: none; }
+.login-card .brand .kov-mark { width: 7.5rem; height: 5.6rem; }
+.login-card .brand.small .kov-mark { width: 4.4rem; height: 3.3rem; }
+.login-card .brand .word {
+  font-size: 1.7rem; font-weight: 700; letter-spacing: .02em; color: var(--mark-ink);
+  animation: kov-word .5s .95s backwards cubic-bezier(.2,.75,.25,1);
+}
+.login-card .brand.small .word { font-size: 1.2rem; animation: none; }
+@keyframes kov-word { from { opacity: 0; transform: translateY(.4rem); } }
+@media (prefers-reduced-motion: reduce) { .login-card .brand .word { animation: none; } }
+/* Подсказка и вводимый текст по центру строки */
+.login-card .input.centered { text-align: center; }
+.login-card .input.centered::placeholder { text-align: center; }
+/* Пароль с глазом */
+.pass-field { position: relative; display: flex; }
+/* Отступ с обеих сторон одинаковый: иначе подсказка «Пароль» сдвигалась
+   влево на ширину кнопки-глаза и переставала быть по центру поля */
+.pass-field .input { flex: 1; padding-left: 2.6rem; padding-right: 2.6rem; }
+.pass-field .eye {
+  position: absolute; right: .35rem; top: 50%; transform: translateY(-50%);
+  border: 0; background: transparent; cursor: pointer; padding: .35rem; border-radius: 50%;
+  color: var(--text-label); display: inline-flex;
+}
+.pass-field .eye:hover { background: var(--chip-bg); color: var(--accent); }
+.pass-field .eye.on { color: var(--info); }
+.pass-field .eye svg { width: 1.1rem; height: 1.1rem; }
+.login-card .link { align-self: center; background: none; border: 0; color: var(--info); cursor: pointer; text-decoration: underline; padding: .3rem; }
+.login-card .error { color: var(--critical); background: var(--critical-soft); border-radius: var(--radius); padding: .5rem .7rem; }
+.login-card .hint { color: var(--text-label); font-size: .78rem; text-align: center; }
+.login-card .brand.no-mark .word { animation: none; }
+/* Логотип с названием на входе: слово выезжает из-под правой грани знака */
+.login-card .brand.lock .kov-mark { width: 17rem; height: 5.5rem; }
+@media (max-width: 760px) { .login-card .brand.lock .kov-mark { width: 14rem; height: 4.6rem; } }
+/* ── переключатель темы на экране входа ────────────────────────────────── */
+.login-screen .theme-toggle {
+  position: absolute; top: 1rem; right: 1rem; z-index: 2;
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .5rem .85rem; border-radius: 1.4rem; cursor: pointer;
+  background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-label);
+  box-shadow: var(--card-shadow); font-size: .8rem; font-weight: 600;
+  transition: color .2s, border-color .2s, transform .2s;
+}
+.login-screen .theme-toggle:hover { color: var(--accent); border-color: var(--accent-soft); transform: translateY(-1px); }
+.login-screen .theme-toggle svg { width: 1.05rem; height: 1.05rem; }
+@media (max-width: 480px) {
+  .login-screen .theme-toggle span { display: none; }
+  .login-screen .theme-toggle { padding: .55rem; border-radius: 50%; }
+}

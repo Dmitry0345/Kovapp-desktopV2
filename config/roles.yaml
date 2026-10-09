@@ -1,0 +1,95 @@
+# ===== учётные записи по ролям =====
+
+roles:
+  admin:
+    title: Администратор системы
+    status: администратор
+    department: Руководство
+    position: Администратор
+    login: admin
+    builtin: true
+    groups: [all, management]
+  director:
+    title: Директор
+    status: директор
+    department: Руководство
+    position: Директор
+    login: at_director
+    groups: [all, management, core]
+  head_mont:
+    title: Руководитель монтажа
+    status: руководитель отдела
+    department: Монтажный отдел
+    position: Старший монтажник
+    login: at_head_mont
+    groups: [all, heads, core]
+  deputy_mont:
+    title: Заместитель руководителя монтажа
+    status: руководитель отдела
+    department: Монтажный отдел
+    position: Заместитель руководителя
+    login: at_deputy_mont
+    groups: [all, heads]
+  worker_mont:
+    title: Монтажник
+    status: работник
+    department: Монтажный отдел
+    position: Монтажник
+    login: at_worker_mont
+    groups: [all, workers, core]
+  worker_mont2:
+    title: Второй монтажник
+    status: работник
+    department: Монтажный отдел
+    position: Монтажник
+    login: at_worker_mont2
+    groups: [all, workers]
+  head_to:
+    title: Руководитель отдела ТО
+    status: руководитель отдела
+    department: Отдел ТО
+    position: Старший инженер
+    login: at_head_to
+    groups: [all, heads]
+  worker_to:
+    title: Инженер ТО
+    status: работник
+    department: Отдел ТО
+    position: Инженер
+    login: at_worker_to
+    groups: [all, workers]
+  head_buh:
+    title: Главный бухгалтер
+    status: руководитель отдела
+    department: Бухгалтерия
+    position: Главный бухгалтер
+    login: at_head_buh
+    groups: [all, heads]
+  worker_buh:
+    title: Бухгалтер
+    status: работник
+    department: Бухгалтерия
+    position: Бухгалтер
+    login: at_worker_buh
+    groups: [all, workers, core]
+  contract1:
+    title: Юрист договорного отдела
+    status: работник
+    department: Договорной отдел
+    position: Юрист
+    login: at_contract1
+    groups: [all, workers, core]
+  contract2:
+    title: Специалист по договорам
+    status: работник
+    department: Договорной отдел
+    position: Специалист по договорам
+    login: at_contract2
+    groups: [all, workers]
+  stock:
+    title: Кладовщик
+    status: работник
+    department: Склад
+    position: Сотрудник склада
+    login: at_stock
+    groups: [all, workers, core]

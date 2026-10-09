@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- фон страницы до загрузки: светлая тема веб-версии -->
+    <color name="kovapp_bg">#FFFFFF</color>
+    <!-- плашка знака (web_app/icons/icon.svg) -->
+    <color name="kovapp_icon_bg">#132A32</color>
+</resources>

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Kovapp — симулятор телефона</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="sim.css">
+</head>
+<body>
+  <aside class="panel left">
+    <h1>Kovapp <span>симулятор телефона</span></h1>
+
+    <section class="card">
+      <h2>Телефон</h2>
+      <label>Модель <select id="device"></select></label>
+      <label class="row"><input type="checkbox" id="landscape"> Альбомная ориентация</label>
+      <label>Масштаб
+        <select id="zoom">
+          <option value="fit">По размеру окна</option>
+          <option value="1">100 %</option>
+          <option value="0.8">80 %</option>
+          <option value="0.6">60 %</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Сеть</h2>
+      <div class="seg" id="net">
+        <button type="button" data-v="online" class="on">Есть</button>
+        <button type="button" data-v="slow">Медленная</button>
+        <button type="button" data-v="offline">Нет</button>
+      </div>
+      <p class="hint">«Нет» — как пропавший интернет: сервер недоступен, а интерфейс остаётся, он внутри APK.</p>
+    </section>
+
+    <section class="card">
+      <h2>Уведомления</h2>
+      <label>Разрешение телефона
+        <select id="perm">
+          <option value="default">ещё не спрашивали</option>
+          <option value="granted">разрешены</option>
+          <option value="denied">запрещены</option>
+        </select>
+      </label>
+      <label class="row"><input type="checkbox" id="battery"> Работа без ограничений батареи</label>
+      <div class="kv"><span>Канал</span><b id="chan">выключен</b></div>
+      <div class="kv"><span>Устройство</span><b id="devid">—</b></div>
+      <button type="button" id="testPush">Проверочное уведомление</button>
+      <button type="button" id="colleague" hidden>Сообщение от коллеги</button>
+      <p class="hint">Уведомления приходят по настоящему каналу приложения (/ws/native-push). Закройте приложение кнопкой «Недавние» — они появятся в шторке.</p>
+    </section>
+
+    <section class="card">
+      <h2>Приложение</h2>
+      <button type="button" id="restart">Перезапустить</button>
+      <button type="button" id="wipe">Стереть данные приложения</button>
+      <div class="kv"><span>Сервер</span><b id="server">…</b></div>
+      <a class="sitelink" id="siteLink" target="_blank" rel="noopener" hidden>Открыть сайт под другим сотрудником ↗</a>
+      <p class="hint" id="siteHint" hidden>Там можно войти вторым сотрудником и переписываться с «телефоном»: сообщения, фото и файлы видны у обоих, пока тестовый сервер запущен.</p>
+    </section>
+  </aside>
+
+  <main class="stage" id="stage">
+    <div class="phone" id="phone">
+      <div class="screen" id="screen">
+        <div class="status" id="status">
+          <span id="clock">--:--</span>
+          <span class="icons"><span id="neticon">▾ Wi-Fi</span><span class="batt"></span></span>
+        </div>
+        <div class="appArea" id="appArea"></div>
+        <div class="home" id="home" hidden>
+          <button type="button" class="appIcon" id="launcher"><img alt="" id="launcherImg"><span>Kovapp</span></button>
+        </div>
+        <div class="recents" id="recents" hidden></div>
+        <div class="headsup" id="headsup" hidden></div>
+        <div class="sysdialog" id="sysdialog" hidden></div>
+        <div class="systoast" id="systoast" hidden></div>
+        <nav class="navbar" id="navbar">
+          <button type="button" data-k="back" title="Назад">◁</button>
+          <button type="button" data-k="home" title="Домой">○</button>
+          <button type="button" data-k="recent" title="Недавние приложения">▢</button>
+        </nav>
+      </div>
+    </div>
+  </main>
+
+  <aside class="panel right">
+    <section class="card grow">
+      <h2>Шторка уведомлений <button type="button" class="link" id="clearShade">очистить</button></h2>
+      <div class="shade" id="shade"></div>
+    </section>
+    <section class="card">
+      <h2>Загрузки</h2>
+      <div class="list" id="downloads"></div>
+    </section>
+    <section class="card grow">
+      <h2>Журнал моста <button type="button" class="link" id="clearLog">очистить</button></h2>
+      <div class="log" id="log"></div>
+    </section>
+  </aside>
+
+  <script src="sim.js"></script>
+</body>
+</html>

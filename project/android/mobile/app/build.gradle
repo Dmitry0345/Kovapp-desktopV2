@@ -1,0 +1,207 @@
+import javax.inject.Inject
+
+plugins {
+    id 'com.android.application'
+}
+
+// ── настройки из kovapp.properties ──────────────────────────────────────
+def props = new Properties()
+def propsFile = rootProject.file('kovapp.properties')
+if (propsFile.exists()) propsFile.withReader('UTF-8') { props.load(it) }
+// -Pkovapp.<ключ>=… из командной строки главнее файла: так автотесты собирают свою
+// отладочную версию, не трогая kovapp.properties
+def prop = { String key, String dflt -> ((project.findProperty('kovapp.' + key) ?: props.getProperty(key)) ?: dflt).toString().trim() }
+def quoted = { String s -> '"' + s.replace('\\', '\\\\').replace('"', '\\"') + '"' }
+
+def serverOrigin = prop('serverOrigin', '')
+if (!serverOrigin) {
+    throw new GradleException('Нет адреса сервера: скопируйте kovapp.properties.example в kovapp.properties и укажите serverOrigin')
+}
+if (!serverOrigin.startsWith('https://') && prop('allowHttpRelease', 'false') != 'true') {
+    throw new GradleException('Рабочая сборка работает только по https: serverOrigin=' + serverOrigin
+            + ' (для проверки по http есть debugServerOrigin; осознанно разрешить http в release — allowHttpRelease=true)')
+}
+def debugServerOrigin = prop('debugServerOrigin', serverOrigin)
+def appPath = prop('appPath', '/app/')
+def webAppDir = rootProject.file(prop('webAppDir', '../web_app'))
+def overlayDir = rootProject.file('overlay')
+def certFile = prop('serverCertificate', '') ? rootProject.file(prop('serverCertificate', '')) : null
+if (certFile != null && !certFile.isFile()) throw new GradleException('Не найден файл сертификата: ' + certFile)
+
+/** network_security_config: https и системные сертификаты; http — только к localhost в отладке */
+def networkConfig = { String origin, boolean debug, boolean withCert ->
+    def uri = new URI(origin)
+    def domains = new LinkedHashMap<String, Map>()
+    def add = { String host, boolean clear, boolean cert ->
+        def d = domains.computeIfAbsent(host) { [clear: false, cert: false] }
+        d.clear = d.clear || clear
+        d.cert = d.cert || cert
+    }
+    if (debug) ['localhost', '127.0.0.1', '10.0.2.2'].each { add(it, true, false) }
+    if (uri.scheme == 'http') add(uri.host, true, false)      // резервный путь по http — только если так задан адрес
+    if (withCert) add(uri.host, false, true)
+    def x = new StringBuilder()
+    x << '<?xml version="1.0" encoding="utf-8"?>\n<network-security-config>\n'
+    x << '    <base-config cleartextTrafficPermitted="false">\n'
+    x << '        <trust-anchors>\n            <certificates src="system"/>\n        </trust-anchors>\n'
+    x << '    </base-config>\n'
+    domains.each { host, d ->
+        x << "    <domain-config cleartextTrafficPermitted=\"${d.clear}\">\n"
+        x << "        <domain includeSubdomains=\"false\">${host}</domain>\n"
+        if (d.cert) {
+            x << '        <trust-anchors>\n            <certificates src="system"/>\n'
+            x << '            <certificates src="@raw/kovapp_server_cert"/>\n        </trust-anchors>\n'
+        }
+        x << '    </domain-config>\n'
+    }
+    if (debug) {
+        x << '    <debug-overrides>\n        <trust-anchors>\n'
+        x << '            <certificates src="system"/>\n            <certificates src="user"/>\n'
+        x << '        </trust-anchors>\n    </debug-overrides>\n'
+    }
+    x << '</network-security-config>\n'
+    x.toString()
+}
+
+// ── генерируемые файлы: интерфейс из web_app и правила сети ─────────────
+abstract class KovappAssetsTask extends DefaultTask {
+    @InputDirectory @PathSensitive(PathSensitivity.RELATIVE) abstract DirectoryProperty getWebDir()
+    @InputDirectory @PathSensitive(PathSensitivity.RELATIVE) abstract DirectoryProperty getOverlayDir()
+    @OutputDirectory abstract DirectoryProperty getOutputDir()
+    @Inject abstract FileSystemOperations getFs()
+
+    @TaskAction void run() {
+        def web = webDir.get().asFile
+        def overlay = overlayDir.get().asFile
+        fs.sync { spec ->
+            spec.into(outputDir.get().asFile)
+            // сжатые копии (*.gz, *.br) сервер создаёт рядом со статикой — в APK они дублируют файлы
+            spec.from(web) { into 'web'; exclude '**/*.gz', '**/*.br' }
+            spec.from(new File(overlay, 'native')) { into 'web/native' }
+            spec.from(overlay) { include 'inject.json', 'web-patches.json'; into 'kovapp' }
+        }
+    }
+}
+
+abstract class KovappNetworkTask extends DefaultTask {
+    @Input abstract Property<String> getXml()
+    @Optional @InputFile @PathSensitive(PathSensitivity.NONE) abstract RegularFileProperty getCert()
+    @OutputDirectory abstract DirectoryProperty getOutputDir()
+
+    @TaskAction void run() {
+        def out = outputDir.get().asFile
+        out.deleteDir()
+        def xmlFile = new File(out, 'xml/network_security_config.xml')
+        xmlFile.parentFile.mkdirs()
+        xmlFile.setText(xml.get(), 'UTF-8')
+        if (cert.isPresent()) {
+            def raw = new File(out, 'raw/kovapp_server_cert.pem')
+            raw.parentFile.mkdirs()
+            raw.bytes = cert.get().asFile.bytes
+        }
+    }
+}
+
+android {
+    namespace 'ru.kovcheg.kovapp'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId prop('applicationId', 'ru.kovcheg.kovapp')
+        minSdk 24
+        targetSdk 36
+        versionCode prop('versionCode', '1').toInteger()
+        versionName prop('versionName', '1.0.0')
+
+        buildConfigField 'String', 'APP_PATH', quoted(appPath)
+        buildConfigField 'String', 'API_ORIGIN', quoted(prop('apiOrigin', ''))
+        buildConfigField 'String', 'CSP_OVERRIDE', quoted(prop('csp', ''))
+        buildConfigField 'boolean', 'WEB_PATCHES', prop('webPatches', 'true') == 'false' ? 'false' : 'true'
+        buildConfigField 'String', 'FCM_PROJECT_ID', quoted(prop('fcmProjectId', ''))
+        buildConfigField 'String', 'FCM_APP_ID', quoted(prop('fcmAppId', ''))
+        buildConfigField 'String', 'FCM_API_KEY', quoted(prop('fcmApiKey', ''))
+        buildConfigField 'String', 'FCM_SENDER_ID', quoted(prop('fcmSenderId', ''))
+    }
+
+    // подпись рабочей сборки — из keystore.properties (см. README)
+    def ksFile = rootProject.file('keystore.properties')
+    signingConfigs {
+        if (ksFile.exists()) {
+            release {
+                def ks = new Properties()
+                ksFile.withReader('UTF-8') { ks.load(it) }
+                storeFile rootProject.file(ks.getProperty('storeFile'))
+                storePassword ks.getProperty('storePassword')
+                keyAlias ks.getProperty('keyAlias')
+                keyPassword ks.getProperty('keyPassword')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'SERVER_ORIGIN', quoted(serverOrigin)
+            buildConfigField 'String', 'DEV_ASSETS_URL', '""'
+            if (ksFile.exists()) signingConfig signingConfigs.release
+        }
+        debug {
+            buildConfigField 'String', 'SERVER_ORIGIN', quoted(debugServerOrigin)
+            buildConfigField 'String', 'DEV_ASSETS_URL', quoted(prop('devAssetsUrl', ''))
+        }
+    }
+
+
+    buildFeatures { buildConfig true }
+
+    // Java 11: версию 8 новые компиляторы считают устаревшей; D8 переводит код для Android 7.0+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+        // тестам нужны подготовленные образцы (tests/make_fixtures.py); без них тесты пропускаются
+        unitTests.all { systemProperty 'kovapp.fixtures', rootProject.file('tests/fixtures').absolutePath }
+    }
+
+    lint {
+        // отчёт Lint пишется (app/build/reports), но сборку не останавливает
+        abortOnError false
+        checkReleaseBuilds true
+        disable 'MissingTranslation'
+    }
+
+    packaging {
+        resources { excludes += ['META-INF/*.kotlin_module', 'META-INF/LICENSE*', 'META-INF/NOTICE*'] }
+    }
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        def name = variant.name.capitalize()
+        def debug = variant.buildType == 'debug'
+        def assets = tasks.register("kovappAssets${name}", KovappAssetsTask) {
+            webDir.set(webAppDir)
+            it.overlayDir.set(overlayDir)
+        }
+        variant.sources.assets.addGeneratedSourceDirectory(assets, { it.outputDir })
+        def net = tasks.register("kovappNetwork${name}", KovappNetworkTask) {
+            xml.set(networkConfig(debug ? debugServerOrigin : serverOrigin, debug, certFile != null))
+            if (certFile != null) cert.set(certFile)
+        }
+        variant.sources.res.addGeneratedSourceDirectory(net, { it.outputDir })
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.13.0'
+    // одна сборка на все телефоны: Google (FCM), если он есть на телефоне и настроен Firebase,
+    // иначе — собственный канал (Huawei, Honor и другие без сервисов Google)
+    implementation platform('com.google.firebase:firebase-bom:34.0.0')
+    implementation 'com.google.firebase:firebase-messaging'
+    testImplementation 'junit:junit:4.13.2'
+}

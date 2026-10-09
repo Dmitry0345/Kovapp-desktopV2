@@ -1,0 +1,8 @@
+.env.example
+.venv-pc
+logs
+.venv/
+venv/
+file_storage/
+
+

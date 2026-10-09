@@ -1,0 +1,666 @@
+/* Общее для всех разделов: оболочка (шапка, меню, панель справа), кнопки, поля, таблицы,
+ * карточки, чипы, окна и подтверждения, шторки снизу, загрузка, журнал, размеры под палец.
+ * Цвета — в theme.css, разделы — в sections/. */
+
+/* ── основа: поля страницы, шрифт, полосы прокрутки ───────────────────── */
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: .875rem;         /* 14px при базе 16: на ноутбуке 1366px ≈ 13px, как в десктопе */
+  color: var(--text-value);
+  background: var(--page-bg);
+  overflow: hidden;
+  min-height: 100vh;
+}
+button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+a { color: var(--info); }
+::selection { background: var(--accent-soft); color: #fff; }
+/* подсказка в пустом поле, тёмная тема: серый браузера давал 3,7:1 */
+:root[data-theme="dark"] ::placeholder { color: #8E8E93; opacity: 1; }
+
+/* Полосы прокрутки в тонах приложения (как _scrollbar_qss) */
+* { scrollbar-width: thin; scrollbar-color: var(--ghost-border) transparent; }
+*::-webkit-scrollbar { width: .55rem; height: .55rem; }
+*::-webkit-scrollbar-thumb { background: var(--ghost-border); border-radius: .4rem; }
+*::-webkit-scrollbar-thumb:hover { background: var(--accent-soft); }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* ── фирменный знак ─────────────────────────────────────────────────────── */
+.kov-mark { display: block; width: 100%; height: 100%; overflow: visible;
+  --l-ink: var(--mark-ink); --l-accent: var(--mark-accent); --l-knock: var(--mark-knock); }
+.kov-mark .ink { fill: var(--l-ink); }
+.kov-mark .knock { fill: var(--l-knock); }
+.kov-mark .si { fill: none; stroke: var(--l-ink); }
+.kov-mark .sa { fill: none; stroke: var(--l-accent); }
+.kov-mark .sk { fill: none; stroke: var(--l-knock); }
+.kov-mark .an { transform-box: fill-box; transform-origin: 50% 50%; }
+@media (prefers-reduced-motion: no-preference) {
+  .kov-mark.play .an { animation-fill-mode: backwards; animation-timing-function: cubic-bezier(.2,.75,.25,1); }
+  .kov-mark.play .draw { animation-name: kov-draw; animation-duration: 1s; }
+  .kov-mark.play .pop { animation-name: kov-pop; animation-duration: .7s; animation-delay: .55s; }
+  .kov-mark.play .corner { animation-duration: .25s; animation-delay: 1s; }
+}
+@keyframes kov-pop { from { opacity: 0; transform: scale(.4); } }
+@keyframes kov-draw { from { stroke-dashoffset: var(--len); } }
+/* ── оболочка ───────────────────────────────────────────────────────────── */
+.app { position: fixed; inset: 0; display: flex; flex-direction: column; }
+/* Шапка — белая, как в десктопе: тёмные значки, серая плашка раздела */
+.top-bar {
+  height: var(--top-bar-h); flex: 0 0 auto;
+  background: var(--card-bg); color: var(--top-bar-fg);
+  display: flex; align-items: center; padding: 0 .75rem; gap: .75rem;
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: var(--top-bar-shadow); z-index: 30;
+}
+.top-bar .menu-btn {
+  width: 4.25rem; height: 3.25rem; border: 0; border-radius: .6rem; background: transparent;
+  color: var(--top-bar-fg); cursor: pointer; display: grid; place-items: center;
+}
+.top-bar .menu-btn:hover { background: var(--chip-bg); color: var(--accent); }
+.top-bar .menu-btn svg { width: 2.2rem; height: 2.2rem; stroke-width: 2.1; }
+.top-bar .title-chip {
+  margin: 0 auto; background: var(--chip-bg); border: 1px solid var(--card-border);
+  color: var(--accent);
+  border-radius: 1.25rem; padding: .45rem 1.2rem; font-size: 1.05rem; font-weight: 700;
+  max-width: 55vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.top-bar .bell-btn { position: relative; width: 3.25rem; height: 3.25rem; border: 0; border-radius: .6rem; background: transparent; color: var(--top-bar-fg); cursor: pointer; display: grid; place-items: center; }
+.top-bar .bell-btn:hover { background: var(--chip-bg); color: var(--accent); }
+.top-bar .bell-btn svg { width: 2rem; height: 2rem; stroke-width: 2.1; }
+.top-bar .badge {
+  position: absolute; top: .3rem; right: .3rem; min-width: 1.15rem; height: 1.15rem; padding: 0 .3rem;
+  border-radius: .6rem; background: var(--badge-bg); color: #fff; font-size: .7rem; font-weight: 700;
+  display: grid; place-items: center; line-height: 1;
+}
+.content { flex: 1 1 auto; min-height: 0; overflow: auto; padding: .9rem 1rem; position: relative; }
+.content > .section { display: flex; flex-direction: column; gap: .75rem; min-height: 100%; }
+/* ── выезжающее меню ───────────────────────────────────────────────────── */
+.scrim { position: fixed; inset: var(--top-bar-h) 0 0 0; background: var(--overlay); opacity: 0; pointer-events: none; transition: opacity var(--anim); z-index: 20; }
+.scrim.open { opacity: 1; pointer-events: auto; }
+.side-menu {
+  position: fixed; top: var(--top-bar-h); bottom: 0; left: 0; width: var(--menu-w);
+  background: var(--card-bg); border-right: 1px solid var(--card-border); box-shadow: var(--shadow);
+  transform: translateX(-100%); transition: transform var(--anim); z-index: 25; display: flex; flex-direction: column;
+}
+.side-menu.open { transform: none; }
+.side-menu .close-row { display: flex; justify-content: flex-end; padding: .6rem .6rem 0; }
+.side-menu .close-btn { width: 2.6rem; height: 2.6rem; border-radius: 50%; border: 1px solid var(--menu-close-border); background: var(--menu-close-bg); color: var(--menu-close-fg); font-weight: 700; cursor: pointer; }
+.side-menu .close-btn:hover { background: var(--menu-close-hover); }
+.side-menu nav { display: flex; flex-direction: column; padding: .4rem .6rem; overflow: auto; }
+.side-menu .item {
+  display: flex; align-items: center; gap: .7rem; text-align: left; border: 0; background: transparent;
+  color: var(--menu-item-fg); padding: .8rem .8rem; border-radius: .25rem; cursor: pointer; font-size: .8125rem;
+  border-bottom: 1px solid var(--menu-divider);
+}
+.side-menu .item svg { width: 1.2rem; height: 1.2rem; color: var(--accent); }
+.side-menu .item:hover { background: var(--menu-hover); }
+.side-menu .item:active { background: var(--menu-active); }
+.side-menu .item.active { background: var(--info-soft); font-weight: 700; }
+.side-menu .item .count { margin-left: auto; background: var(--count-bg); color: #fff; border-radius: .6rem; padding: .05rem .45rem; font-size: .72rem; font-weight: 700; }
+/* ── правая панель (профиль / просмотр) ─────────────────────────────────── */
+.side-panel {
+  position: fixed; top: var(--top-bar-h); bottom: 0; right: 0; width: min(var(--profile-w), 80vw);
+  background: var(--card-bg); border-left: 1px solid var(--card-border); box-shadow: var(--shadow);
+  transform: translateX(100%); transition: transform var(--anim); z-index: 25; display: flex; flex-direction: column; overflow: auto;
+}
+.side-panel.open { transform: none; }
+.side-panel .panel-head { display: flex; align-items: center; gap: .6rem; padding: .8rem 1rem; border-bottom: 1px solid var(--card-border); position: sticky; top: 0; background: var(--card-bg); z-index: 1; }
+/* ── карточки, заголовки, чипы ──────────────────────────────────────────── */
+.card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: .9rem 1rem; }
+.section-header { display: flex; align-items: center; gap: .6rem; padding-bottom: .6rem; }
+.section-header svg { width: 1.375rem; height: 1.375rem; color: var(--accent); flex: 0 0 auto; }
+.section-header .title { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--title-fg); font-weight: 700; white-space: nowrap; }
+.section-header .rule { flex: 1; height: 1px; background: var(--card-border); }
+.chip { display: inline-flex; align-items: center; gap: .3rem; background: var(--chip-bg); color: var(--ghost-text); border-radius: 1rem; padding: .2rem .65rem; font-size: .75rem; }
+.chip.success { background: var(--success-soft); color: var(--success-text); }
+.chip.warning { background: var(--warning-soft); color: var(--warning-text); }
+.chip.danger { background: var(--critical-soft); color: var(--critical-text); }
+.chip.info { background: var(--info-soft); color: var(--info); }
+.muted { color: var(--text-label); }
+.small { font-size: .75rem; }
+.empty { text-align: center; color: var(--text-muted); padding: 2rem 1rem; }
+/* ── кнопки ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  min-height: 2.375rem; padding: .45rem 1rem; border-radius: var(--radius); cursor: pointer;
+  font-weight: 600; line-height: 1.2; white-space: nowrap; user-select: none; transition: background .12s;
+  background: var(--btn-bg); border: 1px solid var(--btn-border); color: #fff;
+}
+.btn svg { width: 1.1rem; height: 1.1rem; }
+.btn:hover { background: var(--btn-hover); }
+.btn:active { background: var(--btn-pressed); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.ghost { background: var(--ghost-bg); border-color: var(--ghost-border); color: var(--ghost-text); }
+.btn.ghost:hover { background: var(--ghost-hover); }
+.btn.ghost:active { background: var(--ghost-pressed); }
+.btn.danger { background: var(--danger-fill); border-color: var(--danger-fill-hover); }
+.btn.danger:hover { background: var(--danger-fill-hover); }
+.btn.danger:active { background: var(--danger-fill-pressed); }
+/* отключённая «Удалить» — тихая, как отключённая «Изменить»: розовой она бросалась в глаза сильнее активных кнопок */
+.btn.danger:disabled { background: var(--ghost-bg); border-color: var(--ghost-border); color: var(--ghost-text); }
+.btn.icon { width: 2.25rem; min-height: 2.25rem; padding: 0; }
+.btn.icon svg { width: 1.05rem; height: 1.05rem; }
+.btn.link { background: none; border: 0; color: var(--info); text-decoration: underline; min-height: 0; padding: .2rem; font-weight: 400; }
+.segmented { display: inline-flex; gap: .35rem; }
+.segmented .btn { min-height: 2.375rem; }
+.segmented .btn.on { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
+.segmented .btn:not(.on) { background: var(--ghost-bg); border-color: var(--ghost-border); color: var(--accent); }
+.btn-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.btn-row.end { justify-content: flex-end; }
+/* нижние кнопки списков (задачи, проекты, организации): на телефоне — одной строкой, с короткими подписями */
+.lbl-short { display: none; }
+.tasks-actions { margin-left: auto; }
+@media (max-width: 760px) {
+  :is(.tasks-actions, .list-actions) { flex: 1 1 100%; flex-wrap: nowrap; min-width: 0; }
+  :is(.tasks-actions, .list-actions) .btn { flex: 1 1 0; min-width: 0; justify-content: center; padding-left: .5rem; padding-right: .5rem; }
+  :is(.tasks-actions, .list-actions) .lbl-full { display: none; }
+  :is(.tasks-actions, .list-actions) .lbl-short { display: inline; }
+  /* подписи не помещаются при выбранном размере текста — «Изменить» и «Удалить» значками,
+     главная кнопка занимает остальное место (класс ставит Kov.UI.fitRow) */
+  :is(.tasks-actions, .list-actions).icons-only .btn:not(:last-child) { flex: 0 0 auto; width: 2.75rem; }
+  :is(.tasks-actions, .list-actions).icons-only .btn:not(:last-child) .lbl-short { display: none; }
+}
+/* «Активные / Архивные» и счётчик (задачи, проекты): на телефоне всегда одной строкой.
+   Не помещается — у кнопок уже поля, затем без значков, затем счётчик в две строки */
+.list-switch { display: flex; align-items: center; gap: .5rem; min-width: 0; }
+@media (max-width: 760px) {
+  .list-switch { flex-wrap: nowrap; }
+  .btn-row > .list-switch { flex: 1 1 100%; }   /* в строке кнопок списка задач — своей строкой */
+  .list-switch > .segmented { flex: 0 1 auto; min-width: 0; flex-wrap: nowrap; }
+  .list-switch > .segmented .btn { min-width: 0; }
+  .list-switch > :not(.segmented) { flex: 0 0 auto; white-space: nowrap; }
+  .list-switch.fit-tight > .segmented .btn { padding-left: .6rem; padding-right: .6rem; gap: .35rem; }
+  .list-switch.fit-wrap > :not(.segmented) { flex: 0 1 auto; min-width: 0; white-space: normal; line-height: 1.2; }
+}
+/* переключатели и вкладки: без значков, если с ними подписи не помещаются */
+.segmented.fit-bare .btn svg, .fit-bare > .segmented .btn svg { display: none; }
+/* ── поля ввода ────────────────────────────────────────────────────────── */
+.input, .select, .textarea {
+  width: 100%; min-height: 2.375rem; padding: .45rem .7rem; background: var(--card-bg); color: var(--text-value);
+  border: 1px solid var(--field-border); border-radius: .45rem; outline: none;
+}
+.input:hover, .select:hover, .textarea:hover { border-color: var(--accent-soft); }
+.input:focus, .select:focus, .textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 .15rem var(--focus-ring); }
+.textarea { min-height: 5.5rem; resize: vertical; }
+.select { appearance: none; -webkit-appearance: none; padding-right: 2rem; cursor: pointer;
+  background-image: var(--select-arrow);
+  background-repeat: no-repeat; background-position: right .6rem center; background-size: .9rem; }
+.search { position: relative; flex: 1; min-width: 10rem; }
+.search .input { padding-left: 2.1rem; }
+.search svg { position: absolute; left: .7rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: var(--text-label); pointer-events: none; }
+.field { display: flex; flex-direction: column; gap: .3rem; }
+.field label { color: var(--text-label); font-size: .78rem; }
+.field .req { color: var(--danger); }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: .75rem; }
+.checkbox { display: inline-flex; align-items: center; gap: .55rem; cursor: pointer; }
+.checkbox input { width: 1.2rem; height: 1.2rem; accent-color: var(--accent); }
+.toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.toolbar .select { width: auto; min-width: 11rem; }
+/* ── таблицы ───────────────────────────────────────────────────────────── */
+.table-wrap { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); overflow: auto; flex: 1 1 auto; min-height: 8rem; }
+table.data { width: 100%; border-collapse: collapse; }
+table.data th { position: sticky; top: 0; background: var(--chip-bg); color: var(--ghost-text); font-weight: 700; text-align: center; padding: .6rem .5rem; border-bottom: 1px solid var(--card-border); font-size: .78rem; white-space: pre-line; z-index: 1; }
+table.data td { padding: .55rem .6rem; border-bottom: 1px solid var(--card-border); text-align: center; vertical-align: middle; }
+table.data td.left { text-align: left; }
+table.data tr.row { cursor: pointer; }
+table.data tr.row:hover td { background: var(--surface-2); }
+table.data tr.row.selected td { background: var(--info-soft); }
+table.data tr.overdue td { background: var(--critical-soft); }
+table.data tr.urgent td { background: var(--warning-soft); }
+table.data tr.overdue.selected td, table.data tr.urgent.selected td { box-shadow: inset .25rem 0 0 var(--accent); }
+table.data .deadline.overdue { color: var(--deadline-overdue); font-weight: 700; }
+table.data .deadline.urgent { color: var(--warning-text); font-weight: 700; }
+table.data .mine { font-weight: 700; }
+table.data .name-cell { display: flex; align-items: center; gap: .45rem; text-align: left; }
+table.data .name-cell .mark { width: .95rem; height: .95rem; flex: 0 0 auto; }
+.stage-dots { display: inline-flex; gap: .15rem; }
+.stage-dots i { width: 1.1rem; height: 1.1rem; border-radius: 50%; background: var(--stage-todo); border: 1px solid var(--stage-todo-border); display: inline-block; }
+.stage-dots i.done { background: var(--stage-done); border-color: var(--stage-done-border); }
+.stage-dots i.current { box-shadow: 0 0 0 .12rem var(--accent-soft); }
+/* ── аватары ───────────────────────────────────────────────────────────── */
+.avatar { width: 2.4rem; height: 2.4rem; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-weight: 700; font-size: .85rem; overflow: hidden; flex: 0 0 auto; background: var(--accent-fill); }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar.lg { width: 6rem; height: 6rem; font-size: 2rem; }
+.avatar.xl { width: 8rem; height: 8rem; font-size: 2.6rem; }
+/* ── карточки профиля / информации ─────────────────────────────────────── */
+.info-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: .9rem 1rem; display: flex; flex-direction: column; gap: .55rem; }
+.info-card .caption { display: flex; align-items: center; gap: .5rem; text-transform: uppercase; letter-spacing: .08em; font-size: .72rem; color: var(--text-label); font-weight: 700; }
+.info-card .caption .badge-icon { width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--chip-bg); display: grid; place-items: center; color: var(--accent); }
+.info-card .caption .badge-icon svg { width: .95rem; height: .95rem; }
+.info-row { display: flex; justify-content: space-between; gap: .9rem; align-items: flex-start; }
+.info-row .k { color: var(--text-label); flex: 0 0 auto; }
+.info-row .v { font-weight: 700; text-align: right; word-break: break-word; }
+.info-row .v.copy { cursor: pointer; text-decoration: underline dotted; }
+/* ── диалоги ───────────────────────────────────────────────────────────── */
+.modal-root { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; background: var(--overlay); padding: 1rem; }
+.modal { width: min(36rem, 100%); max-height: calc(100vh - 2rem); overflow: auto; background: var(--card-bg); border-radius: 1rem; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.modal.wide { width: min(52rem, 100%); }
+.modal .modal-head { display: flex; align-items: center; gap: .6rem; padding: 1rem 1.2rem .6rem; }
+.modal .modal-head h2 { margin: 0; font-size: 1rem; flex: 1; }
+.modal .modal-body { padding: .4rem 1.2rem; display: flex; flex-direction: column; gap: .7rem; }
+.modal .modal-foot { display: flex; justify-content: flex-end; gap: .5rem; padding: .8rem 1.2rem 1.1rem; }
+.modal .close-x { border: 0; background: transparent; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; width: 2rem; height: 2rem; border-radius: 50%; }
+.modal .close-x:hover { background: var(--chip-bg); color: var(--ghost-text); }
+.checklist { display: flex; flex-direction: column; gap: .25rem; max-height: 16rem; overflow: auto; border: 1px solid var(--card-border); border-radius: var(--radius); padding: .4rem; }
+.checklist label { display: flex; align-items: center; gap: .5rem; padding: .35rem .4rem; border-radius: .35rem; cursor: pointer; }
+.checklist label:hover { background: var(--chip-bg); }
+/* ── индикатор загрузки ────────────────────────────────────────────────── */
+.loading { display: flex; align-items: center; justify-content: center; gap: .6rem; color: var(--text-label); padding: 2rem; }
+.spinner { width: 1.4rem; height: 1.4rem; border: .2rem solid var(--card-border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+/* ── настройки ─────────────────────────────────────────────────────────── */
+.range { width: 100%; accent-color: var(--accent); }
+/* ── телефон ───────────────────────────────────────────────────────────── */
+.only-mobile { display: none; }
+@media (max-width: 760px) {
+  :root { --top-bar-h: 3.75rem; --menu-w: min(80vw, 18rem); }
+  .only-mobile { display: initial; }
+  .only-desktop { display: none !important; }
+  .top-bar { padding: 0 .5rem; gap: .5rem; }
+  .top-bar .menu-btn { width: 3rem; height: 2.75rem; }
+  .top-bar .title-chip { font-size: .9rem; padding: .35rem .8rem; max-width: 60vw; }
+  .content { padding: .6rem; }
+  .toolbar .select { min-width: 0; flex: 1 1 8rem; }
+  .side-panel { width: 100vw; }
+  /* таблицы превращаются в карточки: заголовок ячейки берётся из data-label */
+  table.data.cards, table.data.cards tbody, table.data.cards tr, table.data.cards td { display: block; }
+  table.data.cards thead { display: none; }
+  table.data.cards tr { border-bottom: 1px solid var(--card-border); padding: .5rem .7rem; }
+  table.data.cards tr.overdue { background: var(--critical-soft); }
+  table.data.cards tr.urgent { background: var(--warning-soft); }
+  table.data.cards tr td { background: transparent !important; }
+  table.data.cards td { border: 0; text-align: left; padding: .15rem 0; display: flex; gap: .5rem; }
+  table.data.cards td::before { content: attr(data-label); color: var(--text-label); flex: 0 0 7rem; font-size: .75rem; }
+  table.data.cards td.no-label::before { content: none; }
+  table.data.cards td.name-td { font-weight: 700; padding-bottom: .25rem; }
+  .modal { max-height: calc(100vh - 1rem); }
+}
+.chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+/* Голые значки в ячейках и заголовках папок — задаём размер явно */
+.name-cell > svg { width: 1.05rem; height: 1.05rem; color: var(--accent); flex: 0 0 auto; }
+/* Запасное правило с отрицательными полями убрано: вместе с :has() оно
+   срабатывало дважды и утаскивало раздел за края экрана. :has() понимают
+   все браузеры на движке Chromium, Safari и Firefox с 2023 года. */
+/* Значок в шапке диалога: без размера svg растягивался на всё окно */
+.modal .modal-head > svg { width: 1.4rem; height: 1.4rem; flex: 0 0 auto; color: var(--accent); }
+.modal .modal-head { align-items: center; }
+.info-card .caption > svg { width: 1.1rem; height: 1.1rem; flex: 0 0 auto; }
+/* Ничто не должно выходить за пределы экрана при увеличенном масштабе */
+.content { overflow-x: hidden; }
+.card, .info-card, .table-wrap, .modal { max-width: 100%; }
+.range, .input, .select, .textarea { max-width: 100%; }
+.toolbar > * { min-width: 0; }
+.section-header .title { white-space: normal; }
+@media (max-width: 1200px) { .side-panel { width: min(var(--profile-w), 96vw); } }
+/* ── профиль: панель слева с «шапкой», как в десктопе ─────────────────── */
+.side-panel.left { left: 0; right: auto; border-left: 0; border-right: 1px solid var(--card-border); transform: translateX(-100%); }
+.side-panel.left.open { transform: none; }
+@media (max-width: 760px) { .side-panel.left { width: 100vw; } }
+/* Сотрудники в форме задачи */
+.chip.person { padding: .2rem .35rem .2rem .2rem; gap: .4rem; background: var(--card-bg); border: 1px solid var(--card-border); }
+.chip.person .avatar { width: 1.7rem; height: 1.7rem; font-size: .65rem; }
+.chip.person .person-name { font-size: .8rem; }
+.chip-x { border: 0; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 1rem; line-height: 1; padding: 0 .15rem; border-radius: 50%; }
+.chip-x:hover { background: var(--chip-bg); color: var(--danger); }
+.checklist label .avatar { width: 1.7rem; height: 1.7rem; font-size: .65rem; }
+/* CSV: две колонки вместо длинной ленты */
+.csv-grid { display: grid; grid-template-columns: minmax(14rem, 1fr) 2fr; gap: 1rem; align-items: start; }
+.csv-drop { border: .12rem dashed var(--card-border); border-radius: var(--radius-lg); min-height: 11rem; display: grid; place-items: center; gap: .5rem; cursor: pointer; text-align: center; padding: 1rem; }
+.csv-drop:hover { border-color: var(--accent-soft); background: var(--surface-2); }
+.csv-drop svg { width: 2.4rem; height: 2.4rem; color: var(--accent-soft); }
+@media (max-width: 860px) { .csv-grid { grid-template-columns: 1fr; } }
+/* 6. Диалоги в прежнем оформлении: тёмная шапка со значком и заголовком */
+.modal .modal-head {
+  background: linear-gradient(180deg, var(--header-top), var(--header-mid) 60%, var(--header-bottom));
+  color: #fff; padding: .7rem 1rem; border-radius: 1rem 1rem 0 0; gap: .6rem;
+}
+.modal .modal-head h2 { font-size: .98rem; font-weight: 700; }
+.modal .modal-head > svg { color: #fff; }
+.modal .modal-head .close-x { color: rgba(255,255,255,.85); }
+.modal .modal-head .close-x:hover { background: rgba(255,255,255,.18); color: #fff; }
+.modal .modal-head .btn { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.3); color: #fff; }
+.modal .modal-head .btn:hover { background: rgba(255,255,255,.28); }
+.modal .modal-body { padding: 1rem 1.2rem .4rem; }
+.modal .modal-foot { border-top: 1px solid var(--card-border); margin-top: .8rem; padding: .75rem 1.2rem; background: var(--surface-foot); border-radius: 0 0 1rem 1rem; }
+/* 1. Пункты бокового меню — обычный текст, без «ссылочной» синевы и подчёркивания */
+.side-menu .item,
+.side-menu .item:link,
+.side-menu .item:visited,
+.side-menu .item:hover,
+.side-menu .item:active,
+.side-menu .item:focus { color: var(--ghost-text); text-decoration: none; }
+.side-menu .item.active { color: var(--accent); }
+.side-menu .item:focus-visible { outline: 2px solid var(--accent-soft); outline-offset: -2px; }
+/* 2. Списки разделов: раздел занимает ровно высоту экрана, таблица листается
+      внутри себя, панели кнопок под ней всегда остаются видимыми */
+.content > .section.fill { height: 100%; min-height: 0; }
+.content > .section.fill > * { flex: 0 0 auto; }
+.content > .section.fill > .table-wrap { flex: 1 1 auto; min-height: 6rem; overflow: auto; }
+/* общий распорка-элемент */
+.spacer { flex: 1 1 auto; }
+/* Атрибут hidden сильнее любого display в наших правилах.
+   Из-за этого на конверте всегда висел красный «0», а скрытые поля
+   фильтров и выпадающие списки оставались на экране. */
+[hidden] { display: none !important; }
+.chip.more {
+  border: 1px dashed var(--accent-soft); background: var(--info-soft); color: var(--info);
+  font-weight: 700; font-size: .75rem; cursor: pointer; padding: .2rem .7rem;
+}
+.chip.more:hover { background: var(--card-bg); border-color: var(--accent); border-style: solid; }
+/* Сотрудник, которого нельзя назначить ответственным */
+.checklist label.off { opacity: .55; }
+.checklist label.off:hover { background: transparent; cursor: default; }
+/* Раздел «Медиаконтент»: папки задач и вложенные папки этапов */
+.media-toolbar { margin-top: .6rem; }
+/* Крупная заставка загрузки по центру свободного места */
+.big-loading {
+  flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .9rem; padding: 3rem 1rem; color: var(--text-label); min-height: 12rem;
+}
+.big-loading .dots { display: flex; gap: .55rem; }
+.big-loading .dots i {
+  width: .9rem; height: .9rem; border-radius: 50%; background: var(--accent);
+  animation: kov-bounce 1.05s infinite ease-in-out both;
+}
+.big-loading .dots i:nth-child(1) { animation-delay: -.24s; opacity: .55; }
+.big-loading .dots i:nth-child(2) { animation-delay: -.12s; opacity: .78; }
+.big-loading .t { font-size: 1.05rem; font-weight: 600; letter-spacing: .01em; }
+@keyframes kov-bounce {
+  0%, 70%, 100% { transform: translateY(0) scale(.72); }
+  35% { transform: translateY(-.75rem) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) { .big-loading .dots i { animation-duration: 2.4s; } }
+/* Список с поиском вместо обычного select */
+/* В колоночном контейнере flex-basis задаёт высоту: из-за прежнего
+   flex: 1 1 12rem список растягивался на 12rem и разрывал форму. */
+.picker-wrap { position: relative; display: flex; flex-direction: column; min-width: 0; width: 100%; }
+.toolbar > .picker-wrap, .media-toolbar > .picker-wrap { flex: 0 1 14rem; width: auto; max-width: 22rem; }
+/* .select рисует стрелку фоном — у нашей кнопки своя, поэтому фон убираем */
+.select.picker { display: flex; align-items: center; gap: .4rem; text-align: left; cursor: pointer;
+  background-image: none; padding-right: .6rem; }
+.select.picker .t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.select.picker.no-value .t { color: var(--text-muted); }
+.select.picker .chev { display: inline-flex; flex: 0 0 auto; }
+.select.picker .chev svg { width: 1rem; height: 1rem; color: var(--text-label); }
+.select.picker:disabled { opacity: .6; cursor: default; }
+.picker-panel {
+  position: absolute; z-index: 40; top: calc(100% + .25rem); left: 0; right: 0;
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius);
+  box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: hidden; min-width: 14rem;
+}
+.picker-panel.up { top: auto; bottom: calc(100% + .25rem); }
+/* телефон: фильтр в разделе со списком — панель во всю ширину экрана (top и высоту списка ставит скрипт) */
+.picker-panel.sheet { position: fixed; left: .5rem; right: .5rem; min-width: 0; z-index: 950; }
+.picker-panel.sheet .picker-list { max-height: none; }
+.picker-search { padding: .45rem; border-bottom: 1px solid var(--card-border); }
+.picker-list { max-height: 15rem; overflow: auto; padding: .25rem; display: flex; flex-direction: column; gap: .1rem; }
+.picker-row {
+  display: flex; flex-direction: column; gap: .05rem; align-items: flex-start; text-align: left;
+  border: 0; background: transparent; border-radius: .4rem; padding: .4rem .5rem; cursor: pointer; width: 100%;
+}
+.picker-row:hover { background: var(--chip-bg); }
+.picker-row.on { background: var(--info-soft); color: var(--info); }
+.picker-row .t { font-size: .86rem; }
+.picker-row .s { font-size: .72rem; color: var(--text-label); }
+/* Поиск — прямой потомок колоночной карточки: flex:1 растягивал его по высоте,
+   и значок поиска уезжал под поле */
+.info-card > .search, .card > .search { flex: 0 0 auto; }
+/* Заставка загрузки внутри таблицы центрируется по всей её площади */
+.table-wrap > .big-loading { flex: 1 1 auto; min-height: 16rem; }
+.table-wrap:has(> .big-loading) { display: flex; }
+/* Формы не растягиваются на весь экран: поля идут подряд сверху */
+.content > .section > .card.form-card { align-self: flex-start; width: 100%; }
+.form-grid { align-items: start; }
+.form-grid > .field { min-width: 0; }
+.btn.tiny { padding: .18rem .5rem; font-size: .72rem; }
+.btn.tiny svg { width: .85rem; height: .85rem; }
+@media (max-width: 760px) {
+  /* ── поиск в разделах: занимает свою строку целиком ────────────────── */
+  .toolbar > .search { flex: 1 1 100%; min-width: 0; order: -1; }
+  .toolbar > .picker-wrap { flex: 1 1 10rem; max-width: none; }
+  /* ── окна: содержимое прокручивается, кнопки всегда видны ──────────── */
+  .modal { overflow: hidden; }
+  .modal .modal-body { overflow: auto; flex: 1 1 auto; min-height: 0; }
+  .modal .modal-foot { flex-wrap: wrap; }
+  .modal .modal-foot .btn { flex: 1 1 7rem; justify-content: center; }
+}
+/* Знак в шапке бокового меню */
+.side-menu .close-row { display: flex; align-items: center; gap: .5rem; }
+.menu-brand { display: flex; align-items: center; gap: .5rem; }
+.menu-brand .kov-mark { width: 2.6rem; height: 1.95rem; flex: 0 0 auto; }
+.menu-brand span { font-weight: 700; font-size: 1.05rem; letter-spacing: .01em; }
+.avatar.clickable { cursor: zoom-in; }
+.avatar.clickable:hover { outline: .12rem solid var(--accent-soft); outline-offset: .1rem; }
+.checklist label.off { opacity: .6; }
+.checklist label.off:hover { background: transparent; cursor: default; }
+/* Фильтр по сотруднику раздувался по высоте: кнопка растягивалась внутри
+   своей обёртки. Высоту задаём явно — ровно как у поля ввода рядом. */
+.picker-wrap { min-height: 0; align-items: stretch; }
+.picker-wrap > .select.picker {
+  flex: 0 0 auto; height: 2.375rem; min-height: 2.375rem; max-height: 2.375rem;
+  padding-top: 0; padding-bottom: 0; line-height: 1.2;
+}
+.toolbar > .picker-wrap { align-self: center; }
+@media (max-width: 760px) {
+  /* фильтр по сотруднику не выше поля поиска */
+  .picker-wrap > .select.picker { height: 2.375rem; min-height: 2.375rem; max-height: 2.375rem; }
+}
+@media (max-width: 760px) {
+  .stage-dots { display: flex; gap: .3rem; flex-wrap: wrap; justify-content: center; }
+  .stage-dots .dot {
+    width: .45rem; height: .45rem; border-radius: 50%;
+    background: var(--card-border); transition: transform .15s ease;
+  }
+  .stage-dots .dot.done { background: var(--stage-done); }
+  .stage-dots .dot.on { background: var(--info); transform: scale(1.5); }
+}
+.chip.success { background: var(--success-soft); color: var(--success-text); }
+@media (prefers-reduced-motion: no-preference) {
+  .kov-mark.play .slide { animation-name: kov-slide; animation-duration: var(--dur, .85s); animation-delay: var(--d, 1.1s);
+    animation-fill-mode: backwards; animation-timing-function: cubic-bezier(.2,.62,.25,1); }
+}
+@keyframes kov-slide { from { transform: translateX(-242px); } }
+.modal { position: relative; }
+/* переключатель: ручка с пружинкой, галочка проявляется вместе с заливкой */
+.switch { position: relative; flex: 0 0 auto; width: 3.1rem; height: 1.7rem; cursor: pointer; }
+.switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.switch .track { position: absolute; inset: 0; border-radius: 1rem; background: var(--ghost-border);
+  transition: background .28s cubic-bezier(.65,0,.35,1), box-shadow .28s ease; }
+.switch .knob { position: absolute; top: .18rem; left: .18rem; width: 1.34rem; height: 1.34rem; border-radius: 50%;
+  background: var(--knob-bg); box-shadow: 0 .1rem .3rem rgba(0,0,0,.35);
+  transition: transform .32s cubic-bezier(.34,1.56,.64,1), width .18s ease; }
+.switch .knob svg { position: absolute; inset: .27rem; width: .8rem; height: .8rem; color: var(--success);
+  opacity: 0; transform: scale(.5); transition: opacity .2s ease .06s, transform .25s cubic-bezier(.34,1.56,.64,1) .06s; }
+.switch input:checked ~ .track { background: var(--success); }
+.switch input:checked ~ .knob { transform: translateX(1.4rem); }
+.switch input:checked ~ .knob svg { opacity: 1; transform: scale(1); }
+.switch input:focus-visible ~ .track { box-shadow: 0 0 0 .18rem var(--info-soft); }
+.switch input:active ~ .knob { width: 1.6rem; }
+.switch input:disabled ~ .track { background: var(--chip-bg); }
+.switch input:disabled ~ .knob { box-shadow: none; background: var(--ghost-border); }
+/* ── связь с сервером ───────────────────────────────────────────────────
+   Полоска висит поверх содержимого: разделы под ней не сдвигаются ни на
+   пиксель, поэтому появление ничего не ломает. */
+.link-bar {
+  position: fixed; top: calc(var(--top-bar-h) + .4rem); left: 50%; transform: translateX(-50%);
+  z-index: 40; display: inline-flex; align-items: center; gap: .45rem;
+  padding: .35rem .8rem; border-radius: 1rem; font-size: .78rem; font-weight: 600;
+  box-shadow: var(--card-shadow); pointer-events: none; max-width: min(92vw, 26rem);
+  animation: linkIn .28s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+.link-bar.down { background: var(--warning-soft); color: var(--warning-text); border: 1px solid var(--warning); }
+.link-bar.up { background: var(--success-soft); color: var(--success-text); border: 1px solid var(--success); }
+.link-bar svg { width: .9rem; height: .9rem; }
+.link-bar .dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--warning);
+  animation: linkPulse 1.1s ease-in-out infinite; }
+@keyframes linkIn { from { opacity: 0; transform: translate(-50%, -.5rem); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes linkPulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .link-bar, .link-bar .dot { animation: none; } }
+@media (max-width: 760px) { .link-bar { font-size: .72rem; padding: .3rem .65rem; top: calc(var(--top-bar-h) + .25rem); } }
+/* Мягкое появление новых строк и плиток при обновлении по сокету */
+.row-appear { animation: kovAppear .22s ease both; }
+@keyframes kovAppear { from { opacity: 0; transform: translateY(.25rem); } }
+@media (prefers-reduced-motion: reduce) {
+  .row-appear { animation: none; }
+}
+/* ── выделение строки на телефоне ──────────────────────────────────────
+   В карточной раскладке фон ячеек принудительно прозрачный, поэтому
+   выделение было не видно: подсвечиваем саму карточку. */
+@media (max-width: 760px) {
+  table.data.cards tr.row.selected { background: var(--info-soft); box-shadow: inset .25rem 0 0 var(--accent); }
+  table.data.cards tr.row.pressing { background: var(--chip-bg); transition: background .15s ease; }
+  table.data.cards tr.row { transition: background .2s ease; }
+}
+/* ── значки не схлопываются в гибких раскладках ─────────────────────────
+   Внутри flex-контейнера значок — обычный элемент и может быть сжат до
+   нуля, если окну не хватает высоты или ширины: так пропадал знак в зоне
+   переноса файлов при низком окне. Запрет на сжатие ничего не двигает,
+   но держит пропорции при любом соотношении сторон окна. */
+svg { flex: 0 0 auto; }
+/* Значку без своего размера задаём его от текста рядом: в метках и
+   подписях он раньше получал нулевую ширину и просто не появлялся */
+.chip svg, .empty svg, .small svg, .who svg { width: 1em; height: 1em; }
+.link-bar svg { flex: 0 0 auto; }
+@keyframes eqIn { from { opacity: 0; transform: translateY(.5rem); } to { opacity: 1; transform: none; } }
+/* ── Единое окно журнала ───────────────────────────────────────────────────
+   Одно окно на задачи, склад и оборудование: сверху разделы «Выдача» и
+   «Редактирование», рядом поиск по сотруднику. Раньше у каждого раздела был
+   свой вид журнала, и искать в них было нечем. */
+.jr-modal .modal-body { padding: 0; }
+.jr-box { display: flex; flex-direction: column; min-height: 0; }
+.jr-subtitle {
+  padding: .8rem 1.1rem .2rem; font-weight: 700; font-size: 1rem; color: var(--text-value);
+  overflow-wrap: anywhere;
+}
+.jr-head {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  padding: .7rem 1.1rem; border-bottom: 1px solid var(--card-border);
+}
+.jr-tabs { display: flex; gap: .3rem; flex: 0 0 auto; }
+.jr-tab {
+  display: inline-flex; align-items: center; gap: .35rem; cursor: pointer; font: inherit;
+  border: 1px solid transparent; background: transparent; color: var(--text-muted);
+  border-radius: var(--radius); padding: .38rem .7rem; font-size: .85rem; font-weight: 600;
+  transition: background .15s var(--anim), color .15s var(--anim), border-color .15s var(--anim);
+}
+.jr-tab:hover { background: var(--ghost-hover); color: var(--text-value); }
+.jr-tab.on { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
+.jr-tab-n {
+  font-size: .7rem; font-weight: 700; min-width: 1.1rem; text-align: center;
+  background: var(--chip-bg); color: var(--text-muted); border-radius: .5rem; padding: 0 .3rem;
+}
+.jr-tab.on .jr-tab-n { background: rgba(255, 255, 255, .22); color: #fff; }
+.jr-search-wrap { display: flex; align-items: center; gap: .4rem; flex: 1 1 10rem; min-width: 0; }
+.jr-search-wrap > svg { width: 1rem; height: 1rem; color: var(--text-label); flex: 0 0 auto; }
+.jr-search { flex: 1; min-width: 0; }
+.jr-count { font-size: .76rem; color: var(--text-muted); white-space: nowrap; }
+.jr-list {
+  display: flex; flex-direction: column; gap: .35rem;
+  padding: .7rem 1.1rem 1rem; max-height: min(28rem, 60vh); overflow: auto;
+  overscroll-behavior: contain;
+}
+.jr-row {
+  display: flex; gap: .6rem; align-items: flex-start; padding: .5rem .6rem;
+  background: var(--surface-2); border: 1px solid var(--card-border); border-radius: var(--radius);
+  animation: eqIn .25s var(--anim) both; animation-delay: calc(var(--jr-i, 0) * 18ms);
+}
+.jr-row .circ {
+  width: 1.9rem; height: 1.9rem; border-radius: 50%; flex: 0 0 auto;
+  display: grid; place-items: center; background: var(--chip-bg); color: var(--text-muted);
+}
+.jr-row .circ svg { width: .95rem; height: .95rem; }
+.jr-row.tone-ok .circ { background: var(--success-soft); color: var(--success-text); }
+.jr-row.tone-wait .circ { background: var(--warning-soft); color: var(--warning-text); }
+.jr-row.tone-bad .circ { background: var(--critical-soft); color: var(--critical-text); }
+.jr-row.tone-edit .circ { background: var(--info-soft); color: var(--info); }
+.jr-body { display: flex; flex-direction: column; gap: .1rem; min-width: 0; }
+.jr-body b { font-size: .88rem; color: var(--text-value); overflow-wrap: anywhere; }
+.jr-text { font-size: .82rem; color: var(--text-value); overflow-wrap: anywhere; }
+.jr-when { font-size: .74rem; color: var(--text-muted); }
+.jr-empty { padding: 1.6rem .6rem; text-align: center; color: var(--text-muted); font-size: .85rem; }
+@media (max-width: 700px) {
+  .jr-head { padding: .6rem .7rem; gap: .45rem; }
+  .jr-subtitle { padding: .7rem .7rem .1rem; }
+  .jr-list { padding: .6rem .7rem .8rem; max-height: 62vh; }
+  .jr-count { width: 100%; }
+  .jr-tabs { flex: 1 1 100%; }
+  .jr-tab { flex: 1; justify-content: center; }
+}
+@media (max-width: 760px) {
+  .segmented { flex-wrap: wrap; max-width: 100%; }
+  .segmented .btn { flex: 1 1 auto; justify-content: center; }
+}
+/* ── шторки снизу (телефон): выбор из списка и вложения ─────────────────── */
+.kov-sheet-root { position: fixed; inset: 0; z-index: 1200; }
+.kov-sheet-back { position: absolute; inset: 0; background: rgba(0, 0, 0, .42); opacity: 0; transition: opacity .2s; }
+.kov-sheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 86vh; display: flex; flex-direction: column;
+  background: var(--card-bg); border-radius: 18px 18px 0 0; box-shadow: 0 -8px 30px rgba(0, 0, 0, .25);
+  transform: translateY(100%); transition: transform .22s ease; padding-bottom: env(safe-area-inset-bottom, 0px); }
+.kov-sheet-root.open .kov-sheet-back { opacity: 1; }
+.kov-sheet-root.open .kov-sheet { transform: none; }
+.kov-sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--card-border); margin: 8px auto 2px; flex: 0 0 auto; }
+.kov-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; padding: .35rem .9rem .5rem; flex: 0 0 auto; }
+.kov-sheet-head b { font-size: 1.05rem; color: var(--text-value); }
+.kov-sheet-x { flex: 0 0 auto; width: 40px; height: 40px; border: 0; border-radius: 50%; display: grid; place-items: center;
+  background: var(--info-soft); color: var(--text-value); }
+.kov-sheet-x svg { width: 1.1rem; height: 1.1rem; }
+.option-search { margin: 0 .9rem .5rem; width: auto; }
+.option-list { overflow-y: auto; padding: 0 .5rem .8rem; }
+.option-row { width: 100%; min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  padding: .55rem .85rem; border: 0; border-radius: 12px; background: transparent; color: var(--text-value); font-size: 1rem; text-align: left; }
+.option-row.on { background: var(--info-soft); color: var(--accent); font-weight: 600; }
+.option-row svg { width: 1.2rem; height: 1.2rem; flex: 0 0 auto; }
+@media (prefers-reduced-motion: reduce) { .kov-sheet, .kov-sheet-back { transition: none; } }
+/* общая шторка снизу: поля фильтров и т. п. */
+.bottom-body { overflow-y: auto; padding: 0 .9rem 1rem; }
+.sheet-form { display: flex; flex-direction: column; gap: .75rem; }
+.sheet-form .select, .sheet-form .picker-wrap { width: 100%; }
+@keyframes eq-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* окно без кнопок внизу (закрывается крестиком) — пустая полоса не нужна */
+.modal-foot:empty { display: none; }
+/* режим письма: весь экран над клавиатурой — тексту */
+.kov-sheet-root.writer-root { position: fixed; left: 0; right: 0; top: 0; height: 100%; z-index: 3000; display: flex; flex-direction: column;
+  align-items: stretch; justify-content: flex-start; background: var(--card-bg); padding: 0; animation: none; }
+.writer-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex: 0 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + .5rem) .75rem .5rem; border-bottom: 1px solid var(--card-border); }
+.writer-cancel { border: 0; background: transparent; color: var(--accent); font: inherit; font-weight: 700; padding: .45rem .2rem; }
+.writer-title { font-size: 1rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.writer-area { flex: 1 1 auto; width: 100%; box-sizing: border-box; border: 0; outline: none; resize: none; margin: 0;
+  padding: .9rem 1rem; font: inherit; font-size: 1.05rem; line-height: 1.5; background: var(--card-bg); color: var(--text-value); }
+/* окна и шторки — над клавиатурой (переменные ставит ui.js по видимой части экрана) */
+.modal-root { padding-bottom: var(--kb, 0px); }
+.modal-root .modal { max-height: calc(var(--vvh, 100vh) - 1.5rem); }
+.kov-sheet-root .kov-sheet { max-height: calc(var(--vvh, 100vh) - .75rem); margin-bottom: var(--kb, 0px); }
+/* строка ввода над клавиатурой: текст поля, закрытого клавиатурой, — сверху поверх всего */
+.kb-lift { position: fixed; left: 8px; right: 8px; top: 6px; z-index: 5000; pointer-events: none; padding: .45rem .8rem .55rem;
+  border-radius: 12px; background: var(--card-bg); border: 1.5px solid var(--accent); box-shadow: 0 6px 22px rgba(0, 0, 0, .22); }
+.kb-lift[hidden] { display: none; }
+.kb-lift-label { font-size: .72rem; font-weight: 700; color: var(--text-label); text-transform: uppercase; letter-spacing: .04em; min-height: .2rem; }
+.kb-lift-line { display: flex; justify-content: flex-end; align-items: center; overflow: hidden; white-space: nowrap; font-size: 1.05rem; color: var(--text-value); min-height: 1.5rem; }
+.kb-lift-line .kb-lift-text { flex: 0 0 auto; }
+.kb-lift-line:has(.kb-lift-text:empty) { justify-content: flex-start; }
+.kb-lift-caret { display: inline-block; width: 2px; height: 1.2rem; margin-left: 1px; background: var(--accent); animation: kb-blink 1s steps(1) infinite; flex: 0 0 auto; }
+@keyframes kb-blink { 50% { opacity: 0; } }
+/* CSV: «Выбрать файл» и «Импортировать» — одной строкой */
+.csv-actions { display: flex; gap: .5rem; justify-content: flex-end; flex-wrap: nowrap; }
+@media (max-width: 760px) { .csv-actions > .btn { flex: 1 1 0; min-width: 0; justify-content: center; } }
+/* выбор с поиском на телефоне — отдельная шторка: поиск сверху, список прокручивается */
+.picker-sheet-root .kov-sheet { height: calc(var(--vvh, 100vh) - 3.5rem); display: flex; flex-direction: column; }
+.picker-sheet { display: flex; flex-direction: column; gap: .5rem; flex: 1 1 auto; min-height: 0; }
+.picker-sheet .picker-search { flex: 0 0 auto; }
+.picker-sheet .picker-list { flex: 1 1 auto; min-height: 0; max-height: none !important; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 12px; }
+/* серая полоска меню: зона захвата шире самой полоски — тянуть вниз удобно пальцем */
+.kov-sheet-handle { position: relative; touch-action: none; }
+.kov-sheet-handle::before { content: ""; position: absolute; left: -70px; right: -70px; top: -14px; bottom: -14px; }
+.kov-sheet-head { touch-action: none; }
+/* кнопки внизу меню фильтров; задачи проекта без доступа — приглушены */
+.sheet-buttons { display: flex; gap: .5rem; justify-content: flex-end; margin-top: .75rem; }
+/* завершённый проект — только просмотр: пояснение над разделом */
+html.kov-readonly .content > .section::before { content: var(--ro-text); display: block; margin: 0 0 .6rem; padding: .55rem .8rem;
+  border-radius: .6rem; background: var(--warning-soft); color: var(--warning-text); font-size: .9rem; }
+@media (min-width: 761px) {
+  /* поиск в строке фильтров не сжимается до значка: строка переносится (крупный масштаб браузера) */
+  .toolbar > .search { min-width: min(12rem, 100%); }
+}

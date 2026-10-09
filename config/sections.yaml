@@ -1,0 +1,46 @@
+# ===== разделы тестирования =====
+sections:
+  - {key: auth, module: auth, title: "Вход, выход, сброс пароля", weight: 4}
+  - {key: shell, module: shell, title: "Оболочка, меню, навигация", weight: 3}
+  - {key: permissions, module: permissions, title: "Права всех ролей (сервер)", weight: 8, exclusive: true}
+  - {key: files, module: files, title: "Файлы: доступ, превью, скачивание", weight: 8}
+  - {key: device, module: device, title: "Обработка на устройстве и просмотр документов", weight: 8}
+  - {key: network, module: network, title: "Обрыв сети при отправке больших файлов", weight: 14}
+  - {key: ui_rights, module: ui_rights, title: "Кнопки интерфейса по ролям", weight: 9}
+  - {key: tasks, module: tasks, title: "Задачи и форма задачи", weight: 4}
+  - {key: task_view, module: task_view, title: "Окно задачи, этапы, файлы", weight: 3}
+  - {key: projects, module: projects, title: "Проекты", weight: 4}
+  - {key: projects_archive, module: projects_archive, title: "Проекты: завершение, архив, только чтение, доступ к этапам", weight: 3}
+  - {key: warehouse, module: warehouse, title: "Склад проекта", weight: 2, exclusive: true}
+  - {key: equipment, module: equipment, title: "Оборудование", weight: 3}
+  - {key: organizations, module: organizations, title: "Организации", weight: 3}
+  - {key: employees, module: employees, title: "Работники и профиль", weight: 3}
+  - {key: notifications, module: notifications, title: "Уведомления", weight: 2}
+  - {key: messenger, module: messenger, title: "Мессенджер", weight: 4}
+  - {key: settings, module: settings, title: "Настройки и темы", weight: 2}
+  - {key: csv, module: csv_io, title: "Файлы CSV", weight: 1}
+  - {key: push, module: push, title: "Системные уведомления (push)", weight: 3, targets: [web]}
+  - {key: realtime, module: realtime, title: "Два пользователя одновременно", weight: 5}
+  - {key: visual, module: visual, title: "Вёрстка всех разделов", weight: 40}
+  - {key: storage, module: storage, title: "Сжатие таблиц и резервные копии", weight: 3, exclusive: true, targets: [web]}
+  - {key: load, module: load, title: "Нагрузка по ступеням: от LOAD_USERS человек до LOAD_USERS_MIN", weight: 6, exclusive: true, manual: true, targets: [web]}
+  - {key: compression, module: compression, title: "Качество сжатия: браузеры, телефон, сервер и ПК дают одинаковый результат", weight: 6, exclusive: true, manual: true, targets: [web, apk, device]}
+  # ===== только Android на ПК (run.cmd android-pc, прежнее run.cmd mobile) =====
+  - {key: apk_shell, module: apk_shell, title: "Приложение: надстройка, «Назад», загрузки, сеанс", weight: 3, targets: [apk]}
+  - {key: apk_push, module: apk_push, title: "Приложение: уведомления по своему каналу", weight: 4, targets: [apk]}
+  - {key: apk_offline, module: apk_offline, title: "Приложение: работа без связи", weight: 2, targets: [apk]}
+  - {key: apk_fallbacks, module: apk_fallbacks, title: "Приложение: запасные пути (HTTP, HEIC, видео)", weight: 2, targets: [apk]}
+  - {key: apk_sim, module: apk_sim, title: "Приложение в симуляторе телефона", weight: 3, targets: [apk]}
+  - {key: apk_visual, module: apk_visual, title: "Экраны приложения против сайта", weight: 30, targets: [apk]}
+  # ===== настоящий Android: эмулятор или телефон (run.cmd android-device, прежнее run.cmd device; docs/DEVICE.md) =====
+  - {key: device_check, module: device_check, title: "Устройство: подключение, запуск, связь с сервером", weight: 1, targets: [device]}
+  - {key: device_app, module: device_app, title: "Устройство: вход, разделы на экране, «Назад», поворот", weight: 4, targets: [device]}
+  - {key: device_push, module: device_push, title: "Устройство: разрешение, канал, шторка, переход по уведомлению", weight: 4, targets: [device]}
+  - {key: device_offline, module: device_offline, title: "Устройство: сервер пропал и вернулся", weight: 2, targets: [device]}
+  - {key: device_rights, module: device_rights, title: "Устройство: меню каждой роли как на сайте", weight: 4, targets: [device]}
+  - {key: device_tasks, module: device_tasks, title: "Устройство: задачи — создание, карточка, этапы, правка, удаление", weight: 3, targets: [device]}
+  - {key: device_projects, module: device_projects, title: "Устройство: проекты — создание, правка, разделы, удаление", weight: 3, targets: [device]}
+  - {key: device_live, module: device_live, title: "Устройство: реальное время — второй участник видит действия телефона сразу", weight: 3, targets: [device]}
+  - {key: device_upload, module: device_upload, title: "Устройство: большой файл, обрыв связи, «Отменить»", weight: 4, targets: [device]}
+  - {key: device_chat, module: device_chat, title: "Устройство: чат — выбор, часть группы, кружок, пересылка, удаление, шапка, просмотр", weight: 3, targets: [device]}
+  - {key: device_final, module: device_final, title: "Устройство: итог — приложение не падало", weight: 1, targets: [device]}

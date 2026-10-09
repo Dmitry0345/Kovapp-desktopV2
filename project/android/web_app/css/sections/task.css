@@ -1,0 +1,401 @@
+/* Задача: окно задачи, этапы, участники и ответственные, форма задачи, заявка на завершение. */
+
+/* ── окно задачи (шаг 4) ───────────────────────────────────────────────── */
+.task-layout { display: grid; grid-template-columns: minmax(18rem, 2fr) 3fr; gap: .75rem; align-items: start; }
+.stage-nav { display: flex; flex-wrap: wrap; gap: .4rem; }
+.stage-nav .btn { flex-direction: column; gap: .1rem; line-height: 1.15; padding: .4rem .8rem; }
+.stage-nav .btn .dep { font-weight: 400; font-size: .72rem; opacity: .85; }
+.stage-nav .btn.done:not(.on) { border-color: var(--stage-done); color: var(--stage-done-border); background: var(--success-soft); }
+.stage-nav .btn.on { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
+.desc-view { white-space: pre-wrap; word-break: break-word; line-height: 1.45; }
+.desc-view a { color: var(--info); }
+.span-author { border-bottom: 2px solid var(--mark, var(--accent-soft)); }
+.progress-line { height: .6rem; border-radius: .4rem; background: var(--chip-bg); overflow: hidden; }
+.progress-line .fill { height: 100%; background: var(--stage-done); }
+@media (max-width: 960px) {
+  .task-layout { grid-template-columns: 1fr; }
+}
+/* Кнопки этапов — как в десктопе: рамка, две строки, отдел в скобках */
+.stage-nav .btn { background: var(--card-bg); border: 1px solid var(--accent-soft); color: var(--accent); border-radius: .5rem; min-width: 8rem; }
+.stage-nav .btn .dep { color: var(--text-label); }
+.stage-nav .btn:hover { background: var(--chip-bg); }
+.stage-nav .btn.on { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
+.stage-nav .btn.on .dep { color: rgba(255,255,255,.85); }
+/* Этапы отдельной строкой над прогрессом и файлами */
+.stages-row { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: .8rem 1rem; display: flex; flex-direction: column; gap: .6rem; }
+/* 4. Правая колонка тянется до нижней строки действий */
+.task-layout.stretch { align-items: stretch; }
+.task-layout.stretch > div, .task-layout.stretch > .info-card { min-height: 100%; }
+.desc-area { min-height: 12rem; display: flex; flex-direction: column; }
+.desc-area .desc-view { min-height: 9rem; }
+.desc-area .textarea { flex: 1; }
+.stages-row { padding: .7rem 1rem; }
+.stage-actions { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: .6rem .9rem; gap: .6rem; }
+.stage-actions .small.muted { font-size: .85rem; }
+/* 3. Окно задачи: зоны фиксированы заранее, страница не прокручивается,
+      нижняя строка действий всегда на экране */
+.section.task-section { height: 100%; min-height: 0; }
+.section.task-section > * { flex: 0 0 auto; }
+.section.task-section > .task-layout { flex: 1 1 auto; min-height: 0; grid-template-rows: minmax(0, 1fr); }
+.stages-row .stage-nav { justify-content: center; }
+/* список этапов по центру */
+.stages-row .stages-hint { text-align: center; color: var(--text-muted); font-size: .72rem; }
+.task-col { display: flex; flex-direction: column; gap: .75rem; min-height: 0; }
+.task-col.left, .task-col.right { overflow: auto; padding-right: .2rem; }
+.task-col.left > .grow { flex: 1 0 auto; min-height: 7rem; }
+/* зона = карточка с обозначенной рамкой рабочей области */
+.zone { min-height: 0; }
+.zone > .caption { flex: 0 0 auto; }
+.zone-body {
+  flex: 1 1 auto; min-height: 0; overflow: auto;
+  border: .11rem dashed var(--ghost-border); border-radius: var(--radius);
+  background: var(--surface-3); padding: .6rem;
+}
+.zone-body:empty::before { content: attr(data-hint); color: var(--text-muted); font-size: .8rem; }
+.zone-foot { display: flex; flex-direction: column; gap: .4rem; flex: 0 0 auto; }
+.zone-foot .row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.zone.work-zone { flex: 1 1 auto; min-height: 20rem; }
+.zone-holder { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: .5rem; }
+.desc-input { height: 100%; min-height: 8rem; resize: none; }
+/* зона файлов: строка поиска и кнопка «Добавить файлы» на месте, листаются плитки */
+.zone-body.fit { overflow: hidden; display: flex; padding: .5rem; }
+.zone-body.fit > .file-block { flex: 1 1 auto; min-height: 0; }
+.zone-body.fit > .file-block > .file-grid { flex: 1 1 auto; min-height: 0; overflow: auto; align-content: start; padding-right: .2rem; }
+.zone-body.fit > .empty { flex: 1 1 auto; display: grid; place-items: center; }
+.stage-actions { flex-wrap: wrap; }
+.stage-actions .stage-status { flex: 0 1 auto; }
+/* телефон и узкие экраны: одна колонка, обычная прокрутка страницы */
+@media (max-width: 960px) {
+  .section.task-section { height: auto; min-height: 100%; }
+  .section.task-section > .task-layout { grid-template-rows: none; }
+  .task-col.left, .task-col.right { overflow: visible; padding-right: 0; }
+  .zone-body, .zone-body.fit, .zone-body.fit > .file-block > .file-grid { overflow: visible; }
+  .zone.work-zone { min-height: 0; }
+  .desc-input { height: auto; min-height: 10rem; }
+}
+/* Выбранный этап — такой же полупрозрачный, как завершённый, только синий */
+.stage-nav .btn.on {
+  background: var(--info-soft); border-color: var(--info); color: var(--info);
+}
+.stage-nav .btn.on .dep { color: var(--info); opacity: .75; }
+.stage-nav .btn.done.on { background: var(--info-soft); border-color: var(--info); color: var(--info); }
+/* Участники задачи и этапа: список строго заданной высоты (--rows строк),
+   лишние карточки прячутся, вместо них чип «+N» открывает полный состав. */
+.chips.clamped {
+  --row-h: 2.3rem;
+  position: relative; overflow: hidden; align-content: flex-start;
+  height: calc(var(--rows, 2) * var(--row-h) + (var(--rows, 2) - 1) * .35rem);
+}
+.chips.clamped .chip.person, .chips.clamped .chip.more { height: var(--row-h); }
+.chips.clamped .chip.person { max-width: 100%; }
+.chips.clamped .chip.person .person-name {
+  max-width: 11rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.people-card .btn-row { margin-top: .15rem; }
+.people-card .btn-row .btn { width: 100%; justify-content: center; }
+.zone-foot .row.stage-people { align-items: flex-start; }
+.zone-foot .row.stage-people .chips.clamped { flex: 1 1 12rem; min-width: 0; }
+/* Окно «Показать всех участников» */
+.people-list { display: flex; flex-direction: column; gap: .1rem; max-height: 26rem; overflow: auto; }
+.people-group {
+  display: flex; align-items: center; gap: .5rem; padding: .6rem .45rem .3rem;
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-label); position: sticky; top: 0; background: var(--card-bg); z-index: 1;
+}
+.people-row { display: flex; align-items: center; gap: .6rem; padding: .4rem .45rem; border-radius: var(--radius); cursor: pointer; }
+.people-row:hover { background: var(--chip-bg); }
+.people-row .avatar { width: 2.2rem; height: 2.2rem; font-size: .78rem; flex: 0 0 auto; }
+.people-row .who { display: flex; flex-direction: column; min-width: 0; }
+.people-row .who b { font-weight: 600; font-size: .88rem; }
+.people-row .who span { color: var(--text-label); font-size: .75rem; }
+@media (max-width: 760px) {
+  .chips.clamped .chip.person .person-name { max-width: 9rem; }
+  .people-list { max-height: 60vh; }
+}
+/* Описание этапа: под прозрачным полем ввода лежит зеркало с подсветкой
+   авторства. Метрики обоих слоёв обязаны совпадать до пикселя. */
+.desc-editor { position: relative; flex: 1 1 auto; min-height: 8rem; display: flex; }
+.desc-editor > .desc-mirror,
+.desc-editor > .desc-input {
+  margin: 0; width: 100%; height: 100%;
+  font: inherit; font-family: var(--font); font-size: .875rem; line-height: 1.45;
+  letter-spacing: normal; padding: .55rem .7rem;
+  border: 1px solid var(--field-border); border-radius: var(--radius);
+  white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; tab-size: 4;
+}
+.desc-editor > .desc-mirror {
+  position: absolute; inset: 0; overflow: hidden; color: transparent;
+  border-color: transparent; background: transparent; user-select: none; pointer-events: none;
+}
+.desc-editor > .desc-input {
+  position: relative; background: transparent; resize: none; overflow: auto; min-height: 0;
+}
+.desc-editor > .desc-input::placeholder { color: var(--text-muted); }
+.desc-mirror .span-author { border-bottom: 2px solid var(--mark, var(--accent-soft)); }
+.author-tip {
+  position: absolute; z-index: 5; pointer-events: none;
+  background: var(--header-bottom); color: #fff; font-size: .72rem;
+  padding: .2rem .5rem; border-radius: .35rem; box-shadow: var(--shadow); white-space: nowrap;
+}
+.chip.save-state.info { background: var(--info-soft); color: var(--info); }
+.chip.save-state.success { background: var(--success-soft); color: var(--success-text); }
+.chip.save-state.warning { background: var(--warning-soft); color: var(--warning-text); }
+.zone-foot .authors-legend { max-height: 4.2rem; overflow: auto; }
+/* Этапы задачи — единая лента: фон и обводку рисует один SVG, кнопки поверх
+   него прозрачные и отвечают только за текст и нажатия. */
+.stages-row { background: transparent; border: 0; padding: 0; }
+.stage-strip { display: flex; justify-content: center; overflow-x: auto; overflow-y: hidden; padding: .2rem .1rem; }
+.stage-shape-box { position: relative; display: inline-block; flex: 0 0 auto; }
+.stage-shape { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.stage-shape .stage-outline { fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.stage-strip .stage-nav { position: relative; flex-wrap: nowrap; gap: 0; align-items: stretch; }
+/* Кнопки поверх фигуры полностью прозрачные. Перечисление состояний нужно:
+   у старых правил вроде .stage-nav .btn.done:not(.on) вес выше, и их фон
+   перекрывал нарисованную ленту. */
+.stage-strip .stage-nav .btn,
+.stage-strip .stage-nav .btn:hover,
+.stage-strip .stage-nav .btn.on,
+.stage-strip .stage-nav .btn.done,
+.stage-strip .stage-nav .btn.done.on,
+.stage-strip .stage-nav .btn.done:not(.on) {
+  background: transparent; border: 0; border-radius: 0; box-shadow: none;
+  flex: 0 0 auto; min-width: 9.5rem; padding: .5rem 1.8rem; justify-content: center;
+}
+.stage-strip .stage-nav .btn.done:not(.on) { color: var(--stage-done-border); }
+.stage-strip .stage-nav .btn.done:not(.on) .dep { color: var(--stage-done-border); opacity: .7; }
+.stage-strip .stage-nav .btn.on { color: var(--info); }
+.stage-strip .stage-nav .btn.on .dep { color: var(--info); opacity: .75; }
+@media (max-width: 760px) {
+  .stage-strip .stage-nav .btn { min-width: 7.5rem; padding: .45rem 1.1rem; }
+}
+/* Описание этапа занимает всю доступную высоту */
+.zone-holder > .zone-body { flex: 1 1 auto; min-height: 0; display: flex; }
+.zone-holder > .zone-body > .desc-editor,
+.zone-holder > .zone-body > .desc-view { flex: 1 1 auto; min-height: 0; }
+.zone-holder > .zone-body > .desc-view { overflow: auto; }
+.desc-editor { min-height: 0; }
+/* Всё внутри этого блока применяется только к узким экранам —
+   вид на компьютере не меняется. */
+.task-tabs { display: none; }
+@media (max-width: 760px) {
+  /* ── детали задачи: две колонки заменены вкладками ─────────────────── */
+  .task-tabs { display: flex; }
+  /* ширина кнопок — по общему правилу .segmented на телефоне */
+  .task-tabs .btn { justify-content: center; }
+  .task-layout.stretch { display: block; min-height: 0; }
+  .task-layout.show-work > .task-col.left { display: none; }
+  .task-layout.show-info > .task-col.right { display: none; }
+  .task-layout .zone { min-height: calc(100vh - 17rem); }
+  .stage-actions { position: sticky; bottom: 0; z-index: 5;
+    background: var(--page-bg); padding-top: .4rem; flex-wrap: wrap; }
+  .stage-actions .btn { flex: 1 1 9rem; justify-content: center; }
+  .stage-strip { justify-content: flex-start; scroll-padding-inline: 1rem; }
+  .zone-body.fit { min-height: 55vh; }
+  .zone > .caption { flex-wrap: wrap; }
+}
+@media (max-width: 760px) {
+  /* ── детали задачи на телефоне: всё компактнее ───────────────────────── */
+  .content > .section:has(.task-layout) { font-size: .92rem; }
+  .stage-strip .stage-nav .btn { min-width: 6.4rem; padding: .35rem .9rem; font-size: .8rem; }
+  .stage-strip .stage-nav .btn .dep { font-size: .68rem; }
+  .stage-strip { padding: .1rem 0; }
+  .task-tabs .btn { padding: .4rem .6rem; font-size: .82rem; }
+  .task-layout .info-card { padding: .55rem .65rem; gap: .35rem; }
+  .task-layout .info-card .caption { font-size: .68rem; }
+  .task-layout .info-card .row { font-size: .82rem; }
+  .task-layout .chips.clamped { --row-h: 2rem; }
+  .task-layout .chips.clamped .chip.person .person-name { max-width: 7.5rem; font-size: .78rem; }
+  .task-layout .avatar { width: 1.5rem; height: 1.5rem; font-size: .6rem; }
+  .zone > .caption { font-size: .7rem; padding: .35rem .5rem; }
+  /* Три вкладки не влезали в строку — переносим, а не режем по краю */
+  .zone .segmented { gap: .2rem; flex-wrap: wrap; }
+  .zone .segmented .btn { flex: 1 1 8rem; justify-content: center; }
+  .zone .segmented .btn { padding: .35rem .55rem; font-size: .78rem; }
+  .zone .segmented .btn svg { width: .95rem; height: .95rem; }
+  .zone-holder { padding: .45rem; gap: .4rem; }
+  .zone-foot { padding: .3rem .45rem; font-size: .75rem; }
+  .stage-actions .btn { padding: .45rem .7rem; font-size: .82rem; }
+  .task-layout .btn { padding: .4rem .7rem; font-size: .82rem; }
+}
+/* ── переключатель этапов для телефона ────────────────────────────────
+   На компьютере он скрыт, лента остаётся прежней. */
+.stage-mobile-wrap { display: none; }
+@media (max-width: 760px) {
+  .stages-row > .stage-strip { display: none; }
+  .stage-mobile-wrap { display: flex; flex-direction: column; align-items: center; gap: .35rem; }
+  .stage-mobile {
+    display: flex; align-items: center; gap: .3rem; width: 100%;
+    background: var(--card-bg); border: 1px solid var(--accent-soft);
+    border-radius: 999px; padding: .2rem .3rem;
+  }
+  .stage-mobile > .btn { flex: 0 0 auto; border: 0; background: transparent; padding: .35rem .45rem; }
+  .stage-mobile > .btn:disabled { opacity: .3; }
+  .stage-pick {
+    flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; align-items: center;
+    gap: .05rem; border: 0; background: transparent; cursor: pointer; padding: .15rem .3rem;
+    border-radius: 999px;
+  }
+  .stage-pick:hover { background: var(--chip-bg); }
+  .stage-pick .n { font-weight: 700; font-size: .88rem; color: var(--info); }
+  .stage-pick .dep { font-size: .72rem; color: var(--text-label);
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+/* Список этапов из переключателя */
+.stage-list { display: flex; flex-direction: column; gap: .25rem; max-height: 60vh; overflow: auto; }
+.stage-row { display: flex; align-items: center; gap: .6rem; padding: .5rem .6rem; cursor: pointer;
+  border: 1px solid var(--card-border); border-radius: var(--radius); background: var(--card-bg); text-align: left; }
+.stage-row:hover { background: var(--chip-bg); }
+.stage-row.on { border-color: var(--info); background: var(--info-soft); }
+.stage-row .num { flex: 0 0 auto; width: 1.8rem; height: 1.8rem; border-radius: 50%;
+  display: grid; place-items: center; background: var(--chip-bg); font-weight: 700; font-size: .8rem; }
+.stage-row .who { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.stage-row .who b { font-size: .86rem; }
+.stage-row .who span { font-size: .74rem; color: var(--text-label); }
+@media (pointer: coarse) {
+  .stage-pick { min-height: 40px !important; }
+  /* список участников фиксированной высоты: строка растёт вместе с чипом, иначе «+N» обрезается снизу */
+  .chips.clamped, .task-layout .chips.clamped { --row-h: 40px; }
+}
+/* ── Выбор ответственных за этап ───────────────────────────────────────────
+   Обычный выпадающий список не годится: выбрать можно нескольких, и важно
+   сразу видеть, кто руководитель. Поэтому карточки с отметкой. */
+.lead-picker { display: flex; flex-direction: column; gap: .5rem; }
+.lead-hint { font-size: .8rem; color: var(--text-muted); }
+.lead-hint.is-warn { color: var(--warning-text); font-weight: 600; }
+.lead-list { display: flex; flex-direction: column; gap: .35rem; max-height: 17rem; overflow: auto; }
+.lead-row {
+  display: flex; align-items: center; gap: .55rem; width: 100%; text-align: left;
+  background: var(--surface-2); border: 1px solid var(--card-border);
+  border-radius: var(--radius); padding: .4rem .55rem; cursor: pointer; font: inherit;
+  color: var(--text-value); transition: background .15s var(--anim), border-color .15s var(--anim);
+}
+.lead-row:hover { background: var(--ghost-hover); }
+.lead-who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .05rem; }
+.lead-who b { font-size: .87rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Кнопка правки состава — вровень с ростом кружка участника: прежняя
+   была вдвое ниже и терялась рядом с ними */
+/* Всё в одну строку: подпись, кружки участников и кнопка. Кружки при
+   нехватке места ужимаются сами, кнопка не переносится под них */
+.row.stage-people { display: flex; align-items: center; gap: .45rem; flex-wrap: nowrap; }
+.row.stage-people > .small.muted { flex: 0 0 auto; white-space: nowrap; }
+.row.stage-people > .row { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+.row.stage-people .btn.roster-btn { min-height: 2.1rem; padding: .3rem .7rem; margin-left: auto; flex: 0 0 auto; }
+.stage-people .btn.roster-btn svg { width: 1rem; height: 1rem; }
+/* Выбранный участник: галочка в кружке и мягкая подложка вместо сплошной
+   заливки — на ней не читались ни имя, ни должность */
+.lead-row.is-on {
+  border-color: var(--accent); background: var(--surface-2);
+  box-shadow: inset .18rem 0 0 var(--accent);
+}
+.lead-row.is-on .lead-who b { color: var(--accent); }
+.lead-mark {
+  flex: 0 0 auto; width: 1.35rem; height: 1.35rem; border-radius: 50%;
+  border: 1px solid var(--card-border); background: var(--card-bg);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--text-label); transition: background .15s var(--anim), color .15s var(--anim), border-color .15s var(--anim);
+}
+.lead-row.is-on .lead-mark { background: var(--accent-fill); border-color: var(--accent-fill); color: #fff; }
+.lead-mark svg { width: .8rem; height: .8rem; }
+@media (max-width: 700px) {
+  /* Место в строке есть — кнопка встаёт рядом с числом участников,
+     а не переносится под них */
+  .row.stage-people { gap: .35rem; }
+  .row.stage-people .btn.roster-btn { padding: .3rem .55rem; }
+  /* узкий экран: подпись и «Изменить» — первой строкой, люди — второй, во всю ширину
+     (в одну строку рядом с ними не помещался ни один человек, только «+N») */
+  .zone-foot .row.stage-people { flex-wrap: wrap; }
+  .zone-foot .row.stage-people .chips.clamped { flex: 1 1 100%; order: 2; }
+}
+/* ── Заявка на завершение задачи ───────────────────────────────────────────
+   Полоса над этапами: её видят все, кто открыл задачу, а директору она даёт
+   кнопки решения не выходя из задачи — материалы у него перед глазами. */
+.completion-bar {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  background: var(--warning-soft); border: 1px solid var(--warning);
+  border-radius: var(--radius-lg); padding: .6rem .8rem; margin-bottom: .6rem;
+  animation: eqIn .3s var(--anim) both;
+}
+.completion-bar > svg { width: 1.2rem; height: 1.2rem; color: var(--warning-text); flex: 0 0 auto; }
+.completion-text { display: flex; flex-direction: column; gap: .1rem; flex: 1; min-width: 0; }
+.completion-text b { color: var(--text-value); }
+.completion-actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+.completion-bar.is-mine { border-color: var(--info); background: var(--info-soft); }
+.completion-bar.is-mine > svg { color: var(--info); }
+@media (max-width: 700px) {
+  .completion-bar { padding: .55rem .65rem; }
+  .completion-actions { width: 100%; }
+  .completion-actions .btn { flex: 1; }
+}
+/* задача на телефоне: короткая карточка сверху, вкладки «Этап · Файлы · Люди · История» внизу */
+.tv-head { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: .7rem .85rem; margin: .5rem 0;
+  cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.tv-head-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .6rem; }
+.tv-title { font-weight: 800; font-size: 1.02rem; color: var(--text-value); min-width: 0; overflow-wrap: anywhere; }
+.tv-head-top .deadline { flex: 0 0 auto; }
+.tv-sub { margin-top: .2rem; font-size: .82rem; color: var(--text-label); }
+.tv-prog { display: flex; align-items: center; gap: .5rem; margin-top: .45rem; }
+.tv-chev { margin-left: auto; display: grid; place-items: center; color: var(--text-label); transition: transform .2s; }
+.tv-chev svg { width: 1rem; height: 1rem; }
+.tv-head.open .tv-chev { transform: rotate(180deg); }
+.tv-more { margin-top: .6rem; display: flex; flex-direction: column; gap: .5rem; cursor: default; animation: eq-in .2s ease both; }
+.tv-more .info-card { margin: 0; }
+.tv-pane { display: flex; flex-direction: column; gap: .5rem; min-height: 0; }
+.tv-pane[hidden] { display: none; }
+.tv-switch { display: flex; gap: .3rem; background: var(--info-soft); border-radius: 10px; padding: 3px; }
+.tv-switch[hidden] { display: none; }
+.tv-sw { flex: 1 1 0; min-width: 0; border: 0; border-radius: 8px; padding: .45rem .4rem; background: transparent; color: var(--text-label);
+  font: inherit; font-size: .85rem; font-weight: 600; white-space: nowrap; }
+.tv-sw.on { background: var(--card-bg); color: var(--accent); box-shadow: 0 1px 3px rgba(0, 0, 0, .12); }
+.task-v .tv-proxied { display: none; }
+.tv-tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; background: var(--card-bg);
+  border-top: 1px solid var(--card-border); padding-bottom: env(safe-area-inset-bottom, 0px); box-shadow: 0 -2px 10px rgba(0, 0, 0, .06); }
+.task-v { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important; }
+.tv-tab { flex: 1 1 0; min-width: 0; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: .15rem; border: 0; background: transparent; color: var(--text-label); font: inherit; font-size: .72rem; -webkit-tap-highlight-color: transparent; }
+.tv-tab svg { width: 1.35rem; height: 1.35rem; }
+.tv-tab.on { color: var(--accent); font-weight: 700; }
+.tv-fab-unused { position: fixed; right: 16px; bottom: calc(env(safe-area-inset-bottom, 0px) + 72px); z-index: 6; width: 56px; height: 56px;
+  border-radius: 50%; border: 0; background: var(--accent-fill); color: #fff; display: grid; place-items: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .28); animation: eq-in .2s ease both; }
+.tv-fab svg { width: 1.6rem; height: 1.6rem; }
+.tv-fab[hidden] { display: none; }
+.task-v .work-zone > .caption { display: none; }
+/* этап на телефоне: состояние сверху, описание во всё свободное место, «Завершить этап» внизу */
+.task-v .stage-pane:not([hidden]) { display: flex; flex-direction: column; gap: .5rem; }
+.task-v .stage-pane .work-zone { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; margin: 0; }
+.task-v .stage-pane .zone-holder { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.task-v .stage-pane .zone-body { flex: 1 1 auto; display: flex; flex-direction: column; min-height: 0; }
+.task-v .stage-pane .desc-editor { flex: 1 1 auto; min-height: 9rem; display: flex; flex-direction: column; }
+.task-v .stage-pane .desc-editor .desc-input { flex: 1 1 auto; height: auto !important; min-height: 9rem; }
+.task-v .stage-pane .desc-view { flex: 1 1 auto; min-height: 6rem; }
+.task-v .stage-status { display: flex; align-items: center; gap: .45rem; padding: .15rem .3rem; font-size: .85rem; font-weight: 600; color: var(--text-value); }
+.task-v .stage-status::before { content: ''; width: .55rem; height: .55rem; border-radius: 50%; background: #2e7d32; flex: 0 0 auto; }
+.task-v .stage-status[hidden] { display: none; }
+.task-v .zone-foot { display: flex; flex-direction: column; gap: .45rem; margin-top: .55rem; }
+.task-v .stage-people { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .5rem; }
+.task-v .stage-people > .small.muted { flex: 1 1 auto; text-transform: uppercase; font-size: .7rem; letter-spacing: .06em; font-weight: 700; }
+.task-v .stage-people .roster-btn { padding: .2rem .45rem; min-height: 0; border: 0; background: transparent; color: var(--accent); font-weight: 700; }
+.task-v .stage-people > :not(.small):not(.roster-btn) { order: 1; flex: 1 1 100%; }
+.task-v .stage-actions:not([hidden]) { display: flex; flex-direction: column; align-items: stretch; gap: .5rem; padding: 0; border: 0; background: transparent; box-shadow: none; }
+.task-v .stage-actions > .spacer, .task-v .stage-actions > .stage-status { display: none; }
+.task-v .stage-actions .btn-row { display: flex; gap: .5rem; width: 100%; }
+.task-v .stage-actions .btn-row:empty { display: none; }
+.task-v .stage-actions .btn-row > .btn { flex: 1 1 auto; justify-content: center; min-height: 46px; }
+.task-v .stage-actions button[title="Кто и когда менял задачу"] { display: none; }
+/* этап на телефоне: одна рамка у поля описания, без пунктира и двойных отступов — тексту больше места */
+.task-v .stage-pane .work-zone { padding: .55rem; }
+.task-v .stage-pane .zone-holder, .task-v .stage-pane .zone-body, .task-v .stage-pane .desc-editor {
+  border: 0 !important; padding: 0 !important; margin: 0 !important; background: transparent !important; box-shadow: none !important; }
+.task-v .stage-pane .zone-foot { margin-top: .5rem; padding: 0 .15rem; }
+.task-v .stage-people > .small.muted { flex: 1 1 0; min-width: 0; }
+.task-v .stage-people .roster-btn { flex: 0 0 auto; }
+/* ── тёмная тема: контраст ─────────────────────────────────────────────── */
+/* завершённый этап на полосе этапов — светлый зелёный (было 2,8:1) */
+:root[data-theme="dark"] .stage-strip .stage-nav .btn.done:not(.on),
+:root[data-theme="dark"] .stage-strip .stage-nav .btn.done:not(.on) .dep { color: var(--success); }
+/* ── светлая тема: детали задачи — этапы на полосе (согласовано 06.10.2026) ──
+   Цвета светлой темы — общие, в theme.css; здесь только полная яркость подписей этапов. */
+:root:not([data-theme="dark"]) .task-section .stage-nav .btn .dep { opacity: 1; }
+:root:not([data-theme="dark"]) .task-section .stage-strip .stage-nav .btn.done:not(.on),
+:root:not([data-theme="dark"]) .task-section .stage-strip .stage-nav .btn.done:not(.on) .dep { color: var(--success-text); opacity: 1; }
+:root:not([data-theme="dark"]) .task-section .stage-strip .stage-nav .btn.on .dep { opacity: 1; }

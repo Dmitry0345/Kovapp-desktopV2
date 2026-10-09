@@ -1,0 +1,327 @@
+/* Дизайн-система веб-версии «Ковчег» — значения из theme.py десктопа.
+ * Все размеры в rem: корневой font-size выставляет js/core/scale.js
+ * (база по размеру экрана × пользовательский множитель 0.75–1.25).
+ *
+ * Две темы. Светлая — прежний облик; ради контраста по WCAG (согласовано
+ * 06.10.2026) во всём приложении темнее подписи и подсказки, главная кнопка,
+ * «Удалить», ссылки, рамки полей, просроченная дата и счётчик на значке
+ * уведомлений — значения с пометкой «было». Тёмная живёт в блоке
+ * [data-theme="dark"] и переопределяет те же имена, поэтому ни одному
+ * разделу не нужно знать, какая тема включена.
+ *
+ * Здесь — только цвета, тени и общие размеры; общие элементы (кнопки, поля,
+ * окна) — в common.css, разделы — каждый в своём файле.
+ *
+ * Тема ставится атрибутом на <html>: data-theme="light" | "dark".
+ */
+:root {
+  --header-top: #607D8B;
+  --header-mid: #546E7A;
+  --header-bottom: #37474F;
+  --top-bar-fg: #37474F;        /* текст и значки белой шапки */
+  --accent: #546E7A;
+  --accent-soft: #78909C;
+  --page-bg: #F1F4F6;
+  --card-bg: #FFFFFF;
+  --card-border: #DCE3E7;
+  --chip-bg: #ECEFF1;
+  --overlay: rgba(38, 50, 56, .43);
+  --text-label: #546E7A;         /* подписи: 4,9:1 на фоне страницы (было 3,0:1) */
+  --text-value: #263238;
+  --text-muted: #627A86;         /* пустые значения и подсказки: 4,5:1 на белом (было 1,9:1) */
+  --text-on-accent: #FFFFFF;
+  --btn-bg: #546E7A;              /* главная кнопка: белый текст 5,4:1 (было 3,6:1) */
+  --btn-border: #546E7A;
+  --btn-hover: #5F7A86;
+  --btn-pressed: #455A64;
+  --ghost-bg: #ECEFF1;
+  --ghost-border: #CFD8DC;
+  --ghost-hover: #DDE3E6;
+  --ghost-pressed: #CBD4D8;
+  --ghost-text: #37474F;
+  --danger: #D32F2F;
+  --danger-hover: #E53935;
+  --danger-pressed: #C62828;
+  --success: #43A047;
+  --warning: #F9A825;
+  --warning-text: #B47A16;
+  --info: #3A7283;                /* ссылки и «Этап 2 из 2»: 5,4:1 */
+  --critical: #E53935;
+  --success-soft: #E8F5E9;
+  --warning-soft: #FFF8E1;
+  --info-soft: #E4EEF2;
+  --critical-soft: #FFEBEE;
+  --success-text: #2E7D32;      /* текст на success-soft */
+  --critical-text: #C62828;     /* текст на critical-soft */
+  --deadline-overdue: #C62828;  /* просроченная дата в списке задач: 4,9:1 на розовой строке (было 3,7:1) */
+  --stage-done: #4CAF50;
+  --stage-done-border: #388E3C;
+  --stage-todo: #E0E0E0;
+  --stage-todo-border: #A0A0A0;
+
+  /* заливки под белым текстом и рамки полей — отдельно от цвета текста,
+     чтобы тёмная тема могла развести их ради контраста; в светлой — прежние значения */
+  --accent-fill: #546E7A;
+  --danger-fill: #D32F2F;         /* белый текст 5,0:1 (было 3,5:1) */
+  --danger-fill-hover: #C62828;
+  --danger-fill-pressed: #B71C1C;
+  --field-border: #78909C;        /* рамка поля 3,4:1 (было 1,3:1) */
+  --count-bg: #E53935;          /* счётчик чатов в меню */
+  --badge-bg: #D32F2F;          /* счётчик на значке уведомлений: белые цифры 4,98:1 */
+
+  /* поверхности второго уровня: наведение в таблицах, подложки блоков */
+  --surface-2: #F7FAFB;         /* строка таблицы под курсором, карточка раздела */
+  --surface-3: #FBFDFE;         /* непрочитанное уведомление, зона окна задачи */
+  --surface-foot: #FAFCFD;      /* низ диалога */
+  --surface-head-a: #FBFCFD;    /* шапка карточки настроек, верх градиента */
+  --surface-head-b: #F3F6F8;
+  --surface-glass: rgba(255,255,255,.92);   /* липкая строка сохранения */
+  --top-bar-shadow: 0 .1rem .4rem rgba(38, 50, 56, .07);
+  --card-shadow: 0 .15rem .5rem rgba(38,50,56,.06);
+  --toast-shadow: 0 .6rem 1.4rem rgba(38, 50, 56, .18);
+  --toast-body: #546E7A;
+  --title-fg: #546E7A;          /* подпись раздела над карточкой */
+
+  /* боковое меню */
+  --menu-item-fg: #37474F;
+  --menu-divider: #CFD8DC;
+  --menu-hover: #ECEFF1;
+  --menu-active: #CFD8DC;
+  --menu-close-bg: #E0E0E0;
+  --menu-close-border: #CCCCCC;
+  --menu-close-fg: #555555;
+  --menu-close-hover: #D0D0D0;
+
+  /* мелочи форм */
+  --focus-ring: rgba(84,110,122,.18);
+  --knob-bg: #FFFFFF;           /* ручка переключателя, бегунок ползунка */
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23546E7A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+
+  /* экран входа */
+  --login-blob-1: #B9D0D8;
+  --login-blob-2: #CFE0D6;
+  --login-blob-3: rgba(245,179,1,.28);
+  --login-blob-opacity: .5;
+  --login-grid: rgba(19,42,50,.05);
+  --login-title: #37474F;
+
+  /* фирменный знак */
+  --mark-ink: #132A32;
+  --mark-accent: #F5B301;
+  --mark-knock: #F5F7F6;
+
+  /* редакторы фото и видео: тёмная сцена в обеих темах */
+  --stage-dark: #0F2027;
+  --stage-check-a: #e9edec;
+  --stage-check-b: #f7f9fa;
+
+  --font: Arial, "Segoe UI", Helvetica, sans-serif;
+  --radius: .5rem;
+  --radius-lg: .75rem;
+  --shadow: 0 .5rem 1.2rem rgba(38, 50, 56, .16);
+  --top-bar-h: 4.875rem;      /* 78px при 16px */
+  --menu-w: 16.875rem;        /* 270px */
+  --profile-w: 46.875rem;     /* 750px */
+  --anim: 500ms cubic-bezier(.65, 0, .35, 1);   /* InOutCubic */
+  --theme-anim: 420ms;        /* переключение темы */
+
+  color-scheme: light;
+}
+
+/* ── тёмная тема ─────────────────────────────────────────────────────────
+ * Тот же сине-серый оттенок, что и в светлой, только вывернутый: фон
+ * страницы почти чёрный, карточки на два шага светлее, текст тёплый белый.
+ * Акцент поднят по светлоте — на нём по-прежнему белые надписи. Мягкие
+ * подложки (success-soft и прочие) стали глубокими, а текст на них —
+ * светлым, иначе тёмное на тёмном не читается.
+ */
+/* тёмная тема «Чёрный со слоями» — как тёмный режим Apple: чёрный фон, слои светлее, текст не чисто белый */
+:root[data-theme="dark"] {
+  --header-top: #000000;
+  --header-mid: #000000;
+  --header-bottom: #000000;
+  --top-bar-fg: #F5F5F7;
+  /* синий текст — #409CFF (4,9:1 на #2C2C2E), заливки под белым текстом — #0071E3 (4,7:1) */
+  --accent: #409CFF;
+  --accent-fill: #0071E3;
+  --accent-soft: #409CFF;
+  --page-bg: #000000;          /* фирменный тёмный из макета знака */
+  --card-bg: #1C1C1E;
+  --card-border: #38383A;
+  --chip-bg: #2C2C2E;
+  --overlay: rgba(0, 0, 0, .72);
+  --text-label: #A1A1A6;
+  --text-value: #F5F5F7;
+  --text-muted: #8E8E93;       /* 5,2:1 на карточке; было #6E6E73 — 3,4:1 */
+  --text-on-accent: #FFFFFF;
+  --btn-bg: #0071E3;
+  --btn-border: #0071E3;
+  --btn-hover: #0077ED;
+  --btn-pressed: #0062C4;
+  --ghost-bg: #2C2C2E;
+  --ghost-border: #3A3A3C;
+  --ghost-hover: #3A3A3C;
+  --ghost-pressed: #48484A;
+  --ghost-text: #F5F5F7;
+  --danger: #FF453A;
+  --danger-hover: #FF6961;
+  --danger-pressed: #D70015;
+  --success: #30D158;
+  --warning: #FF9F0A;
+  --warning-text: #FFB340;
+  --info: #64D2FF;
+  --critical: #FF453A;
+  --success-soft: #0E2A17;
+  --warning-soft: #33240A;
+  --info-soft: #0C2633;
+  --critical-soft: #3A1210;
+  --success-text: #30D158;
+  --critical-text: #FF6961;
+  --deadline-overdue: #FF453A;
+  --stage-done: #30D158;
+  --stage-done-border: #248A3D;
+  --stage-todo: #3A3A3C;
+  --stage-todo-border: #48484A;
+
+  --danger-fill: #D70015;      /* белый текст 5,4:1; на #FF453A было 3,4:1 */
+  --danger-fill-hover: #E0001A;
+  --danger-fill-pressed: #C8001A;
+  --field-border: #67676A;     /* рамка поля 3:1 к фону; #38383A почти не видна */
+  --count-bg: #D70015;
+  --badge-bg: #D70015;
+
+  --surface-2: #2C2C2E;
+  --surface-3: #1C1C1E;
+  --surface-foot: #141416;
+  --surface-head-a: #2C2C2E;
+  --surface-head-b: #1C1C1E;
+  --surface-glass: rgba(28, 28, 30, .92);
+  --top-bar-shadow: 0 1px 0 #38383A;
+  --card-shadow: none;
+  --toast-shadow: 0 .6rem 1.4rem rgba(0, 0, 0, .6);
+  --toast-body: #A1A1A6;
+  --title-fg: #F5F5F7;
+
+  --menu-item-fg: #F5F5F7;
+  --menu-divider: #38383A;
+  --menu-hover: #2C2C2E;
+  --menu-active: #3A3A3C;
+  --menu-close-bg: #2C2C2E;
+  --menu-close-border: #3A3A3C;
+  --menu-close-fg: #A1A1A6;
+  --menu-close-hover: #3A3A3C;
+
+  --focus-ring: rgba(10, 132, 255, .35);
+  --knob-bg: #DCE7EC;
+  --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2393A8B4' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+
+  --login-blob-1: #1B4050;
+  --login-blob-2: #17362F;
+  --login-blob-3: rgba(245,179,1,.16);
+  --login-blob-opacity: .55;
+  --login-grid: rgba(190,215,225,.05);
+  --login-title: #D6E3EA;
+
+  --mark-ink: #EAEFEE;         /* из макета знака: контур на тёмном */
+  --mark-knock: #17272E;       /* подложка под буквой — цвет карточки */
+  --stage-check-a: #1A2A31;
+  --stage-check-b: #21323A;
+
+  --shadow: 0 .5rem 1.2rem rgba(0, 0, 0, .55);
+
+  color-scheme: dark;
+}
+
+/* ── переключение темы ───────────────────────────────────────────────────
+ * Плавность включается только на время перехода: постоянные переходы на
+ * всех элементах мешали бы собственным анимациям разделов. Класс снимает
+ * скрипт (js/core/theme.js) через --theme-anim.
+ */
+html.theme-anim, html.theme-anim body { transition: background-color var(--theme-anim) ease; }
+html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
+  transition: background-color var(--theme-anim) ease,
+              color var(--theme-anim) ease,
+              border-color var(--theme-anim) ease,
+              fill var(--theme-anim) ease,
+              stroke var(--theme-anim) ease,
+              box-shadow var(--theme-anim) ease !important;
+}
+/* Круговая заливка от кнопки — там, где браузер умеет переходы вида */
+::view-transition-old(root) { animation: none; }
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+html.theme-sweep::view-transition-new(root) {
+  animation: kov-theme-sweep var(--theme-anim) cubic-bezier(.4, 0, .2, 1);
+}
+@keyframes kov-theme-sweep {
+  from { clip-path: circle(0 at var(--sweep-x, 50%) var(--sweep-y, 50%)); }
+  to   { clip-path: circle(var(--sweep-r, 150vmax) at var(--sweep-x, 50%) var(--sweep-y, 50%)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --anim: 1ms linear; --theme-anim: 1ms; }
+  html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transition: none !important; }
+}
+
+/* ── мессенджер (chat/chat.css): свой набор цветов --col-* ──────────────────
+ * Светлая — прежняя гамма мессенджера (бежевая лента, зелёные свои сообщения).
+ * Согласовано 06.10.2026 (вариант А): серый текст темнее, подписи дат — тёмным
+ * текстом на белой плашке, время в своих сообщениях и рамки полей заметнее. */
+:root {
+  --col-bg-main: #f5f5f5;
+  --col-bg-sidebar: #ffffff;
+  --col-bg-chat: #e5ddd5;
+  --col-primary: #3f51b5;
+  --col-primary-hover: #303f9f;
+  --col-divider: #e0e0e0;
+  --col-hover: #f0f0f0;
+  --col-text-main: #212121;
+  --col-text-secondary: #616161;     /* 5,2:1 и на выделенном чате (#757575 давал 3,9:1) */
+  --col-text-disabled: #616161;      /* подсказка «Выберите чат…»: 4,6:1 на ленте (#bdbdbd давал 1,4:1) */
+  --col-selected: #e8eaf6;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --msg-mine-bg: #dcf8c6;
+  --msg-other-bg: #ffffff;
+  --scrollbar-bg: transparent;
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);
+  --col-panel: #ffffff;              /* шапка чата и панель ввода */
+  --col-inset: rgba(0, 0, 0, 0.05);  /* подложка вложений, ответов, реакций */
+  --col-inset-strong: rgba(0, 0, 0, 0.2);
+  --col-veil: rgba(255, 255, 255, 0.78);   /* плашка поверх ленты сообщений */
+  --col-date-bg: rgba(255, 255, 255, 0.92);   /* подписи дат: 5,9:1 (белое на сером давало 2,1:1) */
+  --col-date-fg: #54656F;
+  --col-date-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --col-mine-meta: #56634F;          /* время, галочки и размер файла в своих сообщениях: 5,5:1 на зелёном (было 4,0:1) */
+  --col-field-border: #8C8C8C;       /* рамка полей ввода: 3,4:1 (#e0e0e0 давал 1,3:1) */
+  --col-danger: #C62828;             /* «Удалить» в меню: 5,6:1 */
+  --col-search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23616161' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E");
+}
+/* тёмная тема мессенджера — «Чёрный со слоями», как всё приложение */
+:root[data-theme="dark"] {
+  --col-bg-main: #000000;
+  --col-bg-sidebar: #1C1C1E;
+  --col-bg-chat: #17171A;
+  --col-primary: #409CFF;            /* синий текст: имена в группе, ссылки — 4,8:1 (#0A84FF давал 3,8:1) */
+  --col-primary-hover: #70B4FF;
+  --col-divider: #38383A;
+  --col-hover: #2C2C2E;
+  --col-text-main: #F5F5F7;
+  --col-text-secondary: #AEAEB2;     /* 5,1:1 и на выделенном чате (#A1A1A6 давал 4,4:1) */
+  --col-text-disabled: #8E8E93;      /* 5,5:1 на ленте (#6E6E73 давал 3,5:1) */
+  --col-selected: #3A3A3C;
+  --msg-mine-bg: #2B5278;
+  --msg-other-bg: #2C2C30;
+  --col-panel: #1C1C1E;
+  --col-inset: rgba(255, 255, 255, .06);
+  --col-inset-strong: rgba(255, 255, 255, .12);
+  --col-veil: rgba(28, 28, 30, .82);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.18);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.28);
+  --col-date-bg: rgba(0, 0, 0, 0.2);
+  --col-date-fg: #FFFFFF;
+  --col-date-shadow: none;
+  --col-mine-meta: #C8DAF0;          /* время, галочки и ссылки в своих сообщениях светлее */
+  --col-field-border: #67676A;       /* рамка поля 3:1 к фону */
+  --col-danger: #FF453A;
+  --col-search-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23AEAEB2' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E");
+}

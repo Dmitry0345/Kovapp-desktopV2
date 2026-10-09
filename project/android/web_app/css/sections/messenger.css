@@ -1,0 +1,120 @@
+/* Мессенджер: оболочка чата в приложении, окна чата, карточки и участники группы.
+ * Сам чат — chat/chat.css, его цвета — в theme.css (--col-*). */
+
+/* ── мессенджер (шаг 5): чат занимает всю высоту под шапкой ─────────────── */
+.content > .section.messenger-section { height: calc(100vh - var(--top-bar-h) - 1.8rem); min-height: 22rem; }
+.content > .section.messenger-section > #kovChat { flex: 1 1 auto; min-height: 0; }
+/* Телефон: мессенджер занимает экран целиком, без полей по краям.
+   Поля крали ширину переписки, а внизу оставляли зазор между строкой ввода
+   и выехавшей панелью эмодзи — панель прижата к низу экрана, а раздел
+   заканчивался выше. */
+@media (max-width: 760px) {
+  .content:has(> .section.messenger-section) { padding: 0; }
+  .content > .section.messenger-section {
+    height: calc(100dvh - var(--top-bar-h));
+    gap: 0; border-radius: 0;
+  }
+  .content > .section.messenger-section > #kovChat { border-radius: 0; }
+}
+/* ── окна мессенджера в его же оформлении ─────────────────────────────── */
+.chat-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.chat-tile { display: flex; flex-direction: column; align-items: center; gap: .35rem; padding: 1.1rem .8rem; cursor: pointer;
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: .8rem; text-align: center; }
+.chat-tile:hover { background: var(--chip-bg); border-color: var(--accent); }
+.chat-tile .circ { width: 3rem; height: 3rem; border-radius: 50%; background: var(--info-soft); color: var(--col-primary, var(--accent)); display: grid; place-items: center; }
+.chat-tile .circ svg { width: 1.5rem; height: 1.5rem; }
+.chat-tile .t { font-weight: 700; }
+.chat-tile .s { color: var(--text-label); font-size: .78rem; }
+.chat-card-head { display: flex; flex-direction: column; align-items: center; gap: .3rem; padding: .4rem 0 .8rem; }
+.chat-card-head .avatar { box-shadow: 0 .25rem .7rem rgba(38,50,56,.18); }
+.chat-card-head .avatar svg { width: 2.6rem; height: 2.6rem; color: #fff; }
+.chat-card-name { font-size: 1.15rem; font-weight: 700; text-align: center; }
+.chat-card-sub { color: var(--text-label); font-size: .82rem; text-align: center; }
+.chat-person { display: flex; align-items: center; gap: .5rem; padding: .35rem .45rem; border-radius: .45rem; }
+.chat-person:hover { background: var(--chip-bg); }
+.chat-person-name { font-weight: 600; }
+@media (max-width: 620px) { .chat-tiles { grid-template-columns: 1fr; } }
+/* ── карточки чата: вложения, кликабельные фото, недоступные строки ────── */
+.chat-media { display: flex; gap: .5rem; margin: .2rem 0; }
+.media-cat {
+  flex: 1 1 0; display: flex; align-items: center; justify-content: center; gap: .45rem;
+  border: 1px solid var(--card-border); border-radius: var(--radius); background: var(--card-bg);
+  padding: .6rem .5rem; cursor: pointer; color: var(--text-label);
+}
+.media-cat:hover:not(:disabled) { background: var(--chip-bg); border-color: var(--accent-soft); color: var(--accent); }
+.media-cat:disabled { opacity: .5; cursor: default; }
+.media-cat svg { width: 1.15rem; height: 1.15rem; }
+.media-cat .n { font-weight: 700; font-size: .85rem; }
+/* Список вложений чата. Имя .media-list уже занято списком папок проекта —
+   из-за совпадения папки обрезались по высоте и наезжали друг на друга. */
+.chat-media-list { display: flex; flex-direction: column; gap: .15rem; max-height: 24rem; overflow: auto; }
+/* Единая плитка для фото, видео и остальных файлов в карточке чата */
+.media-tile { display: flex; align-items: center; gap: .7rem; padding: .45rem .5rem;
+  border-radius: var(--radius); cursor: pointer; }
+.media-tile:hover { background: var(--chip-bg); }
+.media-tile .who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.media-tile .who b { font-size: .86rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.media-tile .who span { font-size: .74rem; color: var(--text-label); }
+.mt-thumb { position: relative; flex: 0 0 auto; width: 3.2rem; height: 3.2rem;
+  border-radius: .55rem; overflow: hidden; background: var(--chip-bg);
+  display: grid; place-items: center; color: var(--accent); }
+.mt-thumb img, .mt-thumb video { width: 100%; height: 100%; object-fit: cover; }
+.mt-thumb > svg { width: 1.3rem; height: 1.3rem; }
+.mt-thumb .play { position: absolute; inset: 0; display: grid; place-items: center;
+  background: rgba(19,42,50,.32); color: #fff; }
+.mt-thumb .play svg { width: 1.2rem; height: 1.2rem; }
+/* Пересылка: список чатов с фотографиями */
+.forward-preview { background: var(--chip-bg); border-radius: var(--radius); padding: .5rem .7rem;
+  font-size: .82rem; color: var(--text-label); max-height: 6rem; overflow: auto; }
+.forward-list { display: flex; flex-direction: column; gap: .2rem; max-height: 22rem; overflow: auto; }
+.forward-row { display: flex; align-items: center; gap: .6rem; width: 100%; text-align: left;
+  padding: .45rem .55rem; border: 1px solid transparent; border-radius: var(--radius);
+  background: transparent; cursor: pointer; }
+.forward-row:hover { background: var(--chip-bg); }
+.forward-row.on { background: var(--info-soft); border-color: var(--info); }
+.forward-row .who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.forward-row .who b { font-size: .88rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.forward-row .who span { font-size: .74rem; color: var(--text-label); }
+.forward-row .mark { flex: 0 0 1.2rem; color: var(--info); display: inline-flex; }
+.forward-row .mark svg { width: 1.1rem; height: 1.1rem; }
+.modal-head .btn.leave-btn { color: var(--danger); }
+.modal-head .btn.leave-btn:hover { background: var(--critical-soft); }
+/* Значки категорий в списке вложений: без явного размера SVG растягивался
+   на всю ширину окна — вместо списка была одна огромная папка */
+.media-head { display: flex; align-items: center; gap: .65rem; }
+.cat-icon { display: inline-flex; align-items: center; justify-content: center;
+  width: 1.7rem; height: 1.7rem; flex: 0 0 auto; border-radius: 50%;
+  background: var(--chip-bg); color: var(--accent); }
+.cat-icon svg { width: .95rem; height: .95rem; }
+.chat-media-list .spacer { flex: 1; }
+/* Опасные действия в настройках группы: своя колонка с отступом сверху.
+   Без правила блок оставался обычным div, и кнопка «Удалить группу»
+   сжималась по содержимому, тогда как соседние тянулись на всю ширину. */
+.danger-zone { display: flex; flex-direction: column; gap: .5rem; margin-top: 1.4rem; }
+.danger-zone > .btn { width: 100%; justify-content: center; }
+/* ── участники группы: фиксированная колонка кнопок ─────────────────────── */
+.chat-person { display: flex; align-items: center; gap: .55rem; }
+.chat-person-main { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: .4rem; }
+.chat-person-main .chat-person-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-person-main .chip { flex: 0 0 auto; }
+.chat-person-actions { flex: 0 0 5.4rem; display: flex; justify-content: flex-end; gap: .3rem; }
+.chat-person-actions .btn { width: 2.4rem; height: 2.2rem; padding: 0; justify-content: center; }
+/* Стрелка назад в списке вложений */
+.media-back { flex: 0 0 auto; width: 2rem; height: 2rem; border: 0; border-radius: 50%; background: transparent;
+  color: var(--accent); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.media-back:hover { background: var(--chip-bg); }
+.media-back svg { width: 1.2rem; height: 1.2rem; }
+@media (pointer: coarse) {
+  .icon-btn { min-width: 44px !important; min-height: 44px !important; }
+  #chatSearchInput { min-height: 44px !important; }
+}
+#kovChat .msg-menu-btn { min-width: 1.75rem; min-height: 1.75rem; }
+/* чат: отмена загрузки */
+#kovChat .temp-cancel { display: block; margin: .35rem 0 0 auto; border: 0; background: transparent; color: var(--critical, #d32f2f);
+  font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer; padding: .2rem .1rem; }
+#kovChat .temp-ring { cursor: pointer; }
+/* телефон: пока открыт чат — верхняя строка приложения скрыта, место отдано переписке */
+@media (max-width: 760px) {
+  html.kov-in-chat { --top-bar-h: 0px; }
+  html.kov-in-chat .app > .top-bar { display: none; }
+}

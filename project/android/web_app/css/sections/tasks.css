@@ -1,0 +1,35 @@
+/* Раздел «Задачи»: список задач. */
+
+/* «Искать в:» перед выбором поля поиска — без подписи выбор принимали за сортировку */
+.search-in { position: relative; display: flex; align-items: center; flex: 0 1 auto; min-width: 0; }
+.search-in > .search-in-t { position: absolute; left: .75rem; top: 50%; transform: translateY(-50%); z-index: 1;
+  font-size: .78rem; color: var(--accent); pointer-events: none; white-space: nowrap; }
+:root[data-theme="dark"] .search-in > .search-in-t { color: var(--text-label); }
+.search-in > .select { width: 100%; padding-left: 4.6rem; }
+.toolbar > .search-in > .select { min-width: 15rem; }
+@media (max-width: 760px) {
+  .toolbar > .search-in { flex: 1 1 8rem; }
+  .toolbar > .search-in > .select { min-width: 0; }
+}
+/* просрочка — словом под датой, а не только цветом */
+.overdue-note { display: block; font-size: .72rem; font-weight: 700; color: var(--critical-text); line-height: 1.2; }
+/* Список задач на телефоне — компактной карточкой, как задачи в проекте: название и срок,
+   заказчик, отделы и прогресс; подписи «поле — значение» в каждой карточке не повторяются */
+@media (max-width: 760px) {
+  table.data.cards.task-cards tr.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: .75rem; row-gap: .2rem; padding: .7rem .85rem; }
+  table.data.cards.task-cards td { display: block; padding: 0; }
+  table.data.cards.task-cards td::before { content: none; }
+  table.data.cards.task-cards td[data-col="name"] { grid-column: 1; grid-row: 1; font-size: 1rem; line-height: 1.3; padding: 0; }
+  table.data.cards.task-cards td[data-col="deadline"],
+  table.data.cards.task-cards td[data-col="archived_at"] { grid-column: 2; grid-row: 1; text-align: right; font-size: .9rem; white-space: nowrap; }
+  table.data.cards.task-cards td[data-col="customer_organization"] { grid-column: 1 / -1; grid-row: 2; font-size: .9rem; color: var(--accent); }
+  table.data.cards.task-cards td[data-col="departments"],
+  table.data.cards.task-cards td[data-col="who"] { grid-column: 1; grid-row: 3; font-size: .9rem; color: var(--accent); }
+  table.data.cards.task-cards td[data-col="progress"] { grid-column: 2; grid-row: 3; text-align: right; align-self: center; }
+  /* архив: у даты и автора — короткие пояснения, иначе их не отличить от срока и исполнителя */
+  table.data.cards.task-cards td[data-col="archived_at"]::before { content: 'в архиве'; display: block; font-size: .72rem; color: var(--accent); }
+  table.data.cards.task-cards td[data-col="who"]::before { content: 'Архивировал: '; color: inherit; font-size: inherit; }
+  /* тёмная тема: вторичные строки карточки — серым, синий там читался как ссылка */
+  :root[data-theme="dark"] table.data.cards.task-cards td:is([data-col="customer_organization"], [data-col="departments"], [data-col="who"]),
+  :root[data-theme="dark"] table.data.cards.task-cards td[data-col="archived_at"]::before { color: var(--text-label); }
+}

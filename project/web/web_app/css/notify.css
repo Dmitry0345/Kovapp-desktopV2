@@ -1,0 +1,123 @@
+/* Всплывашки уведомлений. Размеры в rem — масштабируются вместе с приложением
+ * (html{font-size} задаёт масштабатор). Цвета — дизайн-система theme.py. */
+#kov-toasts {
+  position: fixed;
+  top: 5.6rem;               /* под верхней панелью (≤78px) */
+  right: 1rem;
+  width: min(27rem, calc(100vw - 2rem));   /* чуть шире: длинные предупреждения помещаются в 2–3 строки */
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  z-index: 10000;
+  pointer-events: none;
+  font-family: Arial, "Segoe UI", sans-serif;
+}
+.kov-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: .7rem;
+  padding: .7rem .8rem .7rem .9rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: .3rem solid var(--accent);
+  border-radius: .75rem;
+  box-shadow: var(--toast-shadow);
+  color: var(--text-value);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateX(1.5rem);
+  transition: opacity .22s ease, transform .22s ease;
+  user-select: none;
+  outline: none;
+}
+.kov-toast--in { opacity: 1; transform: none; }
+.kov-toast--out { opacity: 0; transform: translateX(1.5rem); }
+.kov-toast:focus-visible { box-shadow: 0 0 0 .15rem var(--accent-soft), var(--toast-shadow); }
+.kov-toast--chat { border-left-color: var(--accent); }
+.kov-toast--notification { border-left-color: var(--info); }
+.kov-toast--group { border-left-color: var(--success); }
+.kov-toast--warning { border-left-color: var(--warning); }
+.kov-toast--success { border-left-color: var(--success); }
+
+.kov-toast__icon {
+  flex: 0 0 auto;
+  width: 2.2rem; height: 2.2rem;
+  border-radius: 50%;
+  background: var(--chip-bg);
+  color: var(--accent);
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+.kov-toast__icon svg { width: 1.25rem; height: 1.25rem; }
+.kov-toast__avatar { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.kov-toast__avatar--text { color: #fff; font-weight: 700; font-size: .85rem; display: grid; place-items: center; }
+.kov-toast__text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: .15rem; }
+/* Заголовок переносится: предупреждения вроде «Количество — неотрицательное
+   число» обрезались на полуслове, и человек не понимал, что не так */
+.kov-toast__title { font-weight: 700; font-size: .95rem; line-height: 1.3; white-space: normal;
+  overflow-wrap: anywhere; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical; overflow: hidden; }
+.kov-toast__body { font-size: .88rem; line-height: 1.3; color: var(--toast-body); display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; overflow-wrap: anywhere; }
+.kov-toast__close {
+  flex: 0 0 auto; margin: -.2rem -.25rem 0 0;
+  width: 1.6rem; height: 1.6rem;
+  border: 0; border-radius: 50%; background: transparent;
+  color: var(--text-muted); font-size: 1.2rem; line-height: 1; cursor: pointer;
+}
+.kov-toast__close:hover { background: var(--chip-bg); color: var(--ghost-text); }
+
+/* Телефон: сверху во всю ширину, появляются сверху */
+/* Подсказка о переходе: на компьютере видна при наведении, на телефоне —
+   всегда, потому что наводить там нечем */
+.kov-toast__hint { font-size: .7rem; color: var(--accent); opacity: 0; height: 0; overflow: hidden;
+  transition: opacity .15s ease; }
+.kov-toast:hover .kov-toast__hint, .kov-toast:focus-visible .kov-toast__hint { opacity: .9; height: auto; }
+
+@media (max-width: 640px) {
+  /* Карточка съезжает под шапку и не закрывает ни заголовок, ни кнопку меню */
+  #kov-toasts { top: calc(var(--top-bar-h) + .35rem); right: .5rem; left: .5rem; width: auto; }
+  .kov-toast { transform: translateY(-1rem); padding: .55rem .6rem .55rem .7rem; gap: .55rem;
+    transition: transform .18s ease, opacity .18s ease; }
+  .kov-toast--in { transform: none; }
+  .kov-toast--out { transform: translateY(-1rem); }
+  .kov-toast__title { font-size: .88rem; -webkit-line-clamp: 2; }
+  .kov-toast__body { font-size: .78rem; -webkit-line-clamp: 2; }
+  .kov-toast__where { font-size: .72rem; }
+  .kov-toast__hint { opacity: .75; height: auto; font-size: .68rem; }
+  .kov-toast__icon, .kov-toast__avatar { width: 2rem; height: 2rem; }
+  .kov-toast__close { padding: .1rem .3rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kov-toast { transition: none; }
+}
+
+/* строка «в группе «…»» под именем отправителя */
+.kov-toast__where {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .76rem; font-weight: 600; color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.kov-toast__where svg { width: .85rem; height: .85rem; flex: 0 0 auto; }
+
+/* ── приглашение разрешить уведомления ── */
+/* карточка в стиле приложения: цвета темы (светлая и тёмная), кнопки .btn */
+.kov-perm-offer { position: fixed; z-index: 9000; right: 1.25rem; bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  width: min(24rem, calc(100vw - 2.5rem)); box-sizing: border-box;
+  display: grid; grid-template-columns: auto 1fr; column-gap: .85rem; row-gap: .9rem; align-items: start;
+  padding: 1rem 1rem .9rem; border-radius: 1rem; background: var(--card-bg); color: var(--text-value);
+  border: 1px solid var(--card-border); box-shadow: var(--toast-shadow); animation: kov-perm-offer-in .22s ease-out; }
+.kov-perm-offer__icon { width: 2.5rem; height: 2.5rem; border-radius: 50%; display: grid; place-items: center;
+  background: var(--ghost-bg); color: var(--accent); }
+.kov-perm-offer__icon svg { width: 1.3rem; height: 1.3rem; }
+.kov-perm-offer__body { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
+.kov-perm-offer__title { font-size: 1rem; font-weight: 600; color: var(--text-value); }
+.kov-perm-offer__body span { font-size: .9rem; line-height: 1.4; color: var(--text-label); }
+.kov-perm-offer__actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: .5rem; }
+@media (max-width: 760px) {
+  .kov-perm-offer { left: .75rem; right: .75rem; width: auto; bottom: calc(.75rem + env(safe-area-inset-bottom, 0px)); }
+  .kov-perm-offer__actions .btn { flex: 1 1 0; justify-content: center; }
+}
+@keyframes kov-perm-offer-in { from { opacity: 0; transform: translateY(.75rem); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .kov-perm-offer { animation: none; } }
+.set-perm { margin: .25rem 0 .75rem; }

@@ -1,0 +1,15 @@
+{
+ "source": "web_app",
+ "synced": "2026-10-07 22:17",
+ "files": {
+  "chat/chat-markup.html": "bd6f78eeb21cb8d9",
+  "chat/chat.css": "e36fa2566390d473",
+  "chat/chat.js": "d3b41485d0b2c068",
+  "chat/emoji-index.js": "2f93f8c7c5c70417",
+  "chat/media-panel.js": "3b47ad3ce41bfb7b",
+  "css/theme.css": "89858ecc6dcdfdf6",
+  "css/common.css": "ff1fcde908288fc2",
+  "css/sections/messenger.css": "238ffc513f9d5339",
+  "js/core/icons.js": "f9e24a27597ac781"
+ }
+}

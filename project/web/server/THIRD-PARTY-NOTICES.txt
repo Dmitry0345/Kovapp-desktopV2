@@ -1,0 +1,44 @@
+Сторонние компоненты сервера Kovapp
+===================================
+
+Код сервера Kovapp принадлежит его владельцу. Библиотеки ниже ставятся из PyPI (pip install) и
+сервером только используются; ни одна не требует раскрывать код Kovapp. Библиотек под GPL и
+AGPL среди них нет.
+
+Библиотеки Python
+-----------------
+Библиотека                          Лицензия                   Что требует
+----------------------------------  -------------------------  ---------------------------------------
+fastapi, pydantic, SQLAlchemy,      MIT                        сохранять уведомление об авторских
+PyMySQL, python-jose, fastapi-mail,                            правах и текст лицензии
+APScheduler, openpyxl, PyYAML,
+anyio, h11, http-ece, ecdsa
+starlette, uvicorn, websockets,     BSD 3-Clause / 2-Clause    то же
+psutil, python-dotenv, zstandard,
+Jinja2, MarkupSafe, idna, pyasn1
+cryptography                        Apache 2.0 или BSD 3       то же; для Apache — и файл NOTICE
+requests, bcrypt, python-multipart, Apache 2.0                 то же, плюс файл NOTICE, если он есть
+aiofiles, rsa, orjson (Apache/MIT)
+Pillow                              MIT-CMU (HPND)             то же
+pywebpush, py-vapid, certifi        MPL 2.0                    если файлы библиотеки не менялись —
+                                                               только текст лицензии и ссылка на
+                                                               исходники (PyPI); свой код не раскрывается
+email-validator                     Unlicense                  ничего
+
+Пока сервер ставится через pip на машине заказчика, библиотеки поставляет PyPI, а не владелец
+Kovapp. Если сервер отдаётся собранным (PyInstaller, KovServer): тексты лицензий всех собранных
+библиотек кладутся рядом, например командой
+    pip install pip-licenses && pip-licenses --with-license-file --no-license-path --format=plain-vertical > LICENSES-python.txt
+
+Отдельные программы
+-------------------
+Сервер вызывает их как отдельные программы (или обращается по сети) — их лицензии на код Kovapp
+не распространяются:
+  FFmpeg (сжатие видео, пакет ffmpeg системы; в Debian/Ubuntu — сборка под GPL с x264);
+  MariaDB/MySQL и утилиты mysqldump, mysqlbinlog (GPL 2.0);
+  zstd (BSD или GPL 2.0 на выбор); nginx (BSD 2-Clause).
+Если эти программы кладутся в собственный установщик сервера, для программ под GPL к ним
+прикладывается их исходный код или письменное предложение его выдать — речь только о самих
+программах, не о Kovapp. Если заказчик ставит их из пакетов системы — ничего не нужно.
+
+Сайт (папка web_app), который раздаёт сервер, — свой список: web_app/THIRD-PARTY-NOTICES.txt.

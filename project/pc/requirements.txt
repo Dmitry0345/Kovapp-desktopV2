@@ -1,0 +1,16 @@
+# Kovapp для компьютера (Windows): библиотеки Python.
+# Установка: python -m pip install -r requirements.txt
+# Python 3.10–3.12, 64 бита.
+
+# окна, веб-движок мессенджера, видео и звук: Qt 6 через PySide6 (лицензия LGPL v3 — см. README, «Лицензии»)
+PySide6==6.10.2
+
+# обращения к серверу и отправка файлов кусками
+requests>=2.31
+requests-toolbelt>=1.0
+
+# фото: поворот по EXIF, WebP, миниатюры
+Pillow>=10.4
+
+# необязательный файл .env рядом с программой
+python-dotenv>=1.0

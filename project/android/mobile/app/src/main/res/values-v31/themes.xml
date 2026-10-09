@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Kovapp" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@color/kovapp_bg</item>
+        <item name="android:colorBackground">@color/kovapp_bg</item>
+        <item name="android:statusBarColor">@color/kovapp_bg</item>
+        <item name="android:navigationBarColor">@color/kovapp_bg</item>
+        <item name="android:windowLightStatusBar">@bool/kovapp_light_bars</item>
+        <item name="android:windowLightNavigationBar">@bool/kovapp_light_bars</item>
+        <item name="android:colorAccent">#546E7A</item>
+        <item name="android:windowSplashScreenBackground">@color/kovapp_bg</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+    </style>
+</resources>

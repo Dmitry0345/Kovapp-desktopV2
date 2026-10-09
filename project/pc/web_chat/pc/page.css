@@ -1,0 +1,7 @@
+/* Страница мессенджера в окне ПК-приложения: чат занимает всю область
+   раздела, вокруг — фон страницы, как у сайта (.content). */
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--page-bg); }
+
+/* Тёмная тема: браузер по color-scheme: dark красит поле поиска чатов в #3B3B3B,
+   встроенный движок Qt (Chromium 83/87) оставляет его белым — цвет задан явно */
+:root[data-theme="dark"] #kovChat #chatSearchInput { background-color: #3B3B3B; }

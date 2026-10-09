@@ -1,0 +1,41 @@
+# Настройки сборки Kovapp. Скопируйте файл в kovapp.properties и поправьте.
+# Файл kovapp.properties в архив и в git не кладите: в нём адреса и ключи.
+
+# Адрес сервера для рабочей (release) сборки — ТОЛЬКО https.
+# Интерфейс откроется по адресу <serverOrigin>/app/
+serverOrigin=https://kovcheg.example.ru
+
+# Адрес сервера для отладочной (debug) сборки.
+# Для проверки на эмуляторе с сервером на своём ПК:
+#   debugServerOrigin=http://localhost:8000   (+ команда: adb reverse tcp:8000 tcp:8000)
+# Для отладки с рабочим сервером оставьте https-адрес.
+debugServerOrigin=http://localhost:8000
+
+# Номер и название версии (versionCode увеличивайте при каждом выпуске)
+versionCode=1
+versionName=1.0.0
+
+# Необязательно: свой сертификат сервера (самоподписанный или своего УЦ).
+# Путь к файлу .pem/.crt относительно папки mobile. Пусто — только
+# сертификаты, которым доверяет телефон (например, Let's Encrypt).
+serverCertificate=
+
+# Необязательно: адрес API, если он не совпадает с адресом страницы
+# (как KOV_API_HOST в web_app/js/core/api-host.js). Обычно пусто.
+apiOrigin=
+
+# Уведомления через Google (FCM). Значения — из консоли Firebase:
+# «Настройки проекта» → «Общие» → ваше Android-приложение.
+# Пусто — уведомления идут собственным каналом на всех телефонах. Заполнено — через
+# Google там, где есть сервисы Google; на Huawei, Honor и других без них — собственным каналом.
+fcmProjectId=
+fcmAppId=
+fcmApiKey=
+fcmSenderId=
+
+# Только для debug: брать файлы интерфейса с ПК вместо APK
+# (tools/devserver.py --assets, через adb reverse tcp:8790 tcp:8790)
+devAssetsUrl=
+
+# Правки текстов браузера на тексты приложения (overlay/web-patches.json)
+webPatches=true

@@ -1,0 +1,183 @@
+name: kovcheg-autotest
+
+# ===== база данных (полный режим) =====
+services:
+  db:
+    image: mariadb:11.4
+    profiles: ["full"]
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-autotest-root-2026}
+    # настройки как у рабочего сервера (docs/mariadb в проекте) и журнал транзакций — для проверки резервных копий
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci", "--max-connections=800",
+              "--innodb-buffer-pool-size=256M", "--innodb-log-file-size=64M", "--innodb-flush-log-at-trx-commit=2",
+              "--performance-schema=OFF", "--thread-cache-size=32", "--table-open-cache=1024", "--skip-name-resolve",
+              "--slow-query-log=1", "--long-query-time=0.5", "--log-output=TABLE",
+              "--log-bin=mysql-bin", "--binlog-format=ROW", "--server-id=1"]
+    tmpfs:
+      - /var/lib/mysql
+    volumes:
+      - ./docker/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+
+# ===== сервер Kovapp (полный режим) =====
+  server:
+    build:
+      context: ./docker
+      dockerfile: server.Dockerfile
+    # DNS для обращений к Google (FCM) и репозиториям: встроенный DNS Docker Desktop иногда не отвечает
+    dns:
+      - ${DOCKER_DNS_1:-1.1.1.1}
+      - ${DOCKER_DNS_2:-8.8.8.8}
+    profiles: ["full"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: ${DB_ROOT_PASSWORD:-autotest-root-2026}
+      FULL_ADMIN_LOGIN: ${FULL_ADMIN_LOGIN:-admin}
+      FULL_ADMIN_PASSWORD: ${FULL_ADMIN_PASSWORD:-Admin-Autotest-2026}
+      AUTOTEST_ACCOUNT_PASSWORD: ${FULL_ACCOUNT_PASSWORD:-Autotest-2026!}
+      AUTOTEST_JWT_SECRET: ${FULL_JWT_SECRET:-autotest-jwt-secret-change-me-0123456789abcdef}
+      FULL_FILE_ACCESS_STRICT: ${FULL_FILE_ACCESS_STRICT:-1}
+      FULL_PROJECT_ACCESS_MODE: ${FULL_PROJECT_ACCESS_MODE:-open}
+      AUTOTEST_WORKERS: ${PARALLEL:-1}
+      AUTOTEST_LOAD_USERS: ${LOAD_USERS:-50}
+      LOOP_SLOW_MS: ${LOOP_SLOW_MS:-0}
+      # split — API, переписка, чтение и приём загрузок в отдельных процессах за nginx, как на рабочем сервере
+      FULL_SERVER_ROLE: ${FULL_SERVER_ROLE:-split}
+      TZ: Europe/Moscow
+    volumes:
+      # сервер — из папки веб-версии
+      - ${PROJECT_WEB_DIR:-./project/web}:/project:ro
+      - ./config:/opt/autotest/config:ro
+      - shared:/shared
+      # ключ сервера Firebase (доставка уведомлений через Google), если он есть в папке keys
+      - ./keys:/keys:ro
+    ports:
+      - "${FULL_PUBLISH_PORT:-18000}:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8000/app/index.html"]
+      interval: 5s
+      timeout: 5s
+      retries: 120
+      start_period: 20s
+
+# ===== тесты (оба режима) =====
+  tests:
+    build:
+      context: ./docker
+      dockerfile: tests.Dockerfile
+    env_file: .env
+    environment:
+      FULL_BASE_URL: http://server:8000
+      MAIL_DIR: /shared/mail
+      SERVER_LOG_DIR: /shared/server-logs
+      UPLOAD_SESSIONS_DIR: /shared/upload-sessions
+      PUSH_CA_BUNDLE: /shared/push-ca/bundle.pem
+      LOG_DIR: /autotest/logs
+      DB_STATUS_HOST: db
+      DB_STATUS_PASSWORD: ${DB_ROOT_PASSWORD:-autotest-root-2026}
+      ONLY: ${ONLY:-}
+      PROJECT_MOUNT: /project
+      PROJECT_WEB_MOUNT: /project-web
+    volumes:
+      - ./:/autotest
+      - shared:/shared
+      # Android: интерфейс APK собирается из web_app и mobile/ папки Android-версии
+      - ${PROJECT_ANDROID_DIR:-./project/android}:/project:ro
+      # веб-версия: её web_app и сервер (сравнение сжатия, версия проекта)
+      - ${PROJECT_WEB_DIR:-./project/web}:/project-web:ro
+    shm_size: "1gb"
+
+# ===== настоящий Android (run.cmd device): всё в Docker, эмулятор — Android Studio на ПК =====
+  # проверка ключей Firebase из папки keys — тем же кодом, что и отправка сервера (свой образ, без базы)
+  keycheck:
+    build:
+      context: ./docker
+      dockerfile: keycheck.Dockerfile
+    profiles: ["device"]
+    dns:
+      - ${DOCKER_DNS_1:-1.1.1.1}
+      - ${DOCKER_DNS_2:-8.8.8.8}
+    volumes:
+      - ${PROJECT_WEB_DIR:-./project/web}:/project:ro
+      - ./keys:/keys:ro
+      - shared:/shared
+      # отладочная подпись APK (её SHA-1 Google сверяет, если ключ API приложения ограничен)
+      - android-home:/android-home:ro
+
+  # сборка отладочного APK из папки project (значения Firebase — из keys/google-services)
+  apk:
+    build:
+      context: ./docker
+      dockerfile: android.Dockerfile
+    image: kovapp-android:local
+    profiles: ["device"]
+    entrypoint: ["/opt/kovapp/apk-build.sh"]
+    dns:
+      - ${DOCKER_DNS_1:-1.1.1.1}
+      - ${DOCKER_DNS_2:-8.8.8.8}
+    environment:
+      DEVICE_PORT: ${DEVICE_PORT:-8000}
+    volumes:
+      - ${PROJECT_ANDROID_DIR:-./project/android}:/project:ro
+      - ./keys:/keys:ro
+      - apk-work:/work
+      - gradle-cache:/root/.gradle
+      - android-home:/root/.android
+      - apk:/apk
+
+  # сервер Appium: эмулятор подключается по adb через сеть, приложение ходит на server:8000
+  appium:
+    image: kovapp-android:local
+    profiles: ["device"]
+    entrypoint: ["/opt/kovapp/appium-start.sh"]
+    environment:
+      DEVICE_ADB: ${DEVICE_ADB:-host.docker.internal:5601}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - apk:/apk:ro
+      - ./logs:/logs
+      # ключ adb этого компьютера: ему эмулятор уже доверяет (без окна «Разрешить отладку?»)
+      - ${ADB_KEYS_DIR:-./keys}:/host-adb:ro
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:4723/status"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      # подключение к эмулятору и загрузка Android — до 11 минут
+      start_period: 660s
+
+  # сами тесты на устройстве (Python + клиент Appium)
+  # второй телефон (run.cmd device-pair): тот же образ, эмулятор на порту 5603
+  appium2:
+    extends:
+      service: appium
+    profiles: ["pair"]
+    environment:
+      DEVICE_ADB: host.docker.internal:5603
+      APPIUM_LOG: /logs/appium2-debug.log
+
+  device:
+    extends:
+      service: tests
+    profiles: ["device"]
+    environment:
+      APPIUM_URL: http://appium:4723
+      LINK_URL: http://appium:4799
+      DEVICE_APK: /apk/app-debug.apk
+
+volumes:
+  shared:
+  apk:
+  apk-work:
+  gradle-cache:
+  android-home:

@@ -1,0 +1,33 @@
+/* Общие поправки поверх разделов: замок недоступных действий и размеры под палец.
+ * Подключается после разделов и файлов, чтобы перекрывать их кнопки. */
+
+/* ── сенсорный экран: элементы управления — под палец ─────────────────── */
+/* Телефон боком получает широкую раскладку в уменьшенном масштабе — без этого
+   кнопки и поля сжимались до 24 px. Растёт только высота, ширина раскладки прежняя. */
+/* Это нижняя граница: более конкретные правила (например, .segmented .btn в rem) её не перебивают. */
+@media (pointer: coarse) {
+  .btn, .input, .select { min-height: 44px !important; }
+  /* 44 px — рекомендация для пальца (было 40) */
+  .top-bar .menu-btn, .top-bar .bell-btn { min-width: 44px !important; min-height: 44px !important; }
+  .btn.icon { min-width: 44px !important; }
+  button.chip { min-height: 40px !important; }
+  button.chip { min-width: 40px !important; }
+  .picker-row { min-height: 44px; justify-content: center; }
+  .range { min-height: 40px !important; }
+}
+/* ── Недоступные действия ──────────────────────────────────────────────────
+   Кнопку не прячем: пропавшая кнопка выглядит как поломка, и человек ищет
+   её глазами. Гасим, ставим замок и объясняем причину — подсказкой при
+   наведении и сообщением при нажатии. */
+.btn.is-locked {
+  opacity: .55; cursor: not-allowed; filter: grayscale(.5);
+  position: relative; padding-right: 1.9rem;
+}
+.btn.is-locked:hover { background: var(--btn-bg); }
+.btn.is-locked.ghost:hover { background: var(--ghost-bg); }
+.btn.is-locked .lock-mark {
+  position: absolute; right: .5rem; top: 50%; transform: translateY(-50%);
+  width: .85rem; height: .85rem; opacity: .9;
+}
+.btn.icon.is-locked { padding-right: 0; }
+.btn.icon.is-locked .lock-mark { right: .15rem; bottom: .15rem; top: auto; transform: none; width: .7rem; height: .7rem; }

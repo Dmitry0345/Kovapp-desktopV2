@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Знак Kovapp, плотная версия: на мелких размерах контур истончается, плашка нет.
+     Поле обрезано по самому знаку и сделано квадратным — иначе браузер вписывает
+     несквадратную картинку в квадратную ячейку вкладки, и знак теряется. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="32 12 96 96" width="96" height="96">
+  <rect x="32" y="12" width="96" height="96" rx="30" fill="#132A32"/>
+  <path d="M98 16A26 26 0 0 1 124 42" fill="none" stroke="#F5B301" stroke-width="8" stroke-linecap="round"/>
+  <rect x="59" y="36" width="11" height="48" rx="5.5" fill="#F5F7F6"/>
+  <path d="M95 38L73 60L95 82" fill="none" stroke="#F5F7F6" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,12 @@
+playwright==1.56.0
+requests>=2.31,<3
+PyYAML>=6.0,<7
+Pillow>=10.4,<12
+openpyxl>=3.1,<4
+cryptography>=42,<47
+# настоящий Android: клиент Appium (сервер — в контейнере appium)
+Appium-Python-Client>=4,<6
+# страница приложения на телефоне — протокол DevTools
+websocket-client>=1.8
+# резервные копии и сжатие таблиц (раздел storage) — прямой доступ к базе
+PyMySQL>=1.1,<2

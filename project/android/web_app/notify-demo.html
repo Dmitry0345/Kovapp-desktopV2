@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ковчег — проверка уведомлений</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/kovapp-mark.svg?v=2026-09-29" type="image/svg+xml">
+<meta name="theme-color" content="#546E7A">
+<link rel="stylesheet" href="css/notify.css">
+<style>
+  :root { font-size: 16px; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, "Segoe UI", sans-serif; background: #F1F4F6; color: #263238; }
+  header { height: 4.5rem; background: linear-gradient(180deg, #607D8B, #546E7A 50%, #37474F); color: #fff; display: flex; align-items: center; padding: 0 1.2rem; gap: 1rem; }
+  header h1 { font-size: 1.15rem; margin: 0; font-weight: 700; }
+  header .chip { margin-left: auto; background: rgba(255,255,255,.14); border-radius: 1.25rem; padding: .35rem .9rem; font-size: .85rem; }
+  main { display: grid; grid-template-columns: minmax(20rem, 26rem) 1fr; gap: 1rem; padding: 1rem; max-width: 80rem; margin: 0 auto; }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+  .card { background: #fff; border: 1px solid #DCE3E7; border-radius: .9rem; padding: 1rem; }
+  .card h2 { margin: 0 0 .6rem; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: #78909C; }
+  label { display: block; font-size: .8rem; color: #78909C; margin: .5rem 0 .2rem; }
+  input[type=text], input[type=password] { width: 100%; padding: .55rem .7rem; border: 1px solid #CFD8DC; border-radius: .5rem; font-size: .95rem; }
+  .row { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .6rem; }
+  button { padding: .55rem .9rem; border-radius: .55rem; border: 1px solid #89A3AE; background: #6E8B98; color: #fff; font-size: .9rem; cursor: pointer; }
+  button:hover { background: #7F9CA8; } button:active { background: #5A7683; }
+  button.ghost { background: #ECEFF1; border-color: #CFD8DC; color: #37474F; } button.ghost:hover { background: #DDE3E6; }
+  button.danger { background: #EF5350; border-color: #E53935; } button.danger:hover { background: #E53935; }
+  button:disabled { opacity: .5; cursor: default; }
+  .status { font-size: .85rem; margin-top: .5rem; padding: .5rem .7rem; border-radius: .5rem; background: #ECEFF1; }
+  .status.ok { background: #E8F5E9; color: #2E7D32; } .status.warn { background: #FFF8E1; color: #B47A16; } .status.err { background: #FFEBEE; color: #C62828; }
+  .toggles label { display: flex; align-items: center; gap: .5rem; font-size: .9rem; color: #263238; margin: .35rem 0; }
+  #log { font-family: Consolas, monospace; font-size: .78rem; white-space: pre-wrap; word-break: break-word; max-height: 32rem; overflow: auto; background: #263238; color: #ECEFF1; padding: .8rem; border-radius: .6rem; }
+  #log .t { color: #B0BEC5; } #log .in { color: #80CBC4; } #log .shown { color: #FFD54F; } #log .err { color: #EF9A9A; }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: .2rem .8rem; font-size: .85rem; }
+  .kv b { color: #546E7A; font-weight: 600; }
+  select { padding: .45rem .6rem; border: 1px solid #CFD8DC; border-radius: .5rem; font-size: .9rem; width: 100%; }
+</style>
+</head>
+<body>
+<header><h1>Ковчег · проверка уведомлений</h1><span class="chip" id="conn-chip">не подключено</span></header>
+<main>
+  <section>
+    <div class="card">
+      <h2>Вход</h2>
+      <label>Сервер</label><input type="text" id="host" value="http://83.171.90.230:54545">
+      <label>Логин</label><input type="text" id="login" autocomplete="username">
+      <label>Пароль</label><input type="password" id="password" autocomplete="current-password">
+      <div class="row"><button id="btn-login">Войти и подключить чат</button><button class="ghost" id="btn-logout">Выйти</button></div>
+      <div class="status" id="login-status">Токен хранится в этом браузере; при повторном открытии страница подключится сама.</div>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <h2>Режим уведомлений</h2>
+      <div class="kv" id="mode-kv"></div>
+      <div class="status" id="mode-status"></div>
+      <div class="row">
+        <button class="ghost" id="btn-perm">Разрешить уведомления</button>
+        <button id="btn-push-on">Включить push</button>
+        <button class="ghost" id="btn-push-off">Отключить push</button>
+        <button class="ghost" id="btn-push-test">Тест push с сервера</button>
+      </div>
+      <div class="status" id="push-status"></div>
+    </div>
+
+    <div class="card toggles" style="margin-top:1rem">
+      <h2>Настройки</h2>
+      <label><input type="checkbox" id="s-toasts" checked> Всплывашки</label>
+      <label><input type="checkbox" id="s-chatToasts" checked> …в том числе для чата</label>
+      <label><input type="checkbox" id="s-sound" checked> Звук</label>
+      <label><input type="checkbox" id="s-os" checked> Системные уведомления при скрытой вкладке</label>
+      <label>Открытый чат (для проверки, что сообщения открытого чата не всплывают)</label>
+      <select id="active-chat"><option value="">— мессенджер закрыт —</option></select>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <h2>Проверка</h2>
+      <div class="row">
+        <button class="ghost" id="btn-local-chat">Всплывашка: чат</button>
+        <button class="ghost" id="btn-local-notif">Всплывашка: уведомление</button>
+        <button id="btn-server-notif">Уведомление через сервер → WS</button>
+        <button class="ghost" id="btn-read">Прочитал уведомления</button>
+      </div>
+      <div class="status">Чтобы проверить сценарий «вкладка скрыта»: сверните окно или перейдите на другую вкладку и попросите коллегу написать вам в чат. Появится звук и счётчик в заголовке вкладки; при HTTPS — ещё и системное уведомление.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>События <span style="float:right;text-transform:none;letter-spacing:0" id="counters"></span></h2>
+    <div id="log"></div>
+  </section>
+</main>
+
+<script src="js/kov-api.js"></script>
+<script src="js/notify/notify-mode.js"></script>
+<script src="js/notify/notify-ui.js"></script>
+<script src="js/notify/notify-center.js"></script>
+<script src="js/notify/push-client.js"></script>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const log = (cls, text) => {
+    const line = document.createElement('div');
+    line.innerHTML = '<span class="t">' + new Date().toLocaleTimeString('ru-RU') + '</span> <span class="' + cls + '">' + escapeHtml(text) + '</span>';
+    $('log').prepend(line);
+    while ($('log').children.length > 300) $('log').lastChild.remove();
+  };
+  const escapeHtml = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const setStatus = (id, cls, text) => { const el = $(id); el.className = 'status ' + (cls || ''); el.textContent = text; };
+
+  // ── режим ──
+  const M = Kov.NotifyMode;
+  $('mode-kv').innerHTML = [
+    ['Соединение', M.secure ? 'HTTPS (защищённое)' : 'HTTP'],
+    ['Notification API', M.notificationsApi ? 'есть' : 'недоступен'],
+    ['Service worker', M.serviceWorker ? 'есть' : 'недоступен'],
+    ['Web Push', M.push ? 'есть' : 'недоступен'],
+    ['Итог', { inpage: 'только внутри открытой вкладки', os: 'системные при открытой вкладке', push: 'полные (и при закрытом браузере)' }[M.level]],
+  ].map(([k, v]) => '<b>' + k + '</b><span>' + v + '</span>').join('');
+  setStatus('mode-status', M.level === 'push' ? 'ok' : 'warn', M.describe());
+
+  // ── центр уведомлений ──
+  const NC = Kov.NotifyCenter;
+  NC.on('counters', c => { $('counters').textContent = 'непрочитанных: уведомлений ' + c.notifications + ', чат ' + c.chats; });
+  NC.on('shown', p => log('shown', 'ПОКАЗАНО [' + p.kind + '] ' + p.title + ' — ' + p.body));
+  NC.on('notification', e => log('shown', 'РАЗДЕЛ «Уведомления» +1: ' + e.message));
+  NC.on('chats', chats => fillChats(chats));
+
+  function fillChats(chats) {
+    const sel = $('active-chat'); const cur = sel.value;
+    sel.innerHTML = '<option value="">— мессенджер закрыт —</option>' + chats.map(c => '<option value="' + c.id + '">' + escapeHtml(c.name) + (c.unread_count ? ' (' + c.unread_count + ')' : '') + '</option>').join('');
+    sel.value = cur;
+  }
+  $('active-chat').addEventListener('change', e => { NC.setActiveChat(e.target.value || null); log('t', 'Открытый чат: ' + (e.target.value || 'нет')); });
+  ['toasts', 'chatToasts', 'sound', 'os'].forEach(k => $('s-' + k).addEventListener('change', e => {
+    NC.setSettings({ [k]: e.target.checked });
+    if (Kov.Api.state.token) Kov.Api.put('preferences/web.notifications', { json: { value: NC.getSettings() } }).catch(() => {});
+  }));
+
+  // ── WebSocket ──
+  let ws = null, reconnectTimer = null, pingTimer = null, backoff = 1000, wantOpen = false;
+  function connectWs() {
+    if (!wantOpen || !Kov.Api.state.token) return;
+    clearTimeout(reconnectTimer);
+    try { ws = new WebSocket(Kov.Api.wsUrl()); } catch (e) { scheduleReconnect(); return; }
+    ws.onopen = () => { backoff = 1000; $('conn-chip').textContent = 'чат подключён'; log('t', 'WS открыт'); pingTimer = setInterval(() => ws.readyState === 1 && ws.send(JSON.stringify({ type: 'ping' })), 25000); };
+    ws.onmessage = e => {
+      let data; try { data = JSON.parse(e.data); } catch (err) { return; }
+      if (data.type === 'ping') { ws.send(JSON.stringify({ type: 'pong' })); return; }
+      if (data.type === 'pong' || data.type === 'connection_status') return;
+      log('in', 'WS ' + data.type + ' ' + JSON.stringify(data).slice(0, 220));
+      NC.handleEvent(data);
+    };
+    ws.onclose = () => { clearInterval(pingTimer); $('conn-chip').textContent = 'переподключение…'; scheduleReconnect(); };
+    ws.onerror = () => {};
+  }
+  function scheduleReconnect() {
+    if (!wantOpen) return;
+    reconnectTimer = setTimeout(connectWs, backoff);
+    backoff = Math.min(backoff * 2, 30000);
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && wantOpen && (!ws || ws.readyState > 1)) { backoff = 1000; connectWs(); } });
+  window.addEventListener('online', () => { backoff = 1000; connectWs(); });
+
+  // ── вход ──
+  async function afterLogin() {
+    const st = Kov.Api.state;
+    setStatus('login-status', 'ok', 'Вошли: user_id=' + st.userId);
+    NC.init({
+      userId: st.userId,
+      resolveChat: async id => { const chats = await Kov.Api.get('chat/list'); const c = chats.find(x => x.id === Number(id)); return c ? { name: c.name, is_group: c.is_group } : null; },
+      navigate: url => log('t', 'ПЕРЕХОД → ' + url),
+    });
+    try {
+      const pref = await Kov.Api.get('preferences/web.notifications');
+      if (pref && pref.value) { NC.setSettings(pref.value); ['toasts', 'chatToasts', 'sound', 'os'].forEach(k => { if (k in pref.value) $('s-' + k).checked = !!pref.value[k]; }); }
+    } catch (e) { /* нет сохранённых */ }
+    try {
+      const unread = await Kov.Api.get('employees/' + st.userId + '/notifications', { query: { is_read: 0 } });
+      NC.setUnreadNotifications(unread.length);
+    } catch (e) { log('err', 'Не удалось получить уведомления: ' + e.message); }
+    try { fillChats(await Kov.Api.get('chat/list')); } catch (e) { /* ignore */ }
+    await Kov.PushClient.init({ swUrl: 'sw.js' });
+    await Kov.PushClient.sync();
+    refreshPushStatus();
+    wantOpen = true; connectWs();
+  }
+
+  $('btn-login').addEventListener('click', async () => {
+    Kov.NotifyUI.unlockAudio();
+    try {
+      await Kov.Api.login($('host').value.trim(), $('login').value.trim(), $('password').value);
+      $('password').value = '';
+      await afterLogin();
+    } catch (e) { setStatus('login-status', 'err', 'Ошибка входа: ' + e.message); }
+  });
+  $('btn-logout').addEventListener('click', () => { wantOpen = false; if (ws) ws.close(); Kov.Api.clear(); setStatus('login-status', '', 'Вышли.'); $('conn-chip').textContent = 'не подключено'; });
+
+  // ── push ──
+  async function refreshPushStatus() {
+    const s = await Kov.PushClient.status();
+    let text = 'Разрешение браузера: ' + s.permission + '. ';
+    if (!s.supported) text += s.reason;
+    else text += (s.serverEnabled ? 'Сервер: push включён. ' : 'Сервер: VAPID-ключи не заданы, push выключен. ') + (s.subscribed ? 'Этот браузер подписан.' : 'Подписки нет.');
+    setStatus('push-status', s.subscribed ? 'ok' : (s.supported ? 'warn' : ''), text);
+  }
+  $('btn-perm').addEventListener('click', async () => { const r = await NC.requestPermission(); log('t', 'Разрешение: ' + r); refreshPushStatus(); });
+  $('btn-push-on').addEventListener('click', async () => { const r = await Kov.PushClient.enable(); log(r.ok ? 't' : 'err', r.ok ? 'Push включён' : 'Push: ' + r.reason); refreshPushStatus(); });
+  $('btn-push-off').addEventListener('click', async () => { const r = await Kov.PushClient.disable(); log('t', r.ok ? 'Push отключён' : 'Push: ' + r.reason); refreshPushStatus(); });
+  $('btn-push-test').addEventListener('click', async () => { try { await Kov.PushClient.test(); log('t', 'Сервер отправил тестовый push'); } catch (e) { log('err', 'Тест push: ' + e.message); } });
+
+  // ── локальные проверки ──
+  $('btn-local-chat').addEventListener('click', () => NC.handleEvent({ type: 'message', id: Date.now(), chat_id: 0, sender_id: -1, sender_name: 'Иванов Пётр', sender_last_name: 'Иванов', sender_first_name: 'Пётр', text: 'Проверка всплывашки чата: договор подписан, файлы в задаче.' }));
+  $('btn-local-notif').addEventListener('click', () => NC.handleEvent({ type: 'notification.new', notification_id: Date.now(), message: 'Вас назначили ответственным по задаче «Монтаж витражей»', target_section: 'task_view', target_id: 1 }));
+  $('btn-server-notif').addEventListener('click', async () => {
+    if (!Kov.Api.state.userId) return log('err', 'Сначала войдите');
+    try {
+      await Kov.Api.post('notifications', { json: { employee_id: Kov.Api.state.userId, message: 'Проверка уведомления с сервера ' + new Date().toLocaleTimeString('ru-RU'), target_section: 'notifications' } });
+      log('t', 'Уведомление создано на сервере — ждём его по WebSocket');
+    } catch (e) { log('err', 'Сервер: ' + e.message); }
+  });
+  $('btn-read').addEventListener('click', () => NC.markNotificationsRead());
+
+  // ── автоподключение ──
+  if (Kov.Api.restore()) { $('host').value = Kov.Api.state.host; afterLogin().catch(e => setStatus('login-status', 'err', e.message)); }
+  refreshPushStatus();
+})();
+</script>
+</body>
+</html>

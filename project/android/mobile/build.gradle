@@ -1,0 +1,5 @@
+// Android Gradle Plugin и Gradle (gradle/wrapper). Если Android Studio предложит
+// обновить плагин — соглашайтесь: код рассчитан на AGP 8.10 и новее.
+plugins {
+    id 'com.android.application' version '8.10.1' apply false
+}

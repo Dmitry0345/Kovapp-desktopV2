@@ -1,0 +1,9 @@
+{
+  "comment": "Какие скрипты приложения подключаются к страницам web_app и куда. Общий файл для APK и tools/devserver.py.",
+  "head_after": "<script src=\"js/core/api-host.js\"></script>",
+  "head_fallback": "</head>",
+  "head_scripts": ["native/kovapp-state.js", "native/kovapp-bridge.js"],
+  "tail_before": "<script src=\"js/app.js\"></script>",
+  "tail_fallback": "</body>",
+  "tail_scripts": ["native/kovapp-app.js"]
+}

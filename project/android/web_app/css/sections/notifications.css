@@ -1,0 +1,66 @@
+/* Раздел «Уведомления»: список и создание уведомления. Всплывашки — notify.css. */
+
+/* ── список уведомлений ────────────────────────────────────────────────── */
+.notif-list { display: flex; flex-direction: column; gap: .5rem; }
+/* Прокручивается список, а не весь раздел: кнопки «Отметить все» и
+   «Создать уведомление» остаются на виду, за ними не надо листать вниз */
+.notif-section { height: 100%; min-height: 0; }
+/* Селектор с .content: ниже в файле есть правило .content > .section.fill > *,
+   которое иначе перебивает это и не даёт списку растянуться */
+.content > .section.notif-section > .notif-list {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  overscroll-behavior: contain; padding-right: .2rem;
+}
+.notif-actions-bar {
+  flex: 0 0 auto; padding-top: .6rem; margin-top: .2rem;
+  border-top: 1px solid var(--card-border); background: var(--page-bg);
+}
+@media (max-width: 700px) {
+  /* телефон: обе кнопки в одну строку поровну, с короткими подписями */
+  .notif-actions-bar { flex-wrap: nowrap; gap: .5rem; }
+  .notif-actions-bar > span { display: none; }
+  .notif-actions-bar .btn { flex: 1 1 0; min-width: 0; }
+  .notif-actions-bar .lbl-full { display: none; }
+  .notif-actions-bar .lbl-short { display: inline; }
+}
+.notif-item { display: flex; gap: .7rem; align-items: flex-start; background: var(--card-bg); border: 1px solid var(--card-border); border-left: .3rem solid var(--card-border); border-radius: var(--radius-lg); padding: .7rem .9rem; cursor: pointer; }
+.notif-item.unread { border-left-color: var(--info); background: var(--surface-3); }
+.notif-item .text { flex: 1; }
+.notif-item .time { color: var(--text-label); font-size: .75rem; white-space: nowrap; }
+.notif-item svg { width: 1.1rem; height: 1.1rem; color: var(--accent); margin-top: .1rem; }
+/* 3. Пустой список уведомлений */
+.empty-state { display: flex; flex-direction: column; align-items: center; gap: .5rem; padding: 3rem 1.5rem; text-align: center; color: var(--text-label); }
+.empty-icon { width: 4.5rem; height: 4.5rem; border-radius: 50%; background: var(--chip-bg); display: grid; place-items: center; color: var(--accent-soft); }
+.empty-icon svg { width: 2.2rem; height: 2.2rem; }
+.empty-title { font-size: 1.05rem; font-weight: 700; color: var(--ghost-text); }
+.empty-text { max-width: 28rem; font-size: .85rem; }
+/* Окно «Создать уведомление»: режим выбора сверху, один список вместо двух,
+   освободившееся место отдано полю текста. */
+.modal-body.notif-create { min-height: min(28rem, 58vh); }
+.notif-create .notif-mode { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.notif-create .notif-pick-wrap { display: flex; flex-direction: column; gap: .5rem; }
+.notif-create .notif-pick { height: 12rem; max-height: none; }
+.notif-create .notif-pick label .chip { margin-left: auto; }
+.notif-create > .field { flex: 1 1 auto; min-height: 0; }
+.notif-create .notif-message { flex: 1 1 auto; min-height: 8.5rem; }
+@media (max-width: 760px) {
+  .modal-body.notif-create { min-height: 0; }
+  .notif-create .notif-pick { height: 10rem; }
+  .notif-create .notif-message { min-height: 7rem; }
+}
+/* «Всем отделам» — первая строка списка отделов, отделена чертой */
+.notif-create .notif-pick label.pick-all {
+  font-weight: 700; border-radius: 0; padding-bottom: .5rem; margin-bottom: .2rem;
+  border-bottom: 1px solid var(--card-border);
+}
+/* Окно создания уведомления: высота не меняется при переключении режима —
+   список отделов занимает и то место, где в режиме «Сотрудникам» стоит поиск */
+.notif-create .notif-pick-wrap { height: 14.5rem; min-height: 0; }
+.notif-create .notif-pick { height: auto; max-height: none; flex: 1 1 auto; min-height: 0; }
+.notif-create .notif-pick-wrap > .toolbar { flex: 0 0 auto; }
+@media (max-width: 760px) { .notif-create .notif-pick-wrap { height: 12rem; } }
+/* Те же кнопки внутри карточки уведомления */
+.notif-actions { display: flex; gap: .4rem; margin-top: .45rem; flex-wrap: wrap; }
+.notif-actions .btn { min-height: 1.9rem; padding: .25rem .7rem; font-size: .78rem; }
+.notif-done { display: inline-flex; align-items: center; gap: .3rem; font-size: .78rem; color: var(--success-text); }
+.notif-done svg { width: .9rem; height: .9rem; }

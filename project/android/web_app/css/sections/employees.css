@@ -1,0 +1,38 @@
+/* Раздел «Работники» и профиль сотрудника. */
+
+.profile-panel { display: flex; flex-direction: column; min-height: 100%; }
+.profile-head {
+  background: linear-gradient(180deg, var(--header-top), var(--header-mid) 55%, var(--header-bottom));
+  color: #fff; padding: .7rem .9rem 1.4rem;
+}
+.profile-head .row { display: flex; align-items: center; gap: .5rem; }
+.profile-head .title { font-weight: 700; font-size: 1rem; }
+.profile-head .head-actions { display: flex; gap: .4rem; }
+.profile-head .btn { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.3); color: #fff; }
+.profile-head .btn:hover { background: rgba(255,255,255,.26); }
+.profile-head .avatar-wrap { position: relative; width: fit-content; margin: 1rem auto 0; }
+.profile-head .avatar { border: .22rem solid rgba(255,255,255,.9); box-shadow: 0 .35rem .9rem rgba(0,0,0,.28); }
+.profile-head .photo-btn { position: absolute; right: -.1rem; bottom: -.1rem; width: 2.4rem; min-height: 2.4rem; padding: 0; border-radius: 50%; background: var(--card-bg); border-color: var(--card-bg); color: var(--accent); }
+.profile-head .photo-btn:hover { background: var(--chip-bg); }
+.profile-head .name { text-align: center; font-size: 1.3rem; font-weight: 700; margin-top: .7rem; }
+.profile-head .sub { text-align: center; font-size: .85rem; margin-top: .25rem; color: rgba(255,255,255,.82); }
+.profile-body { padding: 1rem; display: flex; flex-direction: column; gap: .75rem; background: var(--page-bg); flex: 1; }
+.avatar-wrap .avatar.clickable { cursor: zoom-in; }
+/* Работники на телефоне: имя, ниже «должность · отдел», ниже номер ссылкой —
+   без повторяющихся подписей полей; на экране 390×844 — 6 карточек вместо 4 */
+@media (max-width: 760px) {
+  table.data.cards.emp-cards tr.row { display: grid; grid-template-columns: 2.95rem auto minmax(0, 1fr); row-gap: .15rem; padding: .7rem .85rem; }
+  table.data.cards.emp-cards td { display: block; padding: 0; }
+  table.data.cards.emp-cards td::before { content: none; }
+  table.data.cards.emp-cards td[data-col="fio"] { grid-column: 1 / -1; font-size: 1rem; }
+  table.data.cards.emp-cards td[data-col="position"] { grid-column: 2; grid-row: 2; font-size: .88rem; color: var(--accent); }
+  table.data.cards.emp-cards td[data-col="department"] { grid-column: 3; grid-row: 2; font-size: .88rem; color: var(--accent);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  table.data.cards.emp-cards td[data-col="department"]::before { content: '\00a0· '; }
+  table.data.cards.emp-cards td[data-col="phone_number"] { grid-column: 2 / -1; grid-row: 3; font-size: .9rem; }
+  /* номер: поле нажатия выше строки текста, раскладку не меняет */
+  .emp-cards a.tel { display: inline-flex; align-items: center; gap: .35rem; padding: .3rem .5rem .3rem 0; margin: -.3rem 0;
+    color: var(--info); text-decoration: underline; text-underline-offset: 2px; }
+  .emp-cards a.tel svg { width: 1rem; height: 1rem; flex: 0 0 auto; }
+  :root[data-theme="dark"] table.data.cards.emp-cards td:is([data-col="position"], [data-col="department"]) { color: var(--text-label); }
+}

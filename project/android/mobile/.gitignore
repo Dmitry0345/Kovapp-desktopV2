@@ -1,0 +1,12 @@
+# секреты и настройки конкретной установки — не в git и не в архив
+kovapp.properties
+keystore.properties
+*.jks
+*.keystore
+google-services.json
+# результаты сборки и тестов
+build/
+app/build/
+.gradle/
+local.properties
+tests/ui/report/

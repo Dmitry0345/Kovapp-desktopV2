@@ -1,0 +1,27 @@
+# Сведения о файле Kovapp.exe (Свойства → Подробно). При новой версии — поменять числа и строки.
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(3, 0, 16, 0),
+    prodvers=(3, 0, 16, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo([
+      StringTable('041904B0', [
+        StringStruct('CompanyName', 'Kovapp'),
+        StringStruct('FileDescription', 'Kovapp — задачи, проекты, склад, оборудование и мессенджер'),
+        StringStruct('FileVersion', 'beta3-v16-pc'),
+        StringStruct('InternalName', 'Kovapp'),
+        StringStruct('OriginalFilename', 'Kovapp.exe'),
+        StringStruct('ProductName', 'Kovapp'),
+        StringStruct('ProductVersion', 'beta3-v16-pc')
+      ])
+    ]),
+    VarFileInfo([VarStruct('Translation', [0x0419, 1200])])
+  ]
+)

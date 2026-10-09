@@ -1,0 +1,2248 @@
+/* Цвета мессенджера (--col-*) — в css/theme.css вместе с остальными цветами приложения */
+
+#kovChat * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+#kovChat, #kovChat {
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-family);
+    background-color: var(--col-bg-main);
+    color: var(--col-text-main);
+    overflow: hidden;
+}
+/* Анимации появления сообщений */@keyframes fadeInMsg {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* Скроллбар */#kovChat ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: var(--scrollbar-bg);
+}
+#kovChat ::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 3px;
+}
+#kovChat ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+}
+#kovChat .app-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+/* Кнопки */#kovChat button {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#kovChat .icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--col-text-secondary);
+    transition: background-color 0.2s, color 0.2s, transform 0.15s;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#kovChat .icon-btn:focus-visible {
+    outline: 2px solid var(--col-primary);
+    outline-offset: 2px;
+}
+#kovChat .icon-btn:hover {
+    background-color: var(--col-hover);
+    color: var(--col-primary);
+    transform: scale(1.05);
+}
+#kovChat .icon-btn:active {
+    transform: scale(0.95);
+}
+#kovChat .icon-btn.active {
+    background-color: var(--col-selected);
+    color: var(--col-primary);
+}
+#kovChat .icon-btn-small {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    color: var(--col-text-secondary);
+}
+#kovChat .icon-btn-small:hover {
+    background-color: var(--col-hover);
+    color: var(--col-text-main);
+}
+/* Вводы */#kovChat input[type="text"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--col-field-border);
+    border-radius: 20px;
+    font-family: var(--font-family);
+    font-size: calc(14px * var(--user-scale, 1));
+    outline: none;
+    transition: border-color 0.2s;
+}
+#kovChat input[type="text"]:focus {
+    border-color: var(--col-primary);
+}
+#kovChat input[type="text"]:focus-visible {
+    outline: 2px solid var(--col-primary);
+    outline-offset: -2px;
+}
+/* Левая панель */#kovChat .sidebar {
+    width: 350px;
+    min-width: 350px;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--col-bg-sidebar);
+    border-right: 1px solid var(--col-divider);
+    z-index: 10;
+}
+#kovChat .sidebar-header {
+    height: 60px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 10px;
+    border-bottom: 1px solid var(--col-divider);
+}
+#kovChat .chat-list-container {
+    flex: 1;
+    overflow-y: auto;
+}
+#kovChat .chat-item {
+    display: flex;
+    padding: 10px 15px;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid var(--col-divider);
+    transition: background-color 0.2s, transform 0.15s;
+    border-left: 3px solid transparent;
+}
+#kovChat .chat-item:hover {
+    background-color: var(--col-hover);
+    transform: scale(1.01);
+}
+#kovChat .chat-item.active {
+    background-color: var(--col-selected);
+    border-left-color: var(--col-primary);
+}
+#kovChat .chat-item-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: calc(18px * var(--user-scale, 1));
+    overflow: hidden;
+    flex-shrink: 0;
+}
+#kovChat .chat-item-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+#kovChat .chat-item-info {
+    flex: 1;
+    overflow: hidden;
+}
+#kovChat .chat-item-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+#kovChat .chat-item-name {
+    font-weight: bold;
+    font-size: calc(15px * var(--user-scale, 1));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#kovChat .chat-item-time {
+    font-size: calc(12px * var(--user-scale, 1));
+    color: var(--col-text-secondary);
+}
+#kovChat .chat-item-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#kovChat .chat-item-last-msg {
+    font-size: calc(13px * var(--user-scale, 1));
+    color: var(--col-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Правая панель */#kovChat .chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--col-bg-chat);
+    position: relative;
+    /* Если нужен фон с картинкой:
+    background-image: url('background_chat.png');
+    background-size: cover;
+    background-position: center; */
+}
+#kovChat .placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: calc(21px * var(--user-scale, 1));
+    color: var(--col-text-disabled);
+}
+#kovChat .chat-area {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+#kovChat .chat-header {
+    height: 60px;
+    min-height: 60px;
+    background-color: var(--col-panel);
+    border-bottom: 1px solid var(--col-divider);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+#kovChat .chat-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: calc(16px * var(--user-scale, 1));
+    overflow: hidden;
+    flex-shrink: 0;
+}
+#kovChat .chat-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+#kovChat .chat-title {
+    font-size: calc(18px * var(--user-scale, 1));
+    font-weight: bold;
+}
+#kovChat .header-spacer {
+    flex: 1;
+}
+#kovChat .message-list-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+#kovChat .messages-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+/* Сообщения */#kovChat .msg-wrapper {
+    display: flex;
+    max-width: 75%;
+    width: fit-content;
+    margin-bottom: 4px;
+    box-sizing: border-box;
+    align-items: flex-end;
+}
+/* Стили для контейнера аватара */#kovChat .msg-avatar { 
+    width: 36px; 
+    height: 36px; 
+    border-radius: 50%; 
+    flex-shrink: 0; 
+    overflow: hidden; 
+    background-color: var(--col-primary); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1); 
+    margin-right: 12px;
+}
+/* Аватарка, по которой можно кликнуть (открывает карточку сотрудника) */#kovChat .msg-avatar.clickable {
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+#kovChat .msg-avatar.clickable:hover {
+    transform: scale(1.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+#kovChat .msg-avatar.clickable:active {
+    transform: scale(0.98);
+}
+/* Стили для самой картинки */#kovChat .msg-avatar img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+}
+/* Инициалы, когда фотографии нет */.avatar-initials {
+    color: #FFFFFF;
+    font-weight: 600;
+    font-family: var(--font-family);
+    line-height: 1;
+    user-select: none;
+}
+#kovChat .msg-avatar .avatar-initials {
+    font-size: calc(14px * var(--user-scale, 1));
+}
+#kovChat .chat-item-avatar .avatar-initials {
+    font-size: calc(18px * var(--user-scale, 1));
+}
+#kovChat .chat-avatar .avatar-initials {
+    font-size: calc(18px * var(--user-scale, 1));
+}
+#kovChat .msg-mine {
+    align-self: flex-end;
+}
+#kovChat .msg-other {
+    align-self: flex-start;
+}
+#kovChat .msg-bubble {
+    padding: 8px 12px;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    font-size: calc(15px * var(--user-scale, 1));
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: background-color 1.5s ease-out;
+}
+#kovChat .msg-mine .msg-bubble {
+    background-color: var(--msg-mine-bg);
+    border-bottom-right-radius: 4px;
+}
+#kovChat .msg-other .msg-bubble {
+    background-color: var(--msg-other-bg);
+    border-bottom-left-radius: 4px;
+}
+#kovChat .msg-sender {
+    font-size: calc(12px * var(--user-scale, 1));
+    font-weight: bold;
+    color: var(--col-primary);
+    margin-bottom: 4px;
+}
+/* Подпись автора над пересланным сообщением */#kovChat .msg-forwarded {
+    border-left: 3px solid var(--col-primary);
+    padding: 4px 8px;
+    margin-bottom: 6px;
+    background-color: rgba(0, 0, 0, 0.04);
+    border-radius: 4px;
+}
+#kovChat .msg-forwarded-label {
+    font-size: calc(11px * var(--user-scale, 1));
+    color: var(--col-text-secondary);
+    font-style: italic;
+    margin-bottom: 1px;
+}
+#kovChat .msg-forwarded-author {
+    font-size: calc(12px * var(--user-scale, 1));
+    font-weight: bold;
+    color: var(--col-primary);
+    word-break: break-word;
+}
+#kovChat .msg-text {
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+#kovChat .msg-meta {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: calc(11px * var(--user-scale, 1));
+    color: var(--col-text-secondary);
+    margin-top: 4px;
+    gap: 4px;
+}
+#kovChat .msg-edited {
+    font-style: italic;
+}
+/* Файлы / Медиа */#kovChat .msg-media {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+/* Одиночное фото или видео показывается целиком.
+   Раньше здесь стояли min-width: 150px и object-fit: cover: узкий пузырь не
+   давал картинке сжаться, и она уходила под край, а cover срезал у неё верх
+   и низ. Теперь ширина ограничена пузырём, высота считается по пропорции,
+   а contain не даёт обрезать кадр. Плитки альбома переопределяют это ниже —
+   там cover как раз нужен. */
+#kovChat .media-image {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: auto;
+    max-height: 60vh;
+    min-height: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    object-fit: contain;
+    background-color: var(--col-inset);
+}
+#kovChat .media-file {
+    display: flex;
+    align-items: center;
+    background-color: var(--col-inset);
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+#kovChat .media-file-icon {
+    font-size: calc(24px * var(--user-scale, 1));
+    margin-right: 10px;
+}
+#kovChat .media-file-info {
+    display: flex;
+    flex-direction: column;
+}
+#kovChat .media-file-name {
+    font-size: calc(14px * var(--user-scale, 1));
+    font-weight: 500;
+}
+#kovChat .media-file-size {
+    font-size: calc(12px * var(--user-scale, 1));
+    color: var(--col-text-secondary);
+}
+/* Группы файлов (Альбомы).
+   Раскладка рядами: ряд задаёт высоту через aspect-ratio, плитки внутри
+   всегда одного размера. Раньше здесь была сетка auto-fit, и при нечётном
+   числе файлов последний оказывался один в ряду и растягивался. */
+#kovChat .media-album {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    /* На широком экране пузырь занимает три четверти окна, и альбом из трёх
+       фотографий вырастал выше экрана. Ширину ограничиваем, дальше высота
+       считается от неё сама. */
+    max-width: 26rem;
+    box-sizing: border-box;
+}
+#kovChat .media-row {
+    display: grid;
+    gap: 4px;
+    width: 100%;
+}
+#kovChat .media-row[data-count="2"] { grid-template-columns: 1fr 1fr; aspect-ratio: 2 / 1.12; }
+#kovChat .media-row[data-count="3"] { grid-template-columns: repeat(3, 1fr); aspect-ratio: 3 / 1.04; }
+/* Страховка на случай необычных пропорций: ряд не выше трети экрана */
+#kovChat .media-row, #kovChat .media-hero { max-height: 34vh; }
+/* Высоту всего блока не режем: обрезка спрятала бы файлы, до которых уже
+   не добраться. Размер держит ширина альбома — двенадцать файлов дают
+   около 590 px, и это помещается на экране. */
+/* три файла — «герой» слева и две плитки справа */
+#kovChat .media-hero {
+    display: grid;
+    grid-template-columns: 1.9fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+    width: 100%;
+    aspect-ratio: 3 / 1.85;
+}
+#kovChat .media-hero > *:first-child { grid-row: span 2; }
+#kovChat .media-album .media-row > *,
+#kovChat .media-album .media-hero > *,
+#kovChat .media-album > .temp-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    min-width: 0;
+    min-height: 0;
+}
+#kovChat .media-album .media-image,
+#kovChat .media-album video.media-image {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    min-width: 0;
+    min-height: 0;
+    object-fit: cover;
+    display: block;
+    aspect-ratio: auto;
+}
+/* одиночный файл в альбоме сохраняет свои пропорции */
+#kovChat .media-album > .media-image,
+#kovChat .media-album > div:only-child:not(.media-row):not(.media-hero) .media-image {
+    height: auto;
+    max-height: 60vh;
+    object-fit: contain;
+}
+/* Дата сепаратор */#kovChat .date-separator {
+    align-self: center;
+    background-color: var(--col-date-bg);
+    color: var(--col-date-fg);
+    box-shadow: var(--col-date-shadow);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: calc(12px * var(--user-scale, 1));
+    font-weight: 500;
+    margin: 10px 0;
+}
+/* Сервисные сообщения-маркеры (как в Telegram) */#kovChat .service-message-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+#kovChat .special-message {
+    max-width: 80%;
+    text-align: center;
+    font-size: calc(12.5px * var(--user-scale, 1));
+    line-height: 1.35;
+    color: var(--col-text-secondary);
+    background-color: var(--col-veil);
+    padding: 5px 14px;
+    border-radius: 12px;
+    word-break: break-word;
+}
+/* Реакции */#kovChat .reactions-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    max-width: 100%;
+}
+#kovChat .reaction-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: 13px;
+    background-color: var(--col-inset);
+    border: 1px solid transparent;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+#kovChat .reaction-chip:hover {
+    background-color: rgba(0, 0, 0, 0.09);
+    transform: translateY(-1px);
+}
+#kovChat .reaction-chip:active {
+    transform: translateY(0);
+}
+#kovChat .reaction-chip.mine {
+    background-color: var(--col-selected);
+    border-color: var(--col-primary);
+}
+#kovChat .reaction-chip.hidden {
+    display: none;
+}
+/* Эмодзи набирается шрифтом с цветными глифами, иначе на части систем
+   он рисуется плоским контуром и выглядит чужеродно */#kovChat .reaction-emoji {
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", var(--font-family);
+    font-size: calc(15px * var(--user-scale, 1));
+    line-height: 1;
+}
+#kovChat .reaction-count {
+    font-size: calc(12.5px * var(--user-scale, 1));
+    font-weight: 600;
+    color: var(--col-text-secondary);
+    min-width: 8px;
+    text-align: center;
+}
+#kovChat .reaction-chip.mine .reaction-count {
+    color: var(--col-primary);
+}
+/* Лицо автора — показывается, когда реакцию поставил один человек */#kovChat .reaction-face {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 1.5px var(--msg-other-bg);
+}
+#kovChat .msg-mine .reaction-face {
+    box-shadow: 0 0 0 1.5px var(--msg-mine-bg);
+}
+#kovChat .reaction-face img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+#kovChat .reaction-face .avatar-initials {
+    font-size: calc(8.5px * var(--user-scale, 1));
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1;
+}
+#kovChat .reaction-more {
+    font-size: calc(12.5px * var(--user-scale, 1));
+    font-weight: 600;
+    color: var(--col-text-secondary);
+}
+/* Полный список реакций — открывается по «+N» */.reaction-popup {
+    position: fixed;
+    z-index: 1200;
+    min-width: 190px;
+    max-width: 260px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 6px;
+    background-color: var(--col-bg-sidebar);
+    border: 1px solid var(--col-divider);
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+}
+.reaction-popup-group + .reaction-popup-group {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid var(--col-divider);
+}
+.reaction-popup-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.reaction-popup-head:hover {
+    background-color: var(--col-hover);
+}
+.reaction-popup-head.mine {
+    background-color: var(--col-selected);
+}
+.reaction-popup-count {
+    font-size: calc(12px * var(--user-scale, 1));
+    font-weight: 600;
+    color: var(--col-text-secondary);
+}
+.reaction-popup-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px 4px 14px;
+}
+.reaction-popup-face {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.reaction-popup-face img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.reaction-popup-face .avatar-initials {
+    font-size: calc(9px * var(--user-scale, 1));
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1;
+}
+.reaction-popup-name {
+    font-size: calc(13px * var(--user-scale, 1));
+    color: var(--col-text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Выбор реакции в контекстном меню.
+   Ширина всего меню считается от этих величин: 5 кнопок + 4 промежутка + поля,
+   поэтому меню всегда одного размера (см. --ctx-* в .context-menu). */#kovChat .reaction-picker {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--ctx-emoji-gap);
+    justify-content: space-between;
+    padding: var(--ctx-pad) var(--ctx-pad) 6px;
+}
+/* Расширенный список эмодзи — раскрывается кнопкой со стрелкой */#kovChat .reaction-picker-extra {
+    display: none;
+    flex-wrap: wrap;
+    gap: var(--ctx-emoji-gap);
+    padding: 6px var(--ctx-pad) var(--ctx-pad);
+    margin-top: -2px;
+    border-top: 1px solid var(--col-divider);
+    max-height: 190px;
+    overflow-y: auto;
+}
+#kovChat .reaction-picker-extra.open {
+    display: flex;
+}
+#kovChat .reaction-expand-btn {
+    color: var(--col-text-secondary);
+    background-color: var(--col-hover);
+}
+#kovChat .reaction-expand-btn svg {
+    transition: transform 0.18s ease;
+}
+#kovChat .reaction-expand-btn.expanded svg {
+    transform: rotate(180deg);
+}
+#kovChat .reaction-picker-btn {
+    width: var(--ctx-emoji-size);
+    height: var(--ctx-emoji-size);
+    flex: 0 0 var(--ctx-emoji-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", var(--font-family);
+    font-size: calc(19px * var(--user-scale, 1));
+    line-height: 1;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.12s ease;
+}
+#kovChat .reaction-picker-btn:hover {
+    background-color: var(--col-hover);
+    transform: scale(1.15);
+}
+#kovChat .reaction-picker-btn:active {
+    transform: scale(0.95);
+}
+/* Кнопка вниз */#kovChat .scroll-bottom-btn {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(63, 81, 181, 0.85); /* Полупрозрачный col-primary */
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    border: 2px solid rgba(255, 255, 255, 0.5); /* Изящная рамка */
+    cursor: pointer;
+}
+#kovChat .scroll-bottom-btn.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+#kovChat .scroll-bottom-btn:hover {
+    background-color: var(--col-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(63, 81, 181, 0.4);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+#kovChat .scroll-bottom-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 8px rgba(63, 81, 181, 0.3);
+}
+#kovChat .scroll-bottom-btn svg {
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3)); /* Тень для иконки */
+}
+/* Панель информации (Ответ, Файлы) */#kovChat .info-panel {
+    background-color: var(--col-hover);
+    border-top: 1px solid var(--col-divider);
+    padding: 8px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+#kovChat .reply-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 3px solid var(--col-primary);
+    padding-left: 8px;
+}
+#kovChat .reply-info {
+    font-size: calc(13px * var(--user-scale, 1));
+    color: var(--col-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#kovChat .attachments-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    /* Лента не должна растягивать окно: с десятью файлами она уезжала за край */
+    max-width: 100%;
+    min-width: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    scrollbar-width: thin;
+}
+#kovChat .attachments-count {
+    flex: 0 0 auto;
+    align-self: center;
+    font-size: calc(11px * var(--user-scale, 1));
+    font-weight: 700;
+    color: var(--col-text-secondary);
+    background: var(--col-bg-main);
+    border: 1px solid var(--col-divider);
+    border-radius: 10px;
+    padding: 4px 8px;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+#kovChat .attachment-preview {
+    position: relative;
+    flex: 0 0 auto;
+    width: 72px;
+    height: 72px;
+    margin-right: 8px; /* Added margin to prevent elements from sticking together */
+    background-color: var(--col-bg-main);
+    border-radius: 12px;
+    border: 1px solid var(--col-divider);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.2s, background-color 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+#kovChat .attachment-preview:hover {
+    border-color: var(--col-primary);
+    background-color: var(--col-hover);
+}
+#kovChat .attachment-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 11px;
+}
+#kovChat .attachment-remove {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #FF5252;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: calc(11px * var(--user-scale, 1));
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(255, 82, 82, 0.4);
+    transition: transform 0.2s, background-color 0.2s;
+}
+#kovChat .attachment-remove:hover {
+    transform: scale(1.1);
+    background: #E53935;
+}
+/* Панель ввода */#kovChat .input-area {
+    display: flex;
+    align-items: flex-end;
+    padding: 10px 15px;
+    background-color: var(--col-panel);
+    gap: 10px;
+}
+#kovChat .input-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--col-panel);
+    border-radius: 20px;
+    border: 1px solid var(--col-field-border);
+    transition: border-color 0.2s;
+    min-height: 40px;
+}
+#kovChat .input-wrapper:focus-within {
+    border-color: var(--col-primary);
+}
+#kovChat textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    /* Пока текст помещается, полосы прокрутки быть не должно: у пустого поля
+       она висела справа и выглядела поломкой. Как только текст перерастает
+       поле, js возвращает auto. */
+    overflow-y: hidden;
+    padding: 10px 15px;
+    font-family: var(--font-family);
+    font-size: calc(15px * var(--user-scale, 1));
+    resize: none;
+    outline: none;
+    max-height: 120px;
+    transition: height 0.15s ease-out;
+}
+#kovChat .char-counter {
+    text-align: right;
+    font-size: calc(11px * var(--user-scale, 1));
+    padding: 2px 15px 5px;
+    color: var(--col-text-secondary);
+}
+#kovChat .char-counter.warning {
+    color: orange;
+}
+#kovChat .char-counter.error {
+    color: red;
+    font-weight: bold;
+}
+#kovChat .send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--col-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, transform 0.15s;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+#kovChat .send-btn:hover {
+    background-color: var(--col-selected);
+    transform: scale(1.05);
+}
+#kovChat .send-btn:active {
+    transform: scale(0.95);
+}
+#kovChat .send-btn:focus-visible {
+    outline: 2px solid var(--col-primary);
+    outline-offset: 2px;
+}
+/* Боковая панель поиска */#kovChat .search-sidebar {
+    width: 0; /* скрыта по умолчанию */
+    flex-shrink: 0; /* чтобы flexbox не сжимал её */
+    background-color: var(--col-bg-sidebar);
+    border-left: 1px solid var(--col-divider);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow: hidden;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.05);
+}
+#kovChat .search-sidebar.open {
+    width: 350px;
+}
+#kovChat .search-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 15px 15px;
+}
+#kovChat .search-sidebar-title {
+    font-weight: 600;
+    font-size: calc(16px * var(--user-scale, 1));
+    color: var(--col-text-main);
+}
+#kovChat .close-search-btn {
+    background-color: transparent;
+    color: var(--col-text-secondary);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: calc(16px * var(--user-scale, 1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+#kovChat .close-search-btn:hover {
+    background-color: var(--col-hover);
+    color: var(--col-primary);
+}
+#kovChat .message-search-input {
+    display: block !important;
+    margin: 0 15px 15px 15px !important;
+    width: calc(100% - 30px) !important;
+    padding: 10px 15px !important;
+    border-radius: 20px !important;
+    border: 1px solid var(--col-divider) !important;
+    background-color: var(--col-bg-main) !important;
+    color: var(--col-text-main) !important;
+    font-size: calc(14px * var(--user-scale, 1)) !important;
+    outline: none !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+    box-sizing: border-box !important;
+}
+#kovChat .message-search-input:focus {
+    border-color: var(--col-primary);
+    box-shadow: 0 0 0 2px rgba(41, 121, 255, 0.1); /* Assuming primary is a blue-ish color, will fallback nicely anyway */
+}
+#kovChat .search-divider {
+    border: 0;
+    height: 1px;
+    background-color: var(--col-divider);
+    margin: 0;
+}
+#kovChat .search-results-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+#kovChat .search-result-item {
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    border: 1px solid transparent;
+}
+#kovChat .search-result-item:hover {
+    background-color: var(--col-hover);
+    border-color: var(--col-divider);
+    transform: translateY(-1px);
+}
+#kovChat .search-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+#kovChat .search-result-sender {
+    font-size: calc(14px * var(--user-scale, 1));
+    font-weight: 600;
+    color: var(--col-primary);
+    /* Длинное ФИО не должно выдавливать дату на вторую строку */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+#kovChat .search-result-time {
+    font-size: calc(11px * var(--user-scale, 1));
+    color: var(--col-text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-left: 8px;
+}
+#kovChat .search-result-text {
+    font-size: calc(13px * var(--user-scale, 1));
+    color: var(--col-text-main);
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+}
+/* Прогресс-бар */#kovChat .upload-progress-container {
+    height: 20px;
+    background-color: var(--col-divider);
+    position: relative;
+}
+#kovChat .upload-progress-bar {
+    height: 100%;
+    background-color: var(--col-primary);
+    transition: width 0.2s;
+}
+#kovChat .upload-progress-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(12px * var(--user-scale, 1));
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+/* Контекстное меню (чисто CSS/JS) */.context-menu {
+    /* Размер меню фиксирован: ровно 4 эмодзи + кнопка расширенного списка */
+    --ctx-emoji-size: 34px;
+    --ctx-emoji-gap: 6px;
+    --ctx-pad: 8px;
+
+    position: absolute;
+    background: var(--col-panel, #fff);
+    border: 1px solid var(--col-divider);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    padding: 0 0 4px;
+    width: calc(5 * var(--ctx-emoji-size) + 4 * var(--ctx-emoji-gap) + 2 * var(--ctx-pad));
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.context-menu-item {
+    padding: 8px var(--ctx-pad);
+    font-size: calc(13px * var(--user-scale, 1));
+    cursor: pointer;
+    color: var(--col-text-main);
+    /* Подписи не должны переноситься на вторую строку */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.context-menu-item:hover {
+    background-color: var(--col-hover);
+}
+.context-menu-separator {
+    height: 1px;
+    background-color: var(--col-divider);
+    margin: 4px 0;
+}
+#kovChat .messages-list > :first-child {
+    margin-top: auto;
+}
+#kovChat .msg-new {
+    animation: fadeInMsg 0.3s ease-out forwards;
+}
+/* Drag & Drop Overlay */#kovChat .drag-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(40, 53, 147, 0.90); /* Более глубокий, приятный синий */
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: white;
+    font-size: calc(28px * var(--user-scale, 1));
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+    border: 4px dashed rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    box-sizing: border-box;
+    margin: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+}
+body.drag-active #kovChat .drag-overlay {
+    display: flex;
+    opacity: 1;
+}
+#kovChat .drag-icon {
+    font-size: calc(64px * var(--user-scale, 1));
+    margin-bottom: 20px;
+    animation: bounce 1s infinite alternate;
+}
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-15px); }
+}
+/* Hybrid Media/File Container */#kovChat .hybrid-media-file-container {
+    display: grid;
+    gap: 4px;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+#kovChat .hybrid-media-file-container.count-1 {
+    grid-template-columns: 1fr;
+}
+#kovChat .hybrid-media-file-container.count-2 {
+    grid-template-columns: 1fr 1fr;
+}
+#kovChat .hybrid-media-file-container.count-many {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+#kovChat .hybrid-item {
+    position: relative;
+    cursor: pointer;
+    background-color: var(--col-inset);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 120px;
+    max-height: 400px;
+}
+/* Make single images fit better by bounding them nicely without harsh cropping */#kovChat .hybrid-media-file-container.count-1 .hybrid-item {
+    max-height: 350px;
+}
+#kovChat .hybrid-media-file-container.count-1 .hybrid-image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    max-height: 350px;
+}
+/* For grid items, use object-fit: cover to fill the squares */#kovChat .hybrid-media-file-container:not(.count-1) .hybrid-image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+}
+#kovChat .hybrid-file {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+#kovChat .hybrid-file-icon {
+    font-size: calc(32px * var(--user-scale, 1));
+    margin-bottom: 5px;
+}
+#kovChat .hybrid-file-name {
+    font-size: calc(12px * var(--user-scale, 1));
+    font-weight: 500;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+/* --- Chat Info Modal --- */#kovChat .chat-info-modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--col-text-main);
+    font-family: var(--font-family);
+}
+#kovChat .chat-info-modal-content img {
+    border: 2px solid var(--col-divider);
+    box-shadow: 0 2px 4px var(--col-divider);
+}
+#kovChat .chat-info-modal-content h3 {
+    margin-top: 10px;
+    font-size: calc(18px * var(--user-scale, 1));
+    font-weight: 600;
+}
+#kovChat .chat-info-details {
+    margin-top: 15px;
+    width: 100%;
+    text-align: left;
+    background: var(--col-bg-main);
+    padding: 15px;
+    border-radius: 8px;
+    font-size: calc(14px * var(--user-scale, 1));
+}
+#kovChat .chat-info-details div {
+    margin-bottom: 8px;
+}
+#kovChat .chat-info-details strong {
+    color: var(--col-primary);
+}
+#kovChat .chat-info-participants {
+    margin-top: 15px;
+    width: 100%;
+    text-align: left;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--col-bg-main);
+    border-radius: 8px;
+    padding: 10px;
+}
+#kovChat .chat-info-participants ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#kovChat .chat-info-participants li {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--col-divider);
+    display: flex;
+    align-items: center;
+    font-size: calc(14px * var(--user-scale, 1));
+}
+#kovChat .chat-info-participants li:last-child {
+    border-bottom: none;
+}
+#kovChat .chat-info-participants .role-badge {
+    margin-left: auto;
+    font-size: calc(12px * var(--user-scale, 1));
+    background: var(--col-primary);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+#kovChat .leave-group-btn {
+    margin-top: 15px;
+    width: 100%;
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: calc(14px * var(--user-scale, 1));
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+#kovChat .leave-group-btn:hover {
+    background-color: #b71c1c;
+}
+#kovChat .unread-badge {
+    background-color: var(--col-primary);
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: calc(10px * var(--user-scale, 1));
+    font-weight: bold;
+    margin-left: 5px;
+    display: inline-block;
+}
+/* Прогресс скачивания поверх самого файла: отдельное окно не открывается,
+   поэтому полоса ложится на объект — в том числе внутри группы вложений */#kovChat .download-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    background: rgba(38, 50, 56, 0.82);
+    border-radius: 0 0 10px 10px;
+    pointer-events: none;
+    z-index: 5;
+}
+#kovChat .download-overlay-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+}
+#kovChat .download-overlay-fill {
+    height: 100%;
+    width: 0;
+    background: #FFFFFF;
+    border-radius: 2px;
+    transition: width 0.15s linear;
+}
+#kovChat .download-overlay-text {
+    color: #FFFFFF;
+    font-size: calc(11px * var(--user-scale, 1));
+    font-weight: 600;
+    min-width: 34px;
+    text-align: right;
+}
+
+
+/* ── обёртка веб-версии ── */
+#kovChat { width: 100%; height: 100%; display: flex; font-family: var(--font-family); background-color: var(--col-bg-main); color: var(--col-text-main); overflow: hidden; border: 1px solid var(--card-border, #DCE3E7); border-radius: .75rem; position: relative; }
+#kovChat .app-container { height: 100%; }
+#kovChat #kovChatBack { display: none; }
+@media (max-width: 760px) {
+  #kovChat .sidebar { width: 100%; min-width: 0; max-width: 100%; }
+  #kovChat .chat-main { display: none; }
+  #kovChat.chat-open .sidebar { display: none; }
+  #kovChat.chat-open .chat-main { display: flex; }
+  #kovChat #kovChatBack { display: flex; }
+  #kovChat .search-sidebar.open { position: absolute; inset: 0; width: 100%; z-index: 20; }
+}
+
+/* Поле ввода: одна строка обрезала подсказку — задаём высоту и отступы */
+/* Строка ввода тянется вместе с приложением, но в разумных пределах:
+   на узком окне масштаб заметно выше, и без ограничителя поле вырастало
+   непропорционально остальному чату */
+#kovChat #messageInput {
+    min-height: clamp(34px, 2.6rem, 46px);
+    line-height: 1.45;
+    padding: clamp(7px, .6rem, 11px) clamp(10px, .9rem, 15px);
+    font-size: clamp(14px, 1.05rem, 17px);
+}
+#kovChat .input-area { align-items: center; }
+
+/* Эмодзи рисуются системным цветным шрифтом, иначе вместо них квадраты */
+#kovChat, #kovChat .reaction-emoji, #kovChat .msg-text, #kovChat .chat-item-last-message,
+.context-menu, .reaction-popup, .reaction-popup * {
+  font-family: var(--font-family), "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Symbol", sans-serif;
+}
+#kovChat .reaction-emoji, .reaction-popup .reaction-face, .reaction-popup button {
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Segoe UI Symbol", sans-serif;
+  font-variant-emoji: emoji;
+}
+
+
+/* ── правки мобильной версии ─────────────────────────────────────────── */
+/* Кнопка выхода стояла вплотную к значку группы — частые промахи пальцем */
+@media (max-width: 760px) {
+  #kovChat .chat-info-card .leave-btn,
+  #kovChat .chat-info-card .danger,
+  #kovChat .info-card-actions { margin-top: 1.6rem; }
+  #kovChat .info-card-actions { gap: .8rem; }
+}
+
+
+/* Автор последнего сообщения в списке чатов */
+#kovChat .chat-item-sender { font-weight: 600; color: var(--col-text-main); }
+
+@media (max-width: 760px) {
+  /* Телефон: лента вложений ниже, чтобы не съедать переписку */
+  #kovChat .attachment-preview { width: 56px; height: 56px; margin-right: 4px; }
+  #kovChat .attachments-container { gap: 6px; }
+  #kovChat .info-panel { max-width: 100%; min-width: 0; }
+}
+
+/* Кнопка меню действий в углу пузыря — как в веб-версии Telegram */
+#kovChat .msg-bubble { position: relative; }
+#kovChat .msg-menu-btn {
+    position: absolute; top: 2px; right: 2px;
+    width: 22px; height: 22px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    border: none; border-radius: 50%; cursor: pointer;
+    background: var(--col-veil); color: var(--col-text-secondary);
+    opacity: 0; transition: opacity .12s ease;
+}
+#kovChat .msg-bubble:hover .msg-menu-btn,
+#kovChat .msg-menu-btn:focus-visible { opacity: 1; }
+#kovChat .msg-menu-btn:hover { background: var(--col-panel); color: var(--col-primary); }
+#kovChat .msg-mine .msg-bubble .msg-menu-btn { background: rgba(255, 255, 255, .28); color: #fff; }
+#kovChat .msg-mine .msg-bubble .msg-menu-btn:hover { background: rgba(255, 255, 255, .5); }
+/* На сенсорном экране кнопка видна всегда: наведения там нет */
+@media (pointer: coarse) {
+  #kovChat .msg-menu-btn { opacity: .75; }
+}
+
+/* ── меню действий с сообщением ────────────────────────────────────────
+   Меню живёт в <body>, а не внутри #kovChat, поэтому прежние правила с
+   префиксом #kovChat до него не доходили: кнопки эмодзи оставались с
+   рамкой браузера по умолчанию — те самые чёрные линии. */
+.context-menu {
+    --ctx-emoji-size: 36px;
+    --ctx-emoji-gap: 6px;
+    --ctx-pad: 10px;
+    border: none;
+    border-radius: 14px;
+    padding: 0 0 6px;
+    box-shadow: 0 8px 28px rgba(19, 42, 50, .18), 0 2px 6px rgba(19, 42, 50, .08);
+    overflow: hidden;
+}
+.context-menu .reaction-picker,
+.context-menu .reaction-picker-extra { background: var(--col-inset); }
+.context-menu .reaction-picker { border-radius: 14px 14px 0 0; }
+.context-menu .reaction-picker-extra {
+    display: none;
+    grid-template-columns: repeat(5, var(--ctx-emoji-size));
+    justify-content: space-between;
+    gap: var(--ctx-emoji-gap);
+    padding: 2px var(--ctx-pad) var(--ctx-pad);
+    border-top: 1px solid rgba(19, 42, 50, .07);
+    max-height: 190px;
+    overflow-y: auto;
+}
+.context-menu .reaction-picker-extra.open { display: grid; }
+.context-menu .reaction-picker-btn {
+    width: var(--ctx-emoji-size);
+    height: var(--ctx-emoji-size);
+    flex: 0 0 var(--ctx-emoji-size);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    font-size: calc(20px * var(--user-scale, 1)); line-height: 1;
+    background: transparent;
+    border: none; outline: none; padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color .15s ease, transform .12s ease;
+}
+.context-menu .reaction-picker-btn:hover { background: var(--col-selected); transform: scale(1.18); }
+.context-menu .reaction-picker-btn:active { transform: scale(.94); }
+.context-menu .reaction-expand-btn {
+    color: var(--col-text-secondary);
+    background: var(--col-inset);
+}
+.context-menu .reaction-expand-btn:hover { background: var(--col-hover); transform: none; }
+.context-menu .reaction-expand-btn svg { transition: transform .18s ease; }
+.context-menu .reaction-expand-btn.expanded svg { transform: rotate(180deg); }
+.context-menu .context-menu-separator { background: rgba(19, 42, 50, .07); }
+.context-menu .context-menu-item { border-radius: 8px; margin: 0 6px; padding: 8px 10px; }
+
+
+/* Меню действий позиционируется по координатам события, поэтому fixed:
+   при прокрученной переписке absolute давал сдвиг и уход за край экрана */
+.context-menu { position: fixed; }
+@media (max-width: 760px) {
+  .context-menu { max-width: calc(100vw - 16px); }
+}
+
+/* ── меню действий: полное оформление вне #kovChat ──────────────────────
+   Меню вставляется в <body>, поэтому все правила с префиксом #kovChat до
+   него не доходили: ряд реакций терял display:flex и эмодзи выстраивались
+   в столбик, а пункты оставались без отступов. */
+.context-menu {
+    min-width: 224px;
+    background: var(--col-panel, #fff);
+    color: var(--col-text-main, #132A32);
+    font-family: inherit;
+    padding: 0 0 6px;
+}
+.context-menu .reaction-picker {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ctx-emoji-gap);
+    padding: var(--ctx-pad) var(--ctx-pad) 8px;
+}
+.context-menu .context-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: calc(13.5px * var(--user-scale, 1));
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.context-menu .context-menu-item:hover { background: var(--col-hover); }
+.context-menu .context-menu-item.danger,
+.context-menu .context-menu-item[data-danger="1"] { color: var(--col-danger); }
+.context-menu .context-menu-separator { margin: 5px 8px; }
+
+/* Ряд реакций «дышит»: появляется мягко, эмодзи чуть подпрыгивают по очереди */
+.context-menu { animation: kov-menu-in .14s cubic-bezier(.2,.75,.25,1); }
+@keyframes kov-menu-in { from { opacity: 0; transform: translateY(-4px) scale(.97); } }
+.context-menu .reaction-picker .reaction-picker-btn {
+    animation: kov-emoji-in .26s backwards cubic-bezier(.2,.75,.25,1);
+}
+.context-menu .reaction-picker .reaction-picker-btn:nth-child(1) { animation-delay: .02s; }
+.context-menu .reaction-picker .reaction-picker-btn:nth-child(2) { animation-delay: .05s; }
+.context-menu .reaction-picker .reaction-picker-btn:nth-child(3) { animation-delay: .08s; }
+.context-menu .reaction-picker .reaction-picker-btn:nth-child(4) { animation-delay: .11s; }
+.context-menu .reaction-picker .reaction-picker-btn:nth-child(5) { animation-delay: .14s; }
+@keyframes kov-emoji-in { from { opacity: 0; transform: scale(.5) translateY(4px); } }
+@media (prefers-reduced-motion: reduce) {
+  .context-menu, .context-menu .reaction-picker-btn { animation: none; }
+}
+
+
+/* ── лента прикреплённых файлов: две строки, ничего не уезжает ─────────
+   С десятью файлами одна строка растягивала панель ввода, и кнопка
+   отправки уходила за край экрана. */
+#kovChat .attachments-container {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(2, auto);
+    grid-auto-columns: max-content;
+    align-items: start;
+    justify-content: start;
+    gap: 6px;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px 2px;
+}
+#kovChat .attachments-count {
+    grid-row: span 2;
+    align-self: center;
+    white-space: nowrap;
+}
+#kovChat .attachment-preview {
+    width: 58px; height: 58px; margin-right: 0;
+    /* overflow не режем: крестик висит за границей плитки и обрезался */
+    overflow: visible;
+}
+#kovChat .attachment-preview img,
+#kovChat .attachment-preview video {
+    width: 100%; height: 100%; object-fit: cover; border-radius: 11px;
+}
+#kovChat .att-play {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: calc(16px * var(--user-scale, 1)); background: rgba(19, 42, 50, .34); border-radius: 11px;
+    pointer-events: none;
+}
+/* Панель ввода не должна расти вширь от вложений */
+#kovChat .info-panel { max-width: 100%; min-width: 0; overflow: hidden; }
+#kovChat .input-area, #kovChat .chat-area { min-width: 0; }
+#kovChat .chat-area > * { max-width: 100%; }
+
+@media (max-width: 760px) {
+  #kovChat .attachment-preview { width: 50px; height: 50px; }
+}
+
+
+/* Крестик поверх плитки: он выходит за её край, поэтому плитка не обрезается,
+   а картинка скругляется сама по себе */
+#kovChat .attachment-preview img,
+#kovChat .attachment-preview video { border-radius: 11px; }
+#kovChat .attachment-remove {
+    top: -5px; right: -5px;
+    z-index: 3;
+    box-shadow: 0 0 0 2px var(--col-panel);
+}
+#kovChat .attachments-container { padding-top: 8px; padding-right: 6px; }
+
+/* ── временное сообщение: прогресс на каждой плитке ──────────────────── */
+#kovChat .msg-temp .msg-bubble { opacity: .92; }
+#kovChat .temp-tile { position: relative; }
+#kovChat .temp-tile .media-image { width: 150px; height: 150px; object-fit: cover; display: block; border-radius: 10px; }
+#kovChat .temp-tile.media-file { padding-right: 58px; }
+#kovChat .temp-ring {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; border-radius: 10px; background: rgba(19, 42, 50, .35); color: #fff; font-size: calc(12px * var(--user-scale, 1)); font-weight: 700;
+}
+/* документ: небольшой круг по центру справа — плитка документа бывает в одну строку */
+#kovChat .temp-tile.media-file .temp-ring { inset: auto 8px auto auto; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%; background: rgba(19, 42, 50, .55); font-size: calc(10px * var(--user-scale, 1)); }
+#kovChat .temp-tile.media-file .temp-note { display: none; }
+/* Кольцо прогресса — небольшой круг по центру плитки, как в Telegram */
+#kovChat .temp-ring-fill {
+    position: absolute; left: 50%; top: 50%; width: 66px; height: 66px;
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: conic-gradient(rgba(245, 179, 1, .95) var(--p, 0%), rgba(255, 255, 255, .25) 0);
+    mask: radial-gradient(circle at 50% 50%, transparent 66%, #000 68%);
+    -webkit-mask: radial-gradient(circle at 50% 50%, transparent 66%, #000 68%);
+    pointer-events: none;
+}
+#kovChat .temp-tile.media-file .temp-ring-fill { width: 38px; height: 38px; }
+#kovChat .temp-pct, #kovChat .temp-note { position: relative; z-index: 1; text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+#kovChat .temp-note { font-size: calc(10px * var(--user-scale, 1)); font-weight: 500; opacity: .9; }
+/* По завершении кольцо просто гаснет: зелёная заливка поверх снимка
+   выглядела чужеродно, а сообщение и без того сразу сменяется настоящим */
+#kovChat .temp-tile.done .temp-ring { opacity: 0; transition: opacity .25s ease; }
+#kovChat .temp-tile.error .temp-ring { background: rgba(229, 57, 53, .5); }
+#kovChat .temp-foot { display: none; }   /* процент показывает кольцо на плитке */
+/* Плавный ход кольца: без регистрации свойства проценты меняются рывками */
+@property --p { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+#kovChat .temp-ring-fill { transition: --p .35s cubic-bezier(.4, 0, .2, 1); }
+
+/* ── кнопка воспроизведения поверх видео ────────────────────────────────
+   Раньше это был чёрный кружок с символом «▶» из шрифта: он выбивался из
+   оформления и на разных системах рисовался по-разному. Теперь — стеклянная
+   кнопка с треугольником из чистого CSS, одинаковая везде. */
+#kovChat .video-play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(18, 26, 32, .42);
+    backdrop-filter: blur(6px) saturate(140%);
+    -webkit-backdrop-filter: blur(6px) saturate(140%);
+    border: 1.5px solid rgba(255, 255, 255, .55);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .25);
+    pointer-events: none;                      /* нажатие ловит сама плитка */
+    transition: transform .18s cubic-bezier(.34, 1.56, .64, 1), background .18s ease;
+}
+/* треугольник рисуем рамкой: он всегда ровный и не зависит от шрифта */
+#kovChat .video-play i {
+    display: block; width: 0; height: 0; margin-left: 4px;
+    border-style: solid;
+    border-width: 9px 0 9px 15px;
+    border-color: transparent transparent transparent #fff;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .4));
+}
+#kovChat .video-play::before {                 /* мягкое кольцо вокруг */
+    content: ''; position: absolute; inset: -6px; border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .18);
+}
+#kovChat .media-file:hover .video-play,
+#kovChat .media-row > *:hover .video-play,
+#kovChat .media-hero > *:hover .video-play {
+    transform: translate(-50%, -50%) scale(1.08);
+    background: rgba(18, 26, 32, .55);
+}
+#kovChat .video-play.small { width: 34px; height: 34px; border-width: 1px; }
+#kovChat .video-play.small i { border-width: 6px 0 6px 10px; margin-left: 3px; }
+@media (prefers-reduced-motion: reduce) { #kovChat .video-play { transition: none; } }
+
+/* ── состояние своего сообщения: часы, галочка, две галочки ────────────── */
+#kovChat .msg-status {
+    display: inline-flex; align-items: center; gap: 1px; margin-left: 4px;
+    height: 12px; vertical-align: middle; color: var(--col-text-secondary);
+}
+/* Свои пузыри светло-зелёные, поэтому значок берёт тот же приглушённый
+   тон, что и время: белый на них было не видно */
+#kovChat .msg-status.read { color: var(--col-primary); }
+:root[data-theme="dark"] #kovChat .msg-status.read { color: #64D2FF; }
+
+/* галочка рисуется двумя линиями: не зависит от шрифта и одинакова везде */
+#kovChat .msg-status .tick {
+    display: block; width: 9px; height: 5px; border-left: 1.6px solid currentColor;
+    border-bottom: 1.6px solid currentColor; transform: rotate(-45deg) translate(1px, -1px);
+    border-radius: 0 0 0 1px;
+}
+#kovChat .msg-status .tick.second { margin-left: -5px; }
+#kovChat .msg-status.read .tick { animation: kovTick .28s ease both; }
+#kovChat .msg-status.read .tick.second { animation-delay: .06s; }
+@keyframes kovTick { from { opacity: 0; transform: rotate(-45deg) translate(1px, -1px) scale(.4); } }
+
+/* часы: циферблат со стрелкой, стрелка бежит по кругу */
+#kovChat .msg-status .clock {
+    display: block; width: 11px; height: 11px; border: 1.5px solid currentColor;
+    border-radius: 50%; position: relative;
+}
+#kovChat .msg-status .clock::after {
+    content: ''; position: absolute; left: 50%; top: 50%;
+    width: 1.4px; height: 3.4px; background: currentColor; border-radius: 1px;
+    transform-origin: 50% 0; transform: translate(-50%, 0) rotate(0deg);
+    animation: kovClock 1.4s steps(8, end) infinite;
+}
+@keyframes kovClock { to { transform: translate(-50%, 0) rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+    #kovChat .msg-status .clock::after, #kovChat .msg-status.read .tick { animation: none; }
+}
+/* временный пузырь чуть бледнее — видно, что он ещё не долетел */
+#kovChat .msg-wrapper.msg-pending .msg-bubble { opacity: .78; }
+
+/* Загрузка завершена: кольцо становится зелёным, полоса — сплошной */
+#kovChat .temp-ring.done { opacity: 0; transition: opacity .25s ease; }
+
+/* Отправляемые плитки внутри альбома занимают свою ячейку целиком.
+   Раньше у них была жёсткая сторона 150px, и в ряду оставалась полоска
+   фона под снимком — на светлой теме это бросалось в глаза. */
+#kovChat .media-row > .temp-tile,
+#kovChat .media-hero > .temp-tile { width: 100%; height: 100%; }
+#kovChat .media-row > .temp-tile .media-image,
+#kovChat .media-hero > .temp-tile .media-image { width: 100%; height: 100%; border-radius: 8px; }
+
+
+/* ── строка ввода тянется вместе с остальным приложением ────────────────
+   Модуль чата свёрстан в пикселях, поэтому при половинном окне значки и
+   рамки вокруг росли вместе с интерфейсом, а текст подсказки оставался
+   прежним и выглядел мелким. Здесь переведены на масштабируемые единицы
+   только сама строка ввода и её кнопки: при обычном размере окна всё
+   выглядит как раньше (1rem ≈ 13,3 px при базовом масштабе). */
+/* Пределы обязательны: масштаб приложения на узком окне заметно выше, и без
+   ограничителя строка ввода вырастала непропорционально остальному чату.
+   clamp держит её между привычным и разумно крупным размером. */
+#kovChat .input-area { padding: clamp(8px, .75rem, 14px) clamp(10px, 1.1rem, 18px); gap: clamp(8px, .75rem, 14px); }
+#kovChat .input-wrapper { border-radius: 20px; min-height: clamp(38px, 3rem, 52px); }
+#kovChat .input-area textarea { max-height: clamp(110px, 9rem, 160px); }
+#kovChat .input-area .char-counter { font-size: clamp(11px, .82rem, 14px); padding: .15rem 1.1rem .4rem; }
+#kovChat .input-area .send-btn,
+#kovChat .input-area .icon-btn { width: clamp(38px, 3rem, 52px); height: clamp(38px, 3rem, 52px); }
+/* размеры заданы в самой разметке атрибутами — перебиваем их стилем */
+#kovChat .input-area .send-btn svg,
+#kovChat .input-area .icon-btn svg { width: clamp(22px, 1.8rem, 30px); height: clamp(22px, 1.8rem, 30px); }
+
+/* ── телефон: место под текст ──────────────────────────────────────────
+   На узком экране три круглые кнопки со своими полями и зазорами забирали
+   почти половину строки, и на сообщение оставалось два-три слова. Кнопки
+   прижимаем к полю: отступы до минимальных, зазоры почти в ноль, размер —
+   до нижней границы удобного нажатия. Кнопка отправки остаётся крупнее
+   остальных, чтобы главное действие не потерялось. Поле получает всё
+   освободившееся место: было около половины ширины, стало больше двух
+   третей. */
+@media (max-width: 600px) {
+    #kovChat .input-area { padding: 6px; gap: 2px; align-items: center; }
+    #kovChat .input-area .icon-btn { width: 38px; height: 38px; flex-shrink: 0; }
+    #kovChat .input-area .send-btn { width: 42px; height: 42px; flex-shrink: 0; }
+    #kovChat .input-area .icon-btn svg,
+    #kovChat .input-area .send-btn svg { width: 22px; height: 22px; }
+    #kovChat .input-wrapper { min-width: 0; min-height: 38px; border-radius: 19px; }
+    #kovChat #messageInput {
+        min-height: 34px;
+        max-height: 96px;            /* длинное сообщение не съедает переписку */
+        padding: 8px 12px;
+        font-size: max(16px, calc(16px * var(--user-scale, 1)));   /* меньше 16 — и Safari приближает страницу при вводе */
+    }
+    #kovChat .input-area .char-counter { padding: 0 12px 4px; font-size: calc(11px * var(--user-scale, 1)); }
+}
+
+/* ══ Панель эмодзи, стикеров и GIF ═══════════════════════════════════════
+   Выезжает справа, как поиск по чату, и занимает столько же места. */
+#kovChat .media-sidebar {
+    width: 0;
+    flex-shrink: 0;
+    background-color: var(--col-bg-sidebar);
+    border-left: 1px solid var(--col-divider);
+    display: flex;
+    flex-direction: column;
+    transition: width .3s cubic-bezier(.25, .8, .25, 1);
+    overflow: hidden;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, .05);
+}
+#kovChat .media-sidebar.open { width: 350px; }
+#kovChat .media-sidebar-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 10px 8px 12px;
+    border-bottom: 1px solid var(--col-divider);
+}
+#kovChat .media-tabs { display: flex; gap: 4px; flex: 1; min-width: 0; }
+#kovChat .media-tab {
+    flex: 1; border: none; cursor: pointer; padding: 7px 6px;
+    border-radius: 9px; background: transparent; color: var(--col-text-secondary);
+    font-size: calc(13px * var(--user-scale, 1)); font-weight: 600; white-space: nowrap;
+    transition: background .18s ease, color .18s ease, transform .12s ease;
+}
+#kovChat .media-tab:hover { background: var(--col-hover); color: var(--col-text-primary); }
+#kovChat .media-tab.on { background: var(--col-primary); color: #fff; }
+#kovChat .media-tab:active { transform: scale(.96); }
+
+#kovChat .media-body { flex: 1; min-height: 0; min-width: 0; display: flex; }
+/* min-width: 0 обязателен: без него содержимое раздаёт панели свою
+   ширину, и на узком экране сетка эмодзи вылезает за край */
+#kovChat .media-pane { flex: 1; min-height: 0; min-width: 0; display: flex; flex-direction: column; animation: mediaFade .22s ease both; }
+/* У эмодзи появление отключено: плавное проявление тысячи ячеек тянет
+   их все на отдельный слой и добавляет к показу лишние миллисекунды */
+#kovChat .media-pane.emoji-pane { animation: none; }
+@keyframes mediaFade { from { opacity: 0; transform: translateY(6px); } }
+
+#kovChat .media-search { padding: 10px 12px 6px; }
+#kovChat .media-search input {
+    width: 100%; box-sizing: border-box; border-radius: 12px; padding: 9px 12px;
+    border: 1px solid var(--col-divider); background: var(--col-panel, #fff);
+    color: var(--col-text-primary); font-size: calc(13px * var(--user-scale, 1)); outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+#kovChat .media-search input:focus { border-color: var(--col-primary); box-shadow: 0 0 0 3px rgba(74, 144, 164, .16); }
+
+/* эмодзи */
+/* Разделы переносятся по строкам, а не уезжают вбок: боковая прокрутка на
+   телефоне перехватывала палец, и вместо ленты символов листалась полоска
+   разделов. Теперь в панели одно направление движения — вниз. */
+#kovChat .emoji-nav {
+    display: flex; flex-wrap: wrap; gap: 2px; padding: 4px 8px 6px;
+    border-bottom: 1px solid var(--col-divider);
+}
+#kovChat .emoji-nav-btn {
+    border: none; background: transparent; cursor: pointer; font-size: calc(18px * var(--user-scale, 1));
+    padding: 4px 6px; border-radius: 8px; line-height: 1;
+    transition: background .15s ease, transform .12s ease;
+}
+#kovChat .emoji-nav-btn:hover { background: var(--col-hover); transform: translateY(-1px); }
+#kovChat .emoji-list, #kovChat .sticker-list, #kovChat .gif-grid {
+    overflow-y: auto; overflow-x: hidden;
+    overscroll-behavior: contain;      /* прокрутка не «пробивает» на переписку */
+    touch-action: pan-y;               /* поперёк экрана панель не тянется */
+    -webkit-overflow-scrolling: touch;
+}
+#kovChat .emoji-list { flex: 1; padding: 6px 10px 14px; }
+#kovChat .emoji-group-title {
+    font-size: calc(11px * var(--user-scale, 1)); font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--col-text-secondary); margin: 10px 2px 6px;
+}
+#kovChat .emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 2px; }
+#kovChat .emoji-cell {
+    border: none; background: transparent; cursor: pointer; font-size: calc(23px * var(--user-scale, 1)); line-height: 1;
+    padding: 5px 0; border-radius: 9px; transition: background .12s ease, transform .12s ease;
+}
+#kovChat .emoji-cell:hover { background: var(--col-hover); transform: scale(1.18); }
+#kovChat .emoji-cell:active { transform: scale(.94); }
+
+/* «ничего не нашлось» — общее для эмодзи и стикеров */
+#kovChat .media-empty { font-size: calc(12px * var(--user-scale, 1)); color: var(--col-text-secondary); padding: 20px 12px; text-align: center; }
+
+/* стикеры */
+#kovChat .sticker-list { flex: 1; padding: 6px 10px 14px; }
+#kovChat .sticker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; }
+#kovChat .sticker-cell {
+    border: none; background: transparent; cursor: pointer; padding: 4px; border-radius: 14px;
+    transition: background .15s ease, transform .15s cubic-bezier(.34, 1.56, .64, 1);
+}
+#kovChat .sticker-cell img { width: 100%; height: auto; display: block; }
+#kovChat .sticker-cell:hover { background: var(--col-hover); transform: translateY(-3px) scale(1.05); }
+#kovChat .sticker-cell:active { transform: scale(.95); }
+
+/* GIF */
+#kovChat .gif-hint { font-size: calc(11px * var(--user-scale, 1)); color: var(--col-text-secondary); padding: 2px 14px 8px; }
+/* Кладка колонками. Сетка равняла строку по самой высокой картинке: высокие
+   GIF обрезались, а широкие оставляли под собой пустое поле в две трети
+   ячейки. В колонках каждая картинка сохраняет свои пропорции.
+   Прокрутка при этом вертикальная: многоколоночная вёрстка уходит вбок
+   только в блоке заданной высоты, поэтому высоту держит обёртка, а сам
+   поток колонок растёт вниз. */
+#kovChat .gif-grid { flex: 1; min-height: 0; padding: 0 10px 12px; }
+#kovChat .gif-flow { column-width: 150px; column-gap: 8px; }
+#kovChat .gif-cell, #kovChat .gif-skeleton {
+    width: 100%; border-radius: 12px; overflow: hidden; margin: 0 0 8px;
+    display: block; border: none; padding: 0; background: var(--col-inset);
+    break-inside: avoid;
+}
+#kovChat .gif-cell { cursor: pointer; animation: mediaFade .25s ease both; transition: transform .15s ease; }
+#kovChat .gif-cell img { width: 100%; display: block; }
+#kovChat .gif-cell:hover { transform: scale(1.03); }
+#kovChat .gif-skeleton {
+    background: linear-gradient(100deg, var(--col-inset) 30%, var(--col-hover) 50%, var(--col-inset) 70%);
+    background-size: 220% 100%;
+    animation: gifShimmer 1.2s linear infinite;
+}
+@keyframes gifShimmer { to { background-position: -220% 0; } }
+#kovChat .gif-empty { column-span: all; font-size: calc(12px * var(--user-scale, 1)); color: var(--col-text-secondary); padding: 18px 4px; text-align: center; }
+#kovChat .gif-brand {
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    padding: 8px; border-top: 1px solid var(--col-divider);
+    font-size: calc(10px * var(--user-scale, 1)); letter-spacing: .08em; text-transform: uppercase; color: var(--col-text-secondary);
+}
+#kovChat .gif-brand b { color: var(--col-primary); letter-spacing: .12em; }
+
+/* кнопка вызова панели */
+#kovChat .emoji-btn { color: var(--col-text-secondary); transition: color .18s ease, transform .18s ease; }
+#kovChat .emoji-btn:hover { color: var(--col-primary); transform: scale(1.08); }
+#kovChat .emoji-btn.on { color: var(--col-primary); }
+
+/* сообщения-стикеры и GIF: отдельные объекты без пузыря */
+#kovChat .msg-wrapper.msg-sticker .msg-bubble,
+#kovChat .msg-wrapper.msg-gif .msg-bubble {
+    background: transparent !important; box-shadow: none; padding: 2px 0;
+}
+#kovChat .sticker-view { width: 132px; height: 132px; display: block; animation: stickerPop .28s cubic-bezier(.34, 1.56, .64, 1) both; }
+@keyframes stickerPop { from { opacity: 0; transform: scale(.6); } }
+#kovChat .gif-view { max-width: 260px; border-radius: 14px; display: block; animation: mediaFade .25s ease both; }
+#kovChat .msg-sticker .msg-meta, #kovChat .msg-gif .msg-meta { justify-content: flex-end; padding-top: 2px; }
+
+/* На узком окне панель не раздвигает переписку, а ложится поверх неё:
+   при ширине около 800 px чат иначе сжимался до сотни точек. */
+/* Планшет и узкое окно: панель накрывает переписку сбоку. Телефон разбирается
+   ниже отдельно — там она выезжает снизу, как клавиатура. */
+@media (max-width: 1000px) and (min-width: 761px) {
+    #kovChat .media-sidebar.open {
+        position: absolute; top: 0; right: 0; bottom: 0; width: 360px; z-index: 5;
+        box-shadow: -6px 0 24px rgba(0, 0, 0, .18);
+    }
+}
+/* ── Панель эмодзи на телефоне ─────────────────────────────────────────────
+   Раньше она открывалась сбоку и вылезала за край экрана. Теперь выезжает
+   снизу на место клавиатуры — так устроены мессенджеры, и поле ввода
+   остаётся перед глазами. Высоту задаёт js по замеру настоящей клавиатуры,
+   чтобы при переключении экран не дёргался. */
+@media (max-width: 760px) {
+    #kovChat .media-sidebar {
+        position: fixed; left: 0; right: 0; bottom: 0; top: auto;
+        width: 100%; max-width: 100%; height: var(--media-h, 42vh);
+        border-left: none; border-top: 1px solid var(--col-divider);
+        border-radius: 16px 16px 0 0; z-index: 60;
+        transform: translateY(100%);
+        transition: transform .26s cubic-bezier(.25, .8, .25, 1);
+        box-shadow: 0 -8px 28px rgba(0, 0, 0, .18);
+    }
+    #kovChat .media-sidebar.open { width: 100%; transform: none; }
+    /* Поле ввода поднимается над панелью, а не прячется под ней */
+    #kovChat.media-open .input-area { margin-bottom: var(--media-h, 42vh); }
+    /* Шапка панели ниже: на месте клавиатуры каждая точка высоты на счету,
+       а вкладки при этом остаются крупными для пальца */
+    #kovChat .media-sidebar-header { border-radius: 16px 16px 0 0; height: 46px; min-height: 46px; padding: 0 8px; }
+    #kovChat .media-tab { padding: 7px 10px; font-size: calc(13px * var(--user-scale, 1)); }
+    #kovChat .media-search { padding: 8px 10px 4px; }
+    #kovChat .emoji-nav { padding: 3px 8px 4px; }
+    /* Полоска захвата: показывает, что панель выехала снизу и её можно закрыть */
+    #kovChat .media-sidebar.open::before {
+        content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+        width: 36px; height: 4px; border-radius: 2px; background: var(--col-divider);
+    }
+    #kovChat .media-sidebar-header { padding-top: 8px; }
+    /* Разделы прокручиваются: на невысокой панели иначе видно два ряда */
+    #kovChat .media-sidebar .media-body { min-height: 0; }
+    #kovChat .emoji-list, #kovChat .sticker-list, #kovChat .gif-grid { -webkit-overflow-scrolling: touch; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #kovChat .media-sidebar { transition: none; }
+}
+@media (max-width: 760px) {
+    #kovChat .sticker-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+    #kovChat .emoji-grid { grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); }
+    #kovChat .emoji-cell { font-size: calc(26px * var(--user-scale, 1)); }
+    #kovChat .sticker-view { width: 116px; height: 116px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    #kovChat .media-pane, #kovChat .gif-cell, #kovChat .sticker-view, #kovChat .gif-view { animation: none; }
+    #kovChat .gif-skeleton { animation: none; }
+}
+
+/* ── Скорость панели эмодзи ────────────────────────────────────────────────
+   Раздел содержит больше тысячи ячеек. Разложить и нарисовать их все сразу
+   стоило браузеру полсекунды, а прокрутка шла рывками. Разделы, которых нет
+   на экране, браузер теперь пропускает: содержимое рисуется, когда до него
+   доходит прокрутка. Высоту раздела подсказывает js, поэтому полоса
+   прокрутки верна с самого начала. */
+#kovChat .emoji-group {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 320px;
+}
+/* Раздел, до которого дошёл прогрев: дальше он не пересчитывается заново,
+   и прокрутка идёт без рывков */
+#kovChat .emoji-group.is-warm { content-visibility: visible; }
+/* Изоляцию на каждую ячейку не ставим: на тысяче элементов накладные
+   расходы больше выгоды — с ней прокрутка шла 41 кадр/с, без неё 56 */
+#kovChat .sticker-group { content-visibility: auto; contain-intrinsic-size: auto 260px; }
+
+/* ── Свёрнутый список чатов ────────────────────────────────────────────────
+   На узком окне список в 350 точек забирает половину места, а нужен из него
+   обычно только выбор собеседника. В свёрнутом виде остаются кружки: видно,
+   кто есть и где непрочитанное, а переписке достаётся вся ширина. */
+#kovChat .rail-btn { flex: 0 0 auto; }
+#kovChat .rail-btn svg { transition: transform .2s ease; }
+#kovChat.rail .rail-btn svg { transform: scaleX(-1); }
+
+#kovChat.rail .sidebar { width: 72px; min-width: 72px; max-width: 72px; }
+#kovChat .sidebar { transition: width .22s ease, min-width .22s ease, max-width .22s ease; }
+
+#kovChat.rail .sidebar-header { padding: 0; justify-content: center; }
+#kovChat.rail .sidebar-header #chatSearchInput,
+#kovChat.rail .sidebar-header #addChatBtn { display: none; }
+
+#kovChat.rail .chat-item {
+    padding: 8px 0; justify-content: center; border-left-width: 0;
+    border-right: 3px solid transparent;
+}
+#kovChat.rail .chat-item.active { border-right-color: var(--col-primary); }
+#kovChat.rail .chat-item-avatar { margin-right: 0; }
+#kovChat.rail .chat-item-info { display: none; }
+
+/* Непрочитанные показываем кружком на аватаре — иначе в свёрнутом виде
+   о них никак не узнать */
+#kovChat.rail .chat-item { position: relative; }
+#kovChat.rail .chat-item.has-unread .chat-item-avatar { box-shadow: 0 0 0 2px var(--col-primary); }
+#kovChat.rail .chat-item .rail-dot {
+    position: absolute; top: 6px; right: 10px; min-width: 18px; height: 18px;
+    border-radius: 9px; padding: 0 5px; box-sizing: border-box;
+    background: var(--col-primary); color: #fff; font-size: calc(11px * var(--user-scale, 1)); font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--col-bg-sidebar);
+}
+#kovChat:not(.rail) .chat-item .rail-dot { display: none; }
+
+@media (max-width: 760px) {
+    /* На телефоне список и так во всю ширину, а при открытом чате скрыт —
+       сворачивать нечего, кнопку убираем */
+    #kovChat .rail-btn { display: none; }
+    #kovChat.rail .sidebar { width: 100%; min-width: 0; max-width: 100%; }
+    #kovChat.rail .sidebar-header { padding: 0 15px; justify-content: flex-start; }
+    #kovChat.rail .sidebar-header #chatSearchInput,
+    #kovChat.rail .sidebar-header #addChatBtn { display: flex; }
+    #kovChat.rail .chat-item { padding: 10px 15px; justify-content: flex-start; border-left-width: 3px; }
+    #kovChat.rail .chat-item-avatar { margin-right: 15px; }
+    /* Возвращаем именно block: у строки чата имя со временем и текст
+       сообщения идут двумя строками, а flex выстроил бы их в одну */
+    #kovChat.rail .chat-item-info { display: block; }
+}
+
+/* Значок кнопки эмодзи: на телефоне при открытой панели он превращается в
+   клавиатуру — нажатие как раз и возвращает клавиатуру. На компьютере
+   панель клавиатуру не заменяет, поэтому значок всегда смайлик. */
+#kovChat #btnEmoji .kbd-glyph { display: none; }
+@media (max-width: 760px) {
+    #kovChat.media-open #btnEmoji .smile-glyph { display: none; }
+    #kovChat.media-open #btnEmoji .kbd-glyph { display: block; }
+}
+#kovChat #btnEmoji svg { transition: opacity .16s ease, transform .16s ease; }
+
+/* Долгое нажатие на стикере и GIF открывает меню сообщения. Раньше система
+   перехватывала жест своим меню «сохранить изображение», а перетаскивание
+   картинки отменяло наш отсчёт — до пузыря событие не доходило. */
+#kovChat .sticker-view, #kovChat .gif-view {
+    pointer-events: none;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    user-select: none; -webkit-user-select: none;
+}
+
+/* Плавное появление.
+   Новое сообщение и новая строка реакций возникают мягко, а не рывком:
+   в оживлённой переписке резкие подстановки читаются как мерцание. */
+#kovChat .msg-new { animation: fadeInMsg .26s cubic-bezier(.25, .8, .25, 1) both; }
+#kovChat .reactions-row { animation: reactionsIn .2s ease-out both; }
+@keyframes reactionsIn {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: none; }
+}
+/* Смена времени и галочек не должна мигать: подменяется только текст */
+#kovChat .msg-meta { transition: opacity .15s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+    #kovChat .msg-new, #kovChat .reactions-row { animation: none; }
+}
+
+/* счётчик новых сообщений на кнопке «вниз» */
+#kovChat .scroll-bottom-btn .unseen-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+    background: #F5B301;
+    color: #132A32;
+    font: 700 11px/20px var(--font-family, sans-serif);
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+}
+#kovChat .scroll-bottom-btn .unseen-count[hidden] { display: none; }
+
+/* кнопка «Добавить чат» — ровный круг: в строке поиска её растягивало по высоте */
+#kovChat .sidebar-header #addChatBtn {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 0;
+    align-self: center;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+}
+
+/* отмена загрузки: «✕» в центре кольца, ход — мелко под снимком */
+#kovChat .temp-ring { cursor: pointer; }   /* положение — прежнее: слой поверх всей плитки, кольцо по центру */
+#kovChat .temp-ring .temp-pct, #kovChat .temp-ring .temp-note { display: none; }
+#kovChat .temp-ring .temp-x { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 1.25rem; font-weight: 700; line-height: 1; }
+#kovChat .temp-meta { margin-top: .25rem; font-size: .72rem; text-align: right; color: var(--col-text-secondary, #6b7a86); }
+/* документ в загрузке: кольцо с «✕» — справа, название файла не перекрывается */
+#kovChat .temp-tile.media-file { position: relative; padding-right: 3.2rem; }
+#kovChat .temp-tile.media-file .temp-ring { position: absolute; top: 50%; right: .45rem; left: auto; bottom: auto; transform: translateY(-50%);
+  width: 2.3rem; height: 2.3rem; margin: 0; }
+#kovChat .temp-tile.media-file .temp-ring .temp-x { font-size: 1rem; }
+
+/* кольцо загрузки — по размеру плитки (задаёт chat.js: --ring) */
+#kovChat .temp-tile:not(.media-file) .temp-ring-fill { width: var(--ring, 56px); height: var(--ring, 56px); }
+#kovChat .temp-tile:not(.media-file) .temp-ring .temp-x { font-size: calc(var(--ring, 56px) * .38); }
+
+/* кружок со стрелкой у сообщений больше не нужен: меню — левой и правой кнопкой, долгим нажатием */
+#kovChat .msg-menu-btn { display: none !important; }
+/* выбор нескольких сообщений */
+#kovChat #chatArea { position: relative; }
+#kovChat .sel-bar { position: absolute; left: 0; right: 0; top: 0; z-index: 40; display: flex; align-items: center; gap: 8px;
+  min-height: 56px; padding: 8px 12px; background: var(--col-bg-elevated, #fff); box-shadow: 0 2px 12px rgba(20,30,50,.14); }
+#kovChat .sel-bar[hidden] { display: none; }
+#kovChat .sel-bar button { border: 0; cursor: pointer; font: inherit; }
+#kovChat .sel-bar .sel-x { width: 40px; height: 40px; border-radius: 50%; background: none; font-size: calc(18px * var(--user-scale, 1)); color: inherit; }
+#kovChat .sel-bar .sel-count { flex: 1; font-weight: 600; }
+#kovChat .sel-bar .sel-fwd, #kovChat .sel-bar .sel-del { border-radius: 999px; padding: 8px 14px; font-weight: 600; background: rgba(70,110,180,.12); color: #2f5aa8; }
+#kovChat .sel-bar .sel-del { background: rgba(220,50,50,.1); color: #c62828; }
+#kovChat .sel-bar .sel-del[hidden] { display: none; }
+#kovChat .msg-bubble.sel-on { box-shadow: 0 0 0 3px #4a7bd0; }
+#kovChat.selecting .msg-bubble { cursor: pointer; }
+
+/* выбор: отдельные файлы группы — кружок на плитке; часть группы — бледная рамка, вся — яркая */
+#kovChat .msg-bubble.sel-part { box-shadow: 0 0 0 2px rgba(74,123,208,.5); }
+#kovChat.selecting .sel-able { position: relative; }
+#kovChat.selecting .sel-able::after { content: ""; position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid #fff; background: rgba(0,0,0,.28); box-shadow: 0 1px 3px rgba(0,0,0,.35); z-index: 3; pointer-events: none; }
+#kovChat.selecting .sel-able.sel-file::after { background: #4a7bd0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.2 4.2L19 7' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 13px no-repeat; }
+#kovChat.selecting .sel-able.sel-file > img, #kovChat.selecting .sel-able.sel-file > video { opacity: .85; }
+
+/* кружок выбора у сообщения: пустой — не выбрано, галочка — всё сообщение, чёрточка — часть группы */
+#kovChat #messagesList .sel-row { position: relative; }
+#kovChat.selecting #messagesList .sel-row { padding-left: 40px; }
+#kovChat .sel-circle { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; padding: 0;
+  border-radius: 50%; border: 2px solid #9aa7b6; background: #fff; cursor: pointer; z-index: 2; }
+#kovChat .sel-circle[hidden] { display: none; }
+#kovChat .sel-circle.on { border-color: #4a7bd0; background: #4a7bd0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.2 4.2L19 7' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 15px no-repeat; }
+#kovChat .sel-circle.part { border-color: #4a7bd0; }
+#kovChat .sel-circle.part::after { content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 3px; margin: -1.5px 0 0 -5px; border-radius: 2px; background: #4a7bd0; }
+
+/* без синей подсветки касания: в режиме выбора пузырь «нажимаемый», и Android подсвечивал его целиком */
+#kovChat .msg-bubble, #kovChat .msg-bubble *, #kovChat .sel-circle, #kovChat #messagesList .sel-row { -webkit-tap-highlight-color: transparent; }
+/* часть группы — только галочки на фото и чёрточка в кружке; рамка — когда выбрано всё сообщение */
+#kovChat .msg-bubble.sel-part { box-shadow: none; }
+
+/* тёмная тема: прямые цвета прежней гаммы — нейтральные тени и разделители, синий выделения как в приложении */
+:root[data-theme="dark"] .context-menu { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.29), 0 2px 6px rgba(255, 255, 255, .08); }
+:root[data-theme="dark"] .context-menu .reaction-picker-extra { border-top: 1px solid rgba(255, 255, 255, .08); }
+:root[data-theme="dark"] .context-menu .context-menu-separator { background: rgba(255, 255, 255, .08); }
+:root[data-theme="dark"] #kovChat .att-play { background: rgba(0, 0, 0, 0.54); }
+:root[data-theme="dark"] #kovChat .temp-ring { background: rgba(0, 0, 0, 0.56); }
+:root[data-theme="dark"] #kovChat .temp-tile.media-file .temp-ring { background: rgba(0, 0, 0, 0.75); }
+:root[data-theme="dark"] #kovChat .msg-bubble.sel-on { box-shadow: 0 0 0 3px #0A84FF; }
+:root[data-theme="dark"] #kovChat.selecting .sel-able.sel-file::after { background: #0A84FF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.2 4.2L19 7' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 13px no-repeat; }
+:root[data-theme="dark"] #kovChat .sel-circle.on { border-color: #0A84FF; background: #0A84FF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.2 4.2L19 7' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 15px no-repeat; }
+:root[data-theme="dark"] #kovChat .sel-circle.part { border-color: #0A84FF; }
+:root[data-theme="dark"] #kovChat .sel-circle.part::after { background: #0A84FF; }
+
+/* тёмная тема: лента не чисто чёрная (#17171A), свои сообщения — спокойный синий; внутри них время, галочки и ссылки светлее, чтобы читались */
+:root[data-theme="dark"] #kovChat .msg-mine .msg-bubble { --col-primary: #9FD0FF; }
+/* тёмная тема, контраст: белые цифры и надписи — на #0071E3 (4,7:1), рамка поля — 3:1 к фону, подсказка в поле светлее */
+:root[data-theme="dark"] #kovChat .unread-badge,
+:root[data-theme="dark"] #kovChat .chat-info-participants .role-badge,
+:root[data-theme="dark"] #kovChat .media-tab.on,
+:root[data-theme="dark"] #kovChat.rail .chat-item .rail-dot,
+:root[data-theme="dark"] #kovChat .msg-avatar { background: #0071E3; }
+:root[data-theme="dark"] #kovChat input[type="text"]::placeholder { color: #AEAEB2; }
+
+/* стикеры и GIF из панели не перетаскиваются: отправляются только нажатием */
+.sticker-cell img, .gif-cell img, .media-panel img { -webkit-user-drag: none; user-select: none; }
+
+/* ── правки 06.10.2026: шапка, поиск, меню, клавиатура (телефон и ПК) ───── */
+/* шапка: название в одну строку, под ним — число участников или должность */
+#kovChat #chatHeaderInfo { min-width: 0; flex: 1 1 auto; overflow: hidden; }
+/* длинная подпись не раздвигает чат: без этого его ширина росла по строке текста */
+#kovChat .chat-main, #kovChat .chat-area, #kovChat .chat-header { min-width: 0; }
+#kovChat .chat-title-box { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+#kovChat .chat-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#kovChat .chat-subtitle { margin-top: 2px; font-size: calc(13px * var(--user-scale, 1)); color: var(--col-text-secondary);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#kovChat .chat-subtitle[hidden] { display: none; }
+@media (max-width: 760px) {
+    #kovChat .chat-title { font-size: calc(17px * var(--user-scale, 1)); }
+}
+
+/* время и галочки в своих сообщениях */
+#kovChat .msg-mine .msg-bubble { --col-text-secondary: var(--col-mine-meta); }
+
+/* поиск по чатам: значок лупы вместо эмодзи в подсказке */
+#kovChat #chatSearchInput { padding-left: 34px; background-image: var(--col-search-icon);
+    background-repeat: no-repeat; background-position: 12px center; background-size: 16px 16px; }
+
+/* меню сообщения: значки приложения, «Удалить» — тёмно-красным */
+.context-menu .context-menu-item { min-height: 40px; gap: 10px; }
+.context-menu .context-menu-item svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--col-text-secondary); }
+.context-menu .context-menu-item.danger,
+.context-menu .context-menu-item.danger svg { color: var(--col-danger); }
+.context-menu .context-menu-item:focus { outline: none; }
+.context-menu .context-menu-item:focus-visible { background: var(--col-hover); box-shadow: inset 0 0 0 2px var(--col-primary); }
+.context-menu .reaction-picker-btn:focus-visible { box-shadow: 0 0 0 2px var(--col-primary); }
+@media (pointer: coarse) {
+    /* под палец: строки 44 точки, текст 16 */
+    .context-menu .context-menu-item { min-height: 44px; gap: 12px; font-size: calc(16px * var(--user-scale, 1)); }
+    .context-menu .context-menu-item svg { width: 20px; height: 20px; }
+}
+
+/* клавиатура: где сейчас фокус в списке чатов и в переписке */
+#kovChat .chat-item:focus { outline: none; }
+#kovChat .chat-item:focus-visible { box-shadow: inset 0 0 0 2px var(--col-primary); }
+#kovChat .msg-bubble:focus { outline: none; }
+#kovChat .msg-bubble:focus-visible { outline: 2px solid var(--col-primary); outline-offset: 2px; }
+#kovChat #messagesList [role="button"]:focus { outline: none; }
+#kovChat #messagesList [role="button"]:focus-visible { outline: 2px solid var(--col-primary); outline-offset: 2px; }
+
+/* телефон: поле ввода и кнопки рядом с ним — 44 точки, как остальные кнопки приложения */
+@media (max-width: 600px) {
+    #kovChat .input-area .icon-btn,
+    #kovChat .input-area .send-btn { width: 44px; height: 44px; }
+    #kovChat .input-wrapper { min-height: 44px; }
+    #kovChat #messageInput { min-height: 42px; }
+}

@@ -1,0 +1,13 @@
+# ===== MariaDB для Kovapp: постоянные настройки; зависящие от мощности машины пересчитывает kovapp-db-autotune.sh =====
+[mysqld]
+innodb_buffer_pool_size = 256M
+innodb_log_file_size = 64M
+innodb_flush_log_at_trx_commit = 2
+performance_schema = OFF
+max_connections = 400
+thread_cache_size = 32
+table_open_cache = 1024
+skip_name_resolve = ON
+slow_query_log = ON
+long_query_time = 0.5
+slow_query_log_file = /var/log/mysql/kovapp-slow.log

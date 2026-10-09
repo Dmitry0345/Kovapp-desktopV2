@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Знак из web_app/icons/icon.svg, вписан в безопасную зону адаптивной иконки (66 из 108) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <group android:scaleX="0.6875" android:scaleY="0.6875" android:translateX="-1" android:translateY="12.75">
+        <path android:pathData="M98,16A26,26 0,0 1,124 42"
+            android:strokeColor="#F5B301" android:strokeWidth="8" android:strokeLineCap="round" />
+        <path android:pathData="M64.5,36L64.5,36A5.5,5.5 0,0 1,70 41.5L70,78.5A5.5,5.5 0,0 1,64.5 84L64.5,84A5.5,5.5 0,0 1,59 78.5L59,41.5A5.5,5.5 0,0 1,64.5 36Z"
+            android:fillColor="#F5F7F6" />
+        <path android:pathData="M95,38L73,60L95,82"
+            android:strokeColor="#F5F7F6" android:strokeWidth="11" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+</vector>

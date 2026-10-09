@@ -1,0 +1,12 @@
+ПК-версия Kovapp: программа для Windows (Python и PySide6, FFmpeg в комплекте).
+
+Как положить: распакуйте архив pc.zip в папку F:\kovapp_autotest\project
+(в архиве уже есть папка pc) - получится:
+  project\pc\main.py
+  project\pc\kov\...
+  project\pc\ffmpeg\ffmpeg.exe
+Старое содержимое папки pc перед этим удалите.
+
+Проверка: run.cmd pc (без Docker; нужен Python 3.10-3.12, 64 бита) - подробно docs\PC.md.
+Показ руками: run.cmd demo pc - на сервере в Docker, том же, что у demo web.
+Другая папка - PROJECT_PC_DIR в .env.
